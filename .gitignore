@@ -1,0 +1,12 @@
+*.class
+*.log
+**/savegames/*.json
+.metals/
+.vscode/
+.bloop/
+.bsp/
+.target/
+project/target/
+target/
+.DS_Store
+project/metals.sbt
