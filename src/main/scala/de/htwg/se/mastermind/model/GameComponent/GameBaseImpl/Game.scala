@@ -28,7 +28,7 @@ case class Game(var field: Field,val code: Code, var currentTurn: Int) extends G
   
   var state: State = Init()
 
-  private val maxTurn: Int = field.matrix.rows
+  val maxTurn: Int = field.matrix.rows
   
   //Partial function gets string and returns a event
   type PartialFunctionRule = PartialFunction[String, Event]
@@ -86,11 +86,7 @@ case class Game(var field: Field,val code: Code, var currentTurn: Int) extends G
   }
   
   override def toString(): String = field.toString
-  
-  def getMaxTurns() = maxTurn
-  
-  def getRemainingTurns() = maxTurn - currentTurn
-  
+    
   def getCurrentTurn() = currentTurn
   
   def setTurn(): Int = {

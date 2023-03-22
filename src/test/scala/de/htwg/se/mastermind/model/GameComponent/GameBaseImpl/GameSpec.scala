@@ -20,9 +20,6 @@ class GameSpec extends AnyWordSpec {
       "should have the Init State" in {
         game.state should be(Init())
       }
-      "should have a maxTurn of 10" in {
-        game.getMaxTurns() should be(10)
-      }
       "should have a request function that return the current state" in {
         game.handleRequest(SingleCharRequest("h")) should be(HelpStateEvent())
         game.handleRequest(SingleCharRequest("m")) should be(MenuStateEvent())
@@ -40,8 +37,6 @@ class GameSpec extends AnyWordSpec {
         game.getCurrentTurn() should be(0)
         game.setTurn() should be (1)
         game.undoTurn() should be(0)
-
-        game.getRemainingTurns() should be(10)
         
         val curr_code = game.getCode()
         curr_code.size should be(4)

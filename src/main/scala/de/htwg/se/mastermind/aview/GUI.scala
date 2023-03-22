@@ -185,7 +185,7 @@ class GUI(using controller: ControllerInterface) extends JFXApp3 with Observer {
       border.add(hsl_Grid, 1, 3)
             
       // *** Label Current Turn
-      val labelCurrentTurn = new Label("Remaining Turns: " + controller.game.getRemainingTurns())
+      val labelCurrentTurn = new Label("Remaining Turns: " + (controller.game.maxTurn - controller.game.currentTurn))
             
       //Default Label Style
       val labelStyle_default = s"""
@@ -258,7 +258,7 @@ class GUI(using controller: ControllerInterface) extends JFXApp3 with Observer {
             
       if hints.forall(p => p.stringRepresentation.equals("R")) then
         return controller.request(PlayerWinStateEvent())
-      else if controller.game.getRemainingTurns().equals(0) then
+      else if (controller.game.maxTurn - controller.game.currentTurn) == 0 then
         return controller.request(PlayerLoseStateEvent())
       else
         return controller.request(PlayerInputStateEvent())

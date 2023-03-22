@@ -107,7 +107,7 @@ class TUI(using controller: ControllerInterface) extends Observer:
           controller.placeGuessAndHints(codeVector)(hints)(controller.game.getCurrentTurn())
           if hints.forall(p => p.stringRepresentation.equals("R")) then
             return controller.request(PlayerWinStateEvent())
-          else if controller.game.getRemainingTurns().equals(0) then
+          else if (controller.game.maxTurn - controller.game.currentTurn) == 0 then
             return controller.request(PlayerLoseStateEvent())
           else
             return controller.request(PlayerInputStateEvent())
@@ -120,5 +120,5 @@ class TUI(using controller: ControllerInterface) extends Observer:
   override def update: Unit = {
     //println(controller.update)
     println(controller.game.field)
-    println("Remaining Turns: " + controller.game.getRemainingTurns())
+    println("Remaining Turns: " + (controller.game.maxTurn - controller.game.currentTurn))
   }

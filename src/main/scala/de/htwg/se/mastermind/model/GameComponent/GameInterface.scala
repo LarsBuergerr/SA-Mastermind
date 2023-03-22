@@ -20,15 +20,13 @@ trait GameInterface() {
 
   val code: Code
 
+  val maxTurn: Int
+
   var currentTurn: Int
 
   def state: State
 
   def request(event: Event): State
-
-  def getMaxTurns(): Int
-  
-  def getRemainingTurns(): Int
 
   def getCurrentTurn(): Int
   
