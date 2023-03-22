@@ -14,7 +14,7 @@ import model.GameComponent.GameBaseImpl.Field
 //****************************************************************************** INTERFACE DEFINITION
 trait GameModeInterface {
   
-  var selectMode : Field
+  val selectMode : Field
   
   def strategy_easy: Field
   

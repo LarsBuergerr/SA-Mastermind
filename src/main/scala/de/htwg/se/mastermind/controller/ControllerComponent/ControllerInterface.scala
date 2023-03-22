@@ -19,7 +19,7 @@ trait ControllerInterface extends Observable {
 
   var game: GameInterface
 
-  def placeGuessAndHints(stone: Vector[Stone],hints: Vector[HStone], row: Int): Field
+  def placeGuessAndHints(stone: Vector[Stone])(hints: Vector[HStone])(row: Int): Field
     
   def redo: Unit
     

@@ -254,7 +254,7 @@ class GUI(using controller: ControllerInterface) extends JFXApp3 with Observer {
       for (i <- 0 until controller.game.field.matrix.cols) {
         currentStoneVector = currentStoneVector.updated(i, Stone("E"))
       }
-      controller.placeGuessAndHints(tmp, hints, controller.game.getCurrentTurn())
+      controller.placeGuessAndHints(tmp)(hints)(controller.game.getCurrentTurn())
             
       if hints.forall(p => p.stringRepresentation.equals("R")) then
         return controller.request(PlayerWinStateEvent())

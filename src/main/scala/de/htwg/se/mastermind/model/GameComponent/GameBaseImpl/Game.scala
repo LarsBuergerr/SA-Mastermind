@@ -111,7 +111,7 @@ case class Game(var field: Field,val code: Code, var currentTurn: Int) extends G
   }
   
   
-  def buildVector(vector: Vector[Stone], chars: Array[Char]): Vector[Stone] = {
+  def buildVector(vector: Vector[Stone])(chars: Array[Char]): Vector[Stone] = {
     val stone = chars(vector.size) match
       case 'R'|'r'|'1'  => Stone("R")
       case 'G'|'g'|'2'  => Stone("G")
@@ -122,7 +122,7 @@ case class Game(var field: Field,val code: Code, var currentTurn: Int) extends G
 
       val newvector = vector.appended(stone)
       if (newvector.size < field.cols)
-        buildVector(newvector, chars)
+        buildVector(newvector)(chars)
       else
         return newvector
   }

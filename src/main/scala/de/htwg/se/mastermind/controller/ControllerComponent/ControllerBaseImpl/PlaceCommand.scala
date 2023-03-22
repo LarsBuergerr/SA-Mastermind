@@ -19,7 +19,7 @@ case class PlaceCommand(game: GameInterface, stone: Vector[Stone], hints: Vector
   var newfield = game.field
     
   override def execute: Field =
-    newfield = game.field.placeGuessAndHints(stone, hints, row)
+    newfield = game.field.placeGuessAndHints(stone)(hints)(row)
     game.setTurn()
     newfield
     

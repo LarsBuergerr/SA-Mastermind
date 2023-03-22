@@ -31,7 +31,7 @@ class Controller (using var game: GameInterface, var fileIO: FileIOInterface) ex
   def handleRequest(request: Request): Event =
     game.handleRequest(request)
 
-  def placeGuessAndHints(stone: Vector[Stone],hints: Vector[HStone], row: Int): Field =
+  def placeGuessAndHints(stone: Vector[Stone])(hints: Vector[HStone])(row: Int): Field =
     game.field = invoker.doStep(PlaceCommand(game, stone, hints, row))
     notifyObservers
     game.field
