@@ -11,7 +11,7 @@ import GameComponent.GameBaseImpl.Game
 import java.io._
 import scala.xml._
 
-class FileIO extends FileIOInterface {
+class FileIO extends FileIOInterface:
 
   override def load(game: GameInterface): GameInterface = 
     import java.io._
@@ -107,4 +107,3 @@ class FileIO extends FileIOInterface {
         {game.getCode().code}
       </code>
     </game>
-}

@@ -22,7 +22,7 @@ import com.google.inject.Inject
   * @param field  mastermind game field
   * @param state  state in which the game is currently
   */
-case class Game(var field: Field,val code: Code, var currentTurn: Int) extends GameInterface {
+case class Game(var field: Field,val code: Code, var currentTurn: Int) extends GameInterface:
   
   def this() = this(new Field(10, 4), new Code(4), 0)  
   
@@ -34,7 +34,7 @@ case class Game(var field: Field,val code: Code, var currentTurn: Int) extends G
   type PartialFunctionRule = PartialFunction[String, Event]
   
   // Defines the Chain of Responsibility (Pattern)
-  val chainSCR: PartialFunctionRule = {
+  val chainSCR: PartialFunctionRule =
     RequestHandlerSCR.HelpInputRule orElse 
     RequestHandlerSCR.MenuInputRule orElse
     RequestHandlerSCR.PlayInputRule orElse
@@ -43,8 +43,6 @@ case class Game(var field: Field,val code: Code, var currentTurn: Int) extends G
     RequestHandlerSCR.RedoInputRule orElse
     RequestHandlerSCR.SaveInputRule orElse
     RequestHandlerSCR.LoadInputRule
-  }
-
   
   /**
     * Calls the responsible chain
@@ -52,24 +50,22 @@ case class Game(var field: Field,val code: Code, var currentTurn: Int) extends G
     * @param request
     * @return
     */
-  def handleRequest(request: Request): Event = {
-    request match {
-      case SingleCharRequest(userinput) => {
+  def handleRequest(request: Request): Event =
+    request match
+      case SingleCharRequest(userinput) =>
         //println("SingleCharRequest: " + userinput)                              //@todo remove after debugging
         chainSCR.applyOrElse(userinput, RequestHandlerSCR.DefaultInputRule)
-      }
-      case MultiCharRequest(userinput) => {
+
+      case MultiCharRequest(userinput) =>
         //println("MultiCharRequest: " + userinput)                               //@todo remove after debugging
-        if(userinput.size != field.matrix.cols)
+        if(userinput.size != field.matrix.cols) then
           return RequestHandlerSCR.DefaultInputRule(userinput)
         else
           return PlayerAnalyzeEvent()
-      }
-    }
-  }
 
-  def request(event: Event): State = {
-    event match{
+
+  def request(event: Event): State =
+    event match
       case init: InitStateEvent         => state = Init()
       case menu: MenuStateEvent         => state = Menu()
       case play: PlayStateEvent         => state = Play()
@@ -81,33 +77,27 @@ case class Game(var field: Field,val code: Code, var currentTurn: Int) extends G
       case pWin: PlayerWinStateEvent    => state = PlayerWin()
       case pAna: PlayerAnalyzeEvent     => state = PlayerAnalyze()
        
-    }
     return state.handle()
-  }
   
   override def toString(): String = field.toString
     
   def getCurrentTurn() = currentTurn
   
-  def setTurn(): Int = {
+  def setTurn(): Int =
     currentTurn = currentTurn + 1
     return currentTurn
-  }
   
-  def undoTurn(): Int = {
+  def undoTurn(): Int =
     currentTurn = currentTurn - 1
     return currentTurn
-  }
 
   def getCode(): Code = code
   
-  
-  def resetGame(): Game = {
+  def resetGame(): Game =
     Game(new Field(field.matrix.rows, field.matrix.cols), new Code(field.matrix.cols), 0)
-  }
   
   
-  def buildVector(vector: Vector[Stone])(chars: Array[Char]): Vector[Stone] = {
+  def buildVector(vector: Vector[Stone])(chars: Array[Char]): Vector[Stone] =
     val stone = chars(vector.size) match
       case 'R'|'r'|'1'  => Stone("R")
       case 'G'|'g'|'2'  => Stone("G")
@@ -117,39 +107,34 @@ case class Game(var field: Field,val code: Code, var currentTurn: Int) extends G
       case 'P'|'p'|'6'  => Stone("P")
 
       val newvector = vector.appended(stone)
-      if (newvector.size < field.cols)
+      if (newvector.size < field.cols) then
         buildVector(newvector)(chars)
       else
         return newvector
-  }
-  
+
   
   /**
     * Return the event that is needed to trigger the current state and 
     * can be used to stay in the current state
     * @return event that triggers the current state
     */
-  def getCurrentStateEvent(): Event = {
-    state match {
+  def getCurrentStateEvent(): Event =
+    state match
       case init:Init        => HelpStateEvent()
       case menu:Menu        => MenuStateEvent()
       case play:Play        => PlayStateEvent()
       case quit:Quit        => QuitStateEvent()
       case help:Help        => HelpStateEvent()
       case pInp:PlayerInput => PlayerInputStateEvent()
-    }
-  }
+
   
-  def getDefaultInputRule(input: String): Event = {
+  def getDefaultInputRule(input: String): Event =
     RequestHandlerSCR.DefaultInputRule(input)
-  }
   
-  object RequestHandlerSCR {
-    
+  object RequestHandlerSCR:
     //defines the general rule for the chain
-    def singleCharRule(f: String => Boolean, result: Event): PartialFunctionRule = {
+    def singleCharRule(f: String => Boolean, result: Event): PartialFunctionRule =
       case s if f(s) => result
-    }
     
     //defines the concrete rules
     val HelpInputRule: PartialFunctionRule = singleCharRule(_ == "h", HelpStateEvent())
@@ -162,9 +147,6 @@ case class Game(var field: Field,val code: Code, var currentTurn: Int) extends G
     val LoadInputRule: PartialFunctionRule = singleCharRule(_ == "l", LoadStateEvent())
     
     //defines the default rule
-    def DefaultInputRule(userinput: String): Event = {
+    def DefaultInputRule(userinput: String): Event =
       println(">>> Error: Invalid input [will be ignored]")
       getCurrentStateEvent()
-    }
-  }
-}

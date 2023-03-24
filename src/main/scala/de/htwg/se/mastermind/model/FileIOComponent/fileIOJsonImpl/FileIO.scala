@@ -13,7 +13,7 @@ import java.time.format.DateTimeFormatter
 import play.api.libs.json.*
 //import javax.swing.filechooser.FileNameExtensionFilter
 
-class FileIO extends FileIOInterface {
+class FileIO extends FileIOInterface:
   override def load(game: GameInterface): GameInterface = 
     import scala.io.Source
     import scalafx.stage.FileChooser
@@ -85,39 +85,38 @@ class FileIO extends FileIOInterface {
       "turn" -> game.currentTurn,
       "code" -> vectorToJson(game.code.code.asInstanceOf[Vector[Object]], 0),
     )
-  }
 
   def JsonToStone(cellJson: JsValue) = 
-  val x = cellJson("x").as[Int]
-  val y = cellJson("y").as[Int]
-  val value = cellJson("value").as[String]
-  val cell = Stone(value)
-  cell
+    val x = cellJson("x").as[Int]
+    val y = cellJson("y").as[Int]
+    val value = cellJson("value").as[String]
+    val cell = Stone(value)
+      cell
 
-def JsonToHStone(cellJson: JsValue) = 
-  val x = cellJson("x").as[Int]
-  val y = cellJson("y").as[Int]
-  val value = cellJson("value").as[String]
-  val cell = HintStone(value)
-  cell
-
-
-def JsonToVector(vectorJson: JsValue, mtype: String) =
-  val row = vectorJson("row").as[Int]
-  val cells = vectorJson("cells")
-
-  val vector = 
-    if mtype == "matrix" then
-      cells.as[Seq[JsValue]].map(cell => JsonToStone(cell))
-    else
-      cells.as[Seq[JsValue]].map(cell => JsonToHStone(cell))
-  vector.toVector
+  def JsonToHStone(cellJson: JsValue) = 
+    val x = cellJson("x").as[Int]
+    val y = cellJson("y").as[Int]
+    val value = cellJson("value").as[String]
+    val cell = HintStone(value)
+    cell
 
 
-def JsonToGame(gameJson: JsValue): GameInterface =
-  val matrix = Matrix[Stone](gameJson("matrix").as[Seq[JsValue]].map(vector => JsonToVector(vector, "matrix")).toVector.asInstanceOf[Vector[Vector[Stone]]])
-  val hmatrix = Matrix[HStone](gameJson("hmatrix").as[Seq[JsValue]].map(vector => JsonToVector(vector, "hmatrix")).toVector.asInstanceOf[Vector[Vector[HStone]]])
-  val code = Code(JsonToVector(gameJson("code"), "matrix").asInstanceOf[Vector[Stone]])
-  val turn = gameJson("turn").as[Int]
+  def JsonToVector(vectorJson: JsValue, mtype: String) =
+    val row = vectorJson("row").as[Int]
+    val cells = vectorJson("cells")
 
-  Game(new Field(matrix, hmatrix), code, turn)
+    val vector = 
+      if mtype == "matrix" then
+        cells.as[Seq[JsValue]].map(cell => JsonToStone(cell))
+      else
+        cells.as[Seq[JsValue]].map(cell => JsonToHStone(cell))
+    vector.toVector
+
+
+  def JsonToGame(gameJson: JsValue): GameInterface =
+    val matrix = Matrix[Stone](gameJson("matrix").as[Seq[JsValue]].map(vector => JsonToVector(vector, "matrix")).toVector.asInstanceOf[Vector[Vector[Stone]]])
+    val hmatrix = Matrix[HStone](gameJson("hmatrix").as[Seq[JsValue]].map(vector => JsonToVector(vector, "hmatrix")).toVector.asInstanceOf[Vector[Vector[HStone]]])
+    val code = Code(JsonToVector(gameJson("code"), "matrix").asInstanceOf[Vector[Stone]])
+    val turn = gameJson("turn").as[Int]
+
+    Game(new Field(matrix, hmatrix), code, turn)

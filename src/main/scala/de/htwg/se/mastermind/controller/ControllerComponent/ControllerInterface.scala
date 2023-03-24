@@ -15,7 +15,7 @@ import util.{Observable, Event, Request}
 
 
 //****************************************************************************** INTERFACE DEFINITION
-trait ControllerInterface extends Observable {
+trait ControllerInterface extends Observable:
 
   var game: GameInterface
 
@@ -36,6 +36,3 @@ trait ControllerInterface extends Observable {
   def request(event: Event): State
     
   def handleRequest(request: Request): Event
-    
-}
-

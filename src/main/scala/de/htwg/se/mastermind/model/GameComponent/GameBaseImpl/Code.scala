@@ -36,71 +36,53 @@ case class Code(code: Vector[Stone]):
     * @param userInput  UserInput as Stone Vector
     * @return HintStone Vector (All black: code are equal)
     */
-  def compareTo(userInput: Vector[Stone]):Vector[HStone] = {
+  def compareTo(userInput: Vector[Stone]):Vector[HStone] =
     
     val equalsList = compareToEqual(userInput, 0, List())
     
     val presentList = compareToPresent(userInput, 0 , 0, equalsList, List())
     
     buildVector(Vector(), this.size, equalsList.size, presentList.size)
-  }
   
-  
-  def buildVector(returnVector: Vector[HStone], vectorSize: Int, equalCount: Int, presentCount: Int): (Vector[HStone]) = {
-  
-    if(equalCount != 0){
-      return buildVector(returnVector.appended(HintStone("R")), (vectorSize - 1), (equalCount - 1), presentCount)
-    }
-    
-    if(presentCount != 0){
-      return buildVector(returnVector.appended(HintStone("W")), (vectorSize - 1), equalCount, (presentCount - 1))
-    }
-    
-    if(vectorSize > 0){
-      return buildVector(returnVector.appended(HintStone("E")), (vectorSize - 1), equalCount, presentCount)
-    } else {
-      return returnVector
-    }
-  }
-  
-  
-  def compareToEqual(inputUser: Vector[Stone], currentPos: Int, equalsList: List[Int]): (List[Int]) = {
-    
-    if(currentPos >= size){
-      return equalsList
-    }
-    
-    if(this.code(currentPos).stringRepresentation.equals(inputUser(currentPos).stringRepresentation)){
-      return compareToEqual(inputUser, (currentPos + 1), equalsList.appended(currentPos))
-    }
-    else{
-      return compareToEqual(inputUser, (currentPos + 1), equalsList)
-    }
-  }
-  
-  
-  def compareToPresent(inputUser: Vector[Stone], currentPos: Int, secondPos: Int, equalsList: List[Int], presentList: List[Int]): (List[Int]) = {
 
-    if(currentPos >= size){
-      return presentList
-    }
+  def buildVector(returnVector: Vector[HStone], vectorSize: Int, equalCount: Int, presentCount: Int): (Vector[HStone]) =
+  
+    if(equalCount != 0) then
+      return buildVector(returnVector.appended(HintStone("R")), (vectorSize - 1), (equalCount - 1), presentCount)
+
+    if(presentCount != 0) then
+      return buildVector(returnVector.appended(HintStone("W")), (vectorSize - 1), equalCount, (presentCount - 1))
+    
+    if(vectorSize > 0) then
+      return buildVector(returnVector.appended(HintStone("E")), (vectorSize - 1), equalCount, presentCount)
     else
-    {
-      if(equalsList.contains(currentPos)){
+      return returnVector
+  
+  
+  def compareToEqual(inputUser: Vector[Stone], currentPos: Int, equalsList: List[Int]): (List[Int]) =
+    
+    if(currentPos >= size) then
+      return equalsList
+    
+    if(this.code(currentPos).stringRepresentation.equals(inputUser(currentPos).stringRepresentation)) then
+      return compareToEqual(inputUser, (currentPos + 1), equalsList.appended(currentPos))
+    else
+      return compareToEqual(inputUser, (currentPos + 1), equalsList)
+  
+  
+  def compareToPresent(inputUser: Vector[Stone], currentPos: Int, secondPos: Int, equalsList: List[Int], presentList: List[Int]): (List[Int]) =
+
+    if(currentPos >= size) then
+      return presentList
+    else
+      if(equalsList.contains(currentPos)) then
         return compareToPresent(inputUser, (currentPos + 1), 0, equalsList, presentList) 
-      }
-      else{
-        if(!equalsList.contains(secondPos) && !presentList.contains(secondPos) && (secondPos != currentPos)){
-          if(inputUser(currentPos).stringRepresentation.equals(this.code(secondPos).stringRepresentation)){
+      else
+        if(!equalsList.contains(secondPos) && !presentList.contains(secondPos) && (secondPos != currentPos)) then
+          if(inputUser(currentPos).stringRepresentation.equals(this.code(secondPos).stringRepresentation)) then
             return compareToPresent(inputUser, (currentPos + 1), 0, equalsList, presentList.appended(secondPos))
-          }
-        }
-        if(secondPos >= size - 1) {
+
+        if(secondPos >= size - 1) then
           return compareToPresent(inputUser, (currentPos + 1), 0, equalsList, presentList)
-        }
-        else{
+        else
           return compareToPresent(inputUser, currentPos, secondPos + 1, equalsList, presentList)
-        } 
-      }
-    }
-  }

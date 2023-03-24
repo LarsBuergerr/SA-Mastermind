@@ -12,7 +12,7 @@ import model.GameComponent.GameBaseImpl.Field
 
 
 //****************************************************************************** INTERFACE DEFINITION
-trait GameModeInterface {
+trait GameModeInterface:
   
   val selectMode : Field
   
@@ -25,4 +25,3 @@ trait GameModeInterface {
   def strategy_extrem: Field
   
   def parseInput(): Field
-}

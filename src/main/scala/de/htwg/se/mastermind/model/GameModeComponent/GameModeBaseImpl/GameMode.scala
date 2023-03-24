@@ -17,7 +17,7 @@ import scala.io.StdIn.readLine
 
 
 //****************************************************************************** OBJECT DEFINITION
-object GameMode extends GameModeInterface {
+object GameMode extends GameModeInterface:
 
   val selectMode = parseInput()
 
@@ -29,19 +29,17 @@ object GameMode extends GameModeInterface {
   
   def strategy_extrem = new Field(8, 5,  Stone("E"), HintStone("E"))
   
-  def parseInput(): Field = {
+  def parseInput(): Field =
    
    val in = readLine("Choose gamemode (Easy, Medium [default] , Hard, Extrem): ")
 
-   in match {
+   in match
      case "Easy"    | "easy"        => return strategy_easy
      case "Medium"  | "medium"      => return strategy_medium
      case "Hard"    | "hard"        => return strategy_hard
      case "Extrem"  | "extrem"      => return strategy_extrem
      case _                         => return strategy_medium
-   }
-  }
+
   
   override def toString(): String = "GameMode"
-}
 

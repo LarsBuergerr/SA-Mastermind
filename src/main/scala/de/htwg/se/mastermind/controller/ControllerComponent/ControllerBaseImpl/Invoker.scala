@@ -13,7 +13,7 @@ import util.Command
 
 
 //****************************************************************************** CLASS DEFINITION
-class Invoker {
+case class Invoker():
   private var undoStack: List[Command] = Nil
   private var redoStack: List[Command] = Nil
 
@@ -41,4 +41,3 @@ class Invoker {
         redoStack = stack
         undoStack = head :: undoStack
         Some(head.redoStep)
-}

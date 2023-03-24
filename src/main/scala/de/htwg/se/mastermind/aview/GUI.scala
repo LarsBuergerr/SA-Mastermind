@@ -28,7 +28,7 @@ import util._
 
 
 //****************************************************************************** CLASS DEFINITION
-class GUI(using controller: ControllerInterface) extends JFXApp3 with Observer {
+class GUI(using controller: ControllerInterface) extends JFXApp3 with Observer:
     
   controller.add(this)
 
@@ -246,14 +246,14 @@ class GUI(using controller: ControllerInterface) extends JFXApp3 with Observer {
   /**
     * This method is called when the check button is clicked
     */    
-  def checkCode_Button_Handler() : Unit = {
+  def checkCode_Button_Handler() : Unit =
     val check = currentStoneVector.filter(stone => stone.stringRepresentation == "E")
-    if (check.length == 0) {
+    if (check.length == 0) then
       val hints = controller.game.getCode().compareTo(currentStoneVector)
       val tmp = currentStoneVector
-      for (i <- 0 until controller.game.field.matrix.cols) {
+      for (i <- 0 until controller.game.field.matrix.cols) do
         currentStoneVector = currentStoneVector.updated(i, Stone("E"))
-      }
+
       controller.placeGuessAndHints(tmp)(hints)(controller.game.getCurrentTurn())
             
       if hints.forall(p => p.stringRepresentation.equals("R")) then
@@ -262,27 +262,23 @@ class GUI(using controller: ControllerInterface) extends JFXApp3 with Observer {
         return controller.request(PlayerLoseStateEvent())
       else
         return controller.request(PlayerInputStateEvent())
-    }
-  }
     
   /**
     * This method is called when the undo button is clicked
     */
-  def undoCode_Button_Handler() : Unit = {
+  def undoCode_Button_Handler() : Unit =
     controller.undo
-  }
     
   /**
     * This method is called when the redo button is clicked
     */
-  def redoCode_Button_Handler() : Unit = {
+  def redoCode_Button_Handler() : Unit =
     controller.redo
-  }
     
   /**
    * This method is called when the help button is clicked
    */
-  def help_Button_Handler() : Unit = {
+  def help_Button_Handler() : Unit =
     controller.request(HelpStateEvent())
     val popup = new Popup()
         
@@ -357,19 +353,15 @@ class GUI(using controller: ControllerInterface) extends JFXApp3 with Observer {
         
     popup.getContent().add(helpGrid)
     popup.show(stage)
-  }
-    
-  def reset_Button_Handler() : Unit = {
+
+  def reset_Button_Handler() : Unit =
     controller.reset
-  }
 
-  def save_Button_Handler() : Unit = {
+  def save_Button_Handler() : Unit =
     controller.save
-  }
 
-  def load_Button_Handler() : Unit = {
+  def load_Button_Handler() : Unit =
     controller.load
-  }    
     
   /**
     * This class is a wrapper for the Button class. It defines the style of the button and takes a 
@@ -377,7 +369,7 @@ class GUI(using controller: ControllerInterface) extends JFXApp3 with Observer {
     * @param text Text the button should display
     * @param f    Function that should be executed when the button is clicked
     */
-  class Button_MasterMind(text: String, f: () => Unit) extends Button {
+  class Button_MasterMind(text: String, f: () => Unit) extends Button:
       
     val buttonText = text
         
@@ -409,14 +401,13 @@ class GUI(using controller: ControllerInterface) extends JFXApp3 with Observer {
       -fx-font-size: 25px;
       -fx-padding: 5 15 5 15;"""    
 
-    val button = new Button() {
+    val button = new Button():
       
-      if(buttonText.contains(".png")) {
+      if(buttonText.contains(".png")) then
         val button_img = new ImageView(new Image(getClass.getResource("/buttons/" + buttonText).toExternalForm(), 32, 32,true, true ))
         this.setGraphic(button_img)
-      } else {
+      else
         this.setText(buttonText)
-      }
       
       this.setOnMouseClicked(e => {
         this.setStyle(buttonStyle_click)            
@@ -429,20 +420,19 @@ class GUI(using controller: ControllerInterface) extends JFXApp3 with Observer {
             
       /* Set style when leaving button */
       this.setOnMouseExited(e =>  {this.setStyle(buttonStyle_default)})  
-    }
+
     
     /* Set default style */    
     button.setStyle(buttonStyle_default)
-  }
 
-    
+   
   /**
     * Game Stone Class
     *
     * @param x
     * @param y
     */
-  class Entry(x: Int, y: Int) extends StackPane {
+  class Entry(x: Int, y: Int) extends StackPane:
     val circle_size = 60
     val image_size = circle_size - 5
 
@@ -472,7 +462,6 @@ class GUI(using controller: ControllerInterface) extends JFXApp3 with Observer {
     else 
       label.setGraphic(new ImageView(new Image(getClass.getResource("/stones/stone_" + controller.game.field.matrix.cell(y, x).stringRepresentation + ".png").toExternalForm, image_size, image_size, true, true)))
     this.getChildren().add(label)
-  }
 
     
   /**
@@ -481,7 +470,7 @@ class GUI(using controller: ControllerInterface) extends JFXApp3 with Observer {
     * @param x 
     * @param y
     */
-  class Hints(x: Int, y: Int) extends StackPane {
+  class Hints(x: Int, y: Int) extends StackPane:
     val circle_size = 60
     val image_size = circle_size - 5
 
@@ -501,10 +490,7 @@ class GUI(using controller: ControllerInterface) extends JFXApp3 with Observer {
       label.setGraphic(new ImageView(new Image(getClass.getResource("/hintstones/hstone_" + controller.game.field.hmatrix.cell(y, x).stringRepresentation + ".png").toExternalForm(), image_size, image_size, true, true)))
 
     this.getChildren().add(label)
-  }
     
-  override def stopApp(): Unit = {
+  override def stopApp(): Unit =
     controller.request(QuitStateEvent())
     System.exit(0)
-  }
-}

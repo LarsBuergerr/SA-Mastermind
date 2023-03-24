@@ -14,7 +14,7 @@ import util.{Event, Request}
 
 
 //****************************************************************************** INTERFACE DEFINITION
-trait GameInterface() {
+trait GameInterface():
 
   var field: Field
 
@@ -45,5 +45,3 @@ trait GameInterface() {
   def getDefaultInputRule(input: String): Event
   
   def resetGame() : GameInterface
-
-}

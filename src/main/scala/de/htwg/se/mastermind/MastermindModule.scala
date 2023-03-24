@@ -42,9 +42,8 @@ import model.FileIOComponent.fileIOjsonImpl.FileIO
 
 
 //****************************************************************************** OBJECT DEFINITION
-object MastermindModule {
+object MastermindModule:
   val field = GameMode.selectMode
   given GameInterface       = Game(field, new Code(field.matrix.cols), 0)
   given ControllerInterface = Controller()
   given FileIOInterface     = FileIO()
-}

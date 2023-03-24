@@ -26,7 +26,7 @@ import MastermindModule.{given}
 
 
 //****************************************************************************** MAIN
-object mastermind extends Thread {
+object mastermind extends Thread:
 
   val tui = TUI()
   val gui = GUI()
@@ -34,13 +34,10 @@ object mastermind extends Thread {
   @main 
   override def start(): Unit = 
     
-    val threadGui = new Thread {
-      override def run(): Unit = {
+    val threadGui = new Thread:
+      override def run(): Unit =
         gui.main(Array[String]())
-      }
-    }
 
     threadGui.start()
     Thread.sleep(1000)
     tui.run()
-}

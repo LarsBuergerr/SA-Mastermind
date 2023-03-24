@@ -25,17 +25,16 @@ class TUI(using controller: ControllerInterface) extends Observer:
 
   controller.add(this)
 
-  def run(): Unit = {
+  def run(): Unit =
     controller.request(InitStateEvent())
     inputLoop()
-  }
   
   //@todo Boolean return type for testing?
-  def inputLoop(): Unit = {
+  def inputLoop(): Unit =
     
     val input = readLine(">> ")
     
-    parseInput(input) match {
+    parseInput(input) match 
       case pInp: PlayerInput  =>
         inputLoop()
       case pWin: PlayerWin    =>
@@ -54,54 +53,53 @@ class TUI(using controller: ControllerInterface) extends Observer:
         inputLoop()    
       case quit: Quit         =>
         print("--- See you later alligator...\n")
-    }
-  }
 
   
-  def parseInput(input: String): State = {
+  def parseInput(input: String): State =
     
     val emptyVector: Vector[Stone] = Vector()
     val chars = input.toCharArray()
 
-    chars.size match {
-      case 0 => {// Handles no user input -> stay in current state
+    chars.size match
+      case 0 =>  // Handles no user input -> stay in current state
         val currentRequest = controller.handleRequest(SingleCharRequest(" "))
         return controller.request(currentRequest)
-      }
-      case 1 => { //Handles single char user input (first with CoR, then with State Pattern)
+
+      case 1 =>  //Handles single char user input (first with CoR, then with State Pattern)
         val currentRequest = controller.handleRequest(SingleCharRequest(input))
         print(currentRequest)
-          currentRequest match {
-          case undo: UndoStateEvent  => {
+          currentRequest match
+          case undo: UndoStateEvent  =>
             controller.undo
             return controller.request(PlayerInputStateEvent())
-          }
-          case redo: RedoStateEvent  => {
+
+          case redo: RedoStateEvent  =>
             controller.redo
             return controller.request(PlayerInputStateEvent())
-          }
-          case save: SaveStateEvent  => {
+
+          case save: SaveStateEvent  =>
             val fileIO = new FileIO()
             fileIO.save(controller.game)
             return controller.request(PlayerInputStateEvent())
-          }
-          case load: LoadStateEvent  => {
+
+          case load: LoadStateEvent  =>
             val fileIO = new FileIO()
             controller.game = fileIO.load(controller.game)
             return controller.request(PlayerInputStateEvent())
-          }
+
           case _ => return controller.request(currentRequest)
-        }
-        
-      }
-      case _ => { //Handles multi char user input
+
+      case _ => //Handles multi char user input
         val currentRequest = controller.handleRequest(MultiCharRequest(input))
-        if(currentRequest.isInstanceOf[PlayerAnalyzeEvent])
-          var codeVector = Vector[Stone]()
-          Try (controller.game.buildVector(emptyVector)(chars)) match {
-            case Success(vector) => codeVector = vector.asInstanceOf[Vector[Stone]]
-            case Failure(e)      => return controller.request(controller.game.getDefaultInputRule(input))
-          }
+        if(currentRequest.isInstanceOf[PlayerAnalyzeEvent]) then
+
+          val codeVector: Vector[Stone] =
+            Try(controller.game.buildVector(emptyVector)(chars)) match
+              case Success(vector) => vector.asInstanceOf[Vector[Stone]]
+              case Failure(e) =>
+                controller.request(controller.game.getDefaultInputRule(input))
+                Vector.empty[Stone]
+
           val hints         = controller.game.getCode().compareTo(codeVector)
           //print(hints)
           controller.placeGuessAndHints(codeVector)(hints)(controller.game.getCurrentTurn())
@@ -113,12 +111,8 @@ class TUI(using controller: ControllerInterface) extends Observer:
             return controller.request(PlayerInputStateEvent())
         else  //Invalid input -> stay in current state
           return controller.request(currentRequest)
-      }
-    }
-  }
   
-  override def update: Unit = {
+  override def update: Unit =
     //println(controller.update)
     println(controller.game.field)
     println("Remaining Turns: " + (controller.game.maxTurn - controller.game.currentTurn))
-  }

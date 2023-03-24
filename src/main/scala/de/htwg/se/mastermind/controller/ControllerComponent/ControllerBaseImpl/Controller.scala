@@ -18,13 +18,13 @@ import util.{Request, Event, Observable}
 
 
 //****************************************************************************** CLASS DEFINITION
-class Controller (using var game: GameInterface, var fileIO: FileIOInterface) extends ControllerInterface:
+class Controller (using var game: GameInterface, val fileIO: FileIOInterface) extends ControllerInterface:
 
   val invoker = new Invoker
   
   // Pass on the game state to the view and the event to game
   def request(event: Event): State =
-    var currState = game.request(event)
+    val currState = game.request(event)
     notifyObservers
     currState
   

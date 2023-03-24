@@ -15,54 +15,47 @@ import util._
 
 
 //****************************************************************************** INTERFACE DEFINITION
-trait State {
+trait State:
   def handle(): State
   override def toString(): String
 
-  override def equals(obj: Any): Boolean = {
-    obj match {
+  override def equals(obj: Any): Boolean =
+    obj match
       case that: State => this.toString == that.toString
       case _ => false
-    }
-  }
-}
-
 
 //****************************************************************************** CLASS DEFINITIONS
 val horizontalLine = "----------------------------------------------------------------" + eol
  
-class Init extends State {
-  override def handle(): State = {
+class Init extends State:
+  override def handle(): State =
     val welcomeMessage = "------------------ Welcome to Mastermind -----------------------" + eol
     printf(eol + horizontalLine + welcomeMessage + horizontalLine)
     return this
-  }
+
   override def toString(): String = "State: Init"
-}
 
 
-class Menu extends State {
-  override def handle(): State = {
+class Menu extends State:
+  override def handle(): State =
     val line           = "--- Menu: ------------------------------------------------------" + eol  
     printf(line)
     return this
-  }
+
   override def toString(): String = "State: Menu"
-}
 
 
-class Play extends State {
-  override def handle(): State = {
+class Play extends State:
+  override def handle(): State =
     val line      = "--- Play: ------------------------------------------------------" + eol
     printf(line)
     return this
-  }
+
   override def toString(): String = "State: Play"
-}
 
 
-class Help extends State {
-  override def handle(): State = {
+class Help extends State:
+  override def handle(): State =
     val line      = "--- Help: [Input] : Function-----------------------------------" + eol
     val linePlay  = "---       [p    ] : starts the game" + eol
     val lineMenu  = "---       [m    ] : opens the menu" + eol
@@ -78,61 +71,56 @@ class Help extends State {
     val lineInput = "---       [Enter] : Enters input" + eol
     printf(line + linePlay + lineMenu + lineQuit + lineHelp + lineGame + redLine + greenLine + blueLine + yellowLine + whiteLine + purpleLine + lineInput + horizontalLine)
     return this    
-  }
+
   override def toString(): String = "State: Help"
-}
 
 
-class Quit extends State {
-  override def handle(): State = {
+
+class Quit extends State:
+  override def handle(): State = 
     val line      = "--- Game quit---------------------------------------------------" + eol
     printf(line)
     return this
-  }
+
   override def toString(): String = "State: Quit"
-}
 
 
-class PlayerInput extends State {
-  override def handle(): State = {
+class PlayerInput extends State:
+  override def handle(): State =
     return this
-  }
+
   override def toString(): String = "State: PlayerInput"
-}
 
 
-class PlayerAnalyseState() extends State {
-  override def handle(): State = {
+class PlayerAnalyseState() extends State:
+  override def handle(): State =
     return this
-  }
+
   override def toString(): String = "State: PlayerAnalysis"
-}
 
 
-class PlayerLose extends State {
-  override def handle(): State = {
+class PlayerLose extends State:
+  override def handle(): State =
     val line      = "--- You lost ---------------------------------------------------" + eol
     printf(line)
     return this
-  }
+
   override def toString(): String = "State: PlayerLose"
-}
 
 
-class PlayerWin extends State {
-  override def handle(): State = {
+class PlayerWin extends State:
+  override def handle(): State =
     val line      = "--- You won ----------------------------------------------------" + eol
     printf(line)
     return this
-  }
-  override def toString(): String = "State: PlayerWin"
-}
 
-class PlayerAnalyze extends State {
-  override def handle(): State = {
+  override def toString(): String = "State: PlayerWin"
+
+
+class PlayerAnalyze extends State:
+  override def handle(): State =
     val line      = "--- Player analyzes ---------------------------------------------" + eol
     printf(line)
     return this
-  }
+
   override def toString(): String = "State: PlayerAnalyzes"
-}
