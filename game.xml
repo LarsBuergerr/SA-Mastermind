@@ -27,55 +27,55 @@
     </row><row row="1">
       <cell row="1" col="0">
       <value>
-        R
+        G
       </value>
     </cell><cell row="1" col="1">
       <value>
-        R
+        G
       </value>
     </cell><cell row="1" col="2">
       <value>
-        R
+        G
       </value>
     </cell><cell row="1" col="3">
       <value>
-        R
+        G
       </value>
     </cell>
     </row><row row="2">
       <cell row="2" col="0">
       <value>
-        B
+        G
       </value>
     </cell><cell row="2" col="1">
       <value>
-        B
+        G
       </value>
     </cell><cell row="2" col="2">
       <value>
-        B
+        G
       </value>
     </cell><cell row="2" col="3">
       <value>
-        B
+        G
       </value>
     </cell>
     </row><row row="3">
       <cell row="3" col="0">
       <value>
-        Y
+        G
       </value>
     </cell><cell row="3" col="1">
       <value>
-        Y
+        G
       </value>
     </cell><cell row="3" col="2">
       <value>
-        Y
+        G
       </value>
     </cell><cell row="3" col="3">
       <value>
-        Y
+        G
       </value>
     </cell>
     </row>
@@ -102,19 +102,19 @@
     </row><row row="1">
       <cell row="1" col="0">
       <value>
-        W
+        E
       </value>
     </cell><cell row="1" col="1">
       <value>
-        R
+        E
       </value>
     </cell><cell row="1" col="2">
       <value>
-        W
+        E
       </value>
     </cell><cell row="1" col="3">
       <value>
-        R
+        E
       </value>
     </cell>
     </row><row row="2">
@@ -159,6 +159,6 @@
         0
       </turns>
       <code>
-        BBGG
+        GWRW
       </code>
     </game>

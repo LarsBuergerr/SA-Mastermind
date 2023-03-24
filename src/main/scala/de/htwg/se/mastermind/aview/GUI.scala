@@ -254,7 +254,7 @@ class GUI(using controller: ControllerInterface) extends JFXApp3 with Observer:
       for (i <- 0 until controller.game.field.matrix.cols) do
         currentStoneVector = currentStoneVector.updated(i, Stone("E"))
 
-      controller.placeGuessAndHints(tmp)(hints)(controller.game.getCurrentTurn())
+      controller.placeGuessAndHints(tmp)(hints)(controller.game.currentTurn)
             
       if hints.forall(p => p.stringRepresentation.equals("R")) then
         return controller.request(PlayerWinStateEvent())
@@ -437,7 +437,7 @@ class GUI(using controller: ControllerInterface) extends JFXApp3 with Observer:
     val image_size = circle_size - 5
 
     this.setOnMouseClicked(e => {
-      if(controller.game.getCurrentTurn() == y) then
+      if(controller.game.currentTurn == y) then
         currentStoneVector = currentStoneVector.updated(x, Stone(selectableColors(browseColors)))
         label.setGraphic(new ImageView(new Image(getClass.getResource("/stones/stone_" + selectableColors(browseColors) + ".png").toExternalForm, image_size, image_size, true, true)))
       }
@@ -455,9 +455,9 @@ class GUI(using controller: ControllerInterface) extends JFXApp3 with Observer:
       label.setGraphic(new ImageView(new Image(getClass.getResource("/stones/stone_win.png").toExternalForm(), image_size, image_size, true, true)))
     else if (controller.game.state.isInstanceOf[PlayerLose]) then
       label.setGraphic(new ImageView(new Image(getClass.getResource("/stones/stone_E.png").toExternalForm(), image_size, image_size, true, true)))
-    else if y == controller.game.getCurrentTurn() then
+    else if y == controller.game.currentTurn then
       label.setGraphic(new ImageView(new Image(getClass.getResource("/stones/stone_animation.gif").toExternalForm(), image_size, image_size, true, true)))
-    else if y == (controller.game.getCurrentTurn() + 1) then
+    else if y == (controller.game.currentTurn + 1) then
       label.setGraphic(new ImageView(new Image(getClass.getResource("/stones/stone_" + currentStoneVector(x).stringRepresentation + ".png").toExternalForm, image_size, image_size, true, true)))
     else 
       label.setGraphic(new ImageView(new Image(getClass.getResource("/stones/stone_" + controller.game.field.matrix.cell(y, x).stringRepresentation + ".png").toExternalForm, image_size, image_size, true, true)))

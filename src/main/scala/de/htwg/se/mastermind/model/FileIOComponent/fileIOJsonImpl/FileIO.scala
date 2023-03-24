@@ -66,8 +66,7 @@ class FileIO extends FileIOInterface:
     Json.obj(
       "row" -> row,
       "cells" -> {
-        //for loop with index
-        for (i <- vector.indices) yield cellToJson(vector(i), row, i)
+        vector.map(cell => cellToJson(cell, row, vector.indexOf(cell)))
       }
     )
 
@@ -75,12 +74,10 @@ class FileIO extends FileIOInterface:
   def gameToJson(game: GameInterface) =
     Json.obj(
       "matrix" -> {
-        for (row <- game.field.matrix.m.indices) 
-          yield vectorToJson(game.field.matrix.m(row), row)
+        game.field.matrix.m.map(vector => vectorToJson(vector, game.field.matrix.m.indexOf(vector)))
       },
       "hmatrix" -> {
-        for (row <- game.field.hmatrix.m.indices) 
-          yield vectorToJson(game.field.hmatrix.m(row), row)
+        game.field.hmatrix.m.map(vector => vectorToJson(vector, game.field.hmatrix.m.indexOf(vector)))
       },
       "turn" -> game.currentTurn,
       "code" -> vectorToJson(game.code.code.asInstanceOf[Vector[Object]], 0),

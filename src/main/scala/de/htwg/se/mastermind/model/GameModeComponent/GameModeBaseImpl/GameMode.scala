@@ -42,4 +42,3 @@ object GameMode extends GameModeInterface:
 
   
   override def toString(): String = "GameMode"
-

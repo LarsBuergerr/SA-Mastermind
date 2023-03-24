@@ -69,24 +69,21 @@ class FileIO extends FileIOInterface:
   def rowToXml(matrix: Matrix[Object], row: Int) =
     <row row={row.toString}>
       {
-        for (col <- 0 until matrix.cols)
-          yield cellToXml(matrix, row, col)
+        (0 until matrix.cols).map(col => cellToXml(matrix, row, col))
       }
     </row>
 
   def matrixToXml(matrix: Matrix[Object]) =
     <matrix>
       {
-        for (row <- 0 until matrix.rows)
-          yield rowToXml(matrix, row)
+        (0 until matrix.rows).map(row => rowToXml(matrix, row))
       }
     </matrix>
 
   def hmatrixToXml(hmatrix: Matrix[Object]) =
     <hint_matrix>
       {
-        for (row <- 0 until hmatrix.rows)
-          yield rowToXml(hmatrix, row)
+        (0 until hmatrix.rows).map(row => rowToXml(hmatrix, row))
       }
     </hint_matrix>
 
@@ -101,7 +98,7 @@ class FileIO extends FileIOInterface:
       {matrixToXml(game.field.matrix.asInstanceOf[Matrix[Object]])}
       {hmatrixToXml(game.field.hmatrix.asInstanceOf[Matrix[Object]])}
       <turns>
-        {game.getCurrentTurn()}
+        {game.currentTurn}
       </turns>
       <code>
         {game.getCode().code}

@@ -16,7 +16,7 @@ import util.{Event, Request}
 //****************************************************************************** INTERFACE DEFINITION
 trait GameInterface():
 
-  var field: Field
+  val field: Field
 
   val code: Code
 
@@ -27,12 +27,6 @@ trait GameInterface():
   def state: State
 
   def request(event: Event): State
-
-  def getCurrentTurn(): Int
-  
-  def setTurn(): Int
-
-  def undoTurn(): Int
 
   def getCode(): Code
 

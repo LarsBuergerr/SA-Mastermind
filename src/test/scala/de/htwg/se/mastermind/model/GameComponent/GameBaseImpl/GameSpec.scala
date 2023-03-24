@@ -34,9 +34,7 @@ class GameSpec extends AnyWordSpec {
         game.handleRequest(MultiCharRequest("123")) should be(game.RequestHandlerSCR.DefaultInputRule("123"))
       }
       "should have setter and getter for Current Turn, Turn and Code" in {
-        game.getCurrentTurn() should be(0)
-        game.setTurn() should be (1)
-        game.undoTurn() should be(0)
+        game.currentTurn should be(0)
         
         val curr_code = game.getCode()
         curr_code.size should be(4)

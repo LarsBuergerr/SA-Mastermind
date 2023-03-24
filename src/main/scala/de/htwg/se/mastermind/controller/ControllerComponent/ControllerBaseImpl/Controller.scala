@@ -12,13 +12,14 @@ package ControllerBaseImpl
 
 //****************************************************************************** IMPORTS
 import model.GameComponent.GameInterface
+import model.GameComponent.GameBaseImpl.Game
 import model.GameComponent.GameBaseImpl.{State, Stone, HStone, Field}
 import model.FileIOComponent.FileIOInterface
 import util.{Request, Event, Observable}
 
 
 //****************************************************************************** CLASS DEFINITION
-class Controller (using var game: GameInterface, val fileIO: FileIOInterface) extends ControllerInterface:
+class Controller (using var game: GameInterface, var fileIO: FileIOInterface) extends ControllerInterface:
 
   val invoker = new Invoker
   
@@ -32,16 +33,19 @@ class Controller (using var game: GameInterface, val fileIO: FileIOInterface) ex
     game.handleRequest(request)
 
   def placeGuessAndHints(stone: Vector[Stone])(hints: Vector[HStone])(row: Int): Field =
-    game.field = invoker.doStep(PlaceCommand(game, stone, hints, row))
+    val field = invoker.doStep(PlaceCommand(game, stone, hints, row))
+    game = game.asInstanceOf[Game].copy(field, game.code, game.currentTurn)
     notifyObservers
     game.field
 
   def redo =
-    game.field = invoker.redoStep.getOrElse(game.field)
+    val field = invoker.redoStep.getOrElse(game.field)
+    game = game.asInstanceOf[Game].copy(field, game.code, game.currentTurn)
     notifyObservers
 
   def undo =
-    game.field = invoker.undoStep.getOrElse(game.field)
+    val field = invoker.undoStep.getOrElse(game.field)
+    game = game.asInstanceOf[Game].copy(field, game.code, game.currentTurn)
     notifyObservers
 
   def save =

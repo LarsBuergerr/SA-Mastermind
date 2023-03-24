@@ -22,9 +22,9 @@ import com.google.inject.Inject
   * @param field  mastermind game field
   * @param state  state in which the game is currently
   */
-case class Game(var field: Field,val code: Code, var currentTurn: Int) extends GameInterface:
+case class Game(val field: Field,val code: Code, var currentTurn: Int) extends GameInterface:
   
-  def this() = this(new Field(10, 4), new Code(4), 0)  
+  def this() = this(new Field(10, 4), new Code(4), 0)
   
   var state: State = Init()
 
@@ -65,31 +65,21 @@ case class Game(var field: Field,val code: Code, var currentTurn: Int) extends G
 
 
   def request(event: Event): State =
-    event match
-      case init: InitStateEvent         => state = Init()
-      case menu: MenuStateEvent         => state = Menu()
-      case play: PlayStateEvent         => state = Play()
-      case quit: QuitStateEvent         => state = Quit()
-      case help: HelpStateEvent         => state = Help()
+    val req_state = event match
+      case init: InitStateEvent         =>  Init()
+      case menu: MenuStateEvent         =>  Menu()
+      case play: PlayStateEvent         =>  Play()
+      case quit: QuitStateEvent         =>  Quit()
+      case help: HelpStateEvent         =>  Help()
       
-      case pInp: PlayerInputStateEvent  => state = PlayerInput()
-      case pLos: PlayerLoseStateEvent   => state = PlayerLose()
-      case pWin: PlayerWinStateEvent    => state = PlayerWin()
-      case pAna: PlayerAnalyzeEvent     => state = PlayerAnalyze()
-       
-    return state.handle()
+      case pInp: PlayerInputStateEvent  =>  PlayerInput()
+      case pLos: PlayerLoseStateEvent   =>  PlayerLose()
+      case pWin: PlayerWinStateEvent    =>  PlayerWin()
+      case pAna: PlayerAnalyzeEvent     =>  PlayerAnalyze()
+      
+    return req_state.handle()
   
   override def toString(): String = field.toString
-    
-  def getCurrentTurn() = currentTurn
-  
-  def setTurn(): Int =
-    currentTurn = currentTurn + 1
-    return currentTurn
-  
-  def undoTurn(): Int =
-    currentTurn = currentTurn - 1
-    return currentTurn
 
   def getCode(): Code = code
   

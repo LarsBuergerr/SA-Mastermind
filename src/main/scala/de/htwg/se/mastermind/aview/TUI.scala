@@ -83,8 +83,7 @@ class TUI(using controller: ControllerInterface) extends Observer:
             return controller.request(PlayerInputStateEvent())
 
           case load: LoadStateEvent  =>
-            val fileIO = new FileIO()
-            controller.game = fileIO.load(controller.game)
+            controller.load
             return controller.request(PlayerInputStateEvent())
 
           case _ => return controller.request(currentRequest)
@@ -102,7 +101,7 @@ class TUI(using controller: ControllerInterface) extends Observer:
 
           val hints         = controller.game.getCode().compareTo(codeVector)
           //print(hints)
-          controller.placeGuessAndHints(codeVector)(hints)(controller.game.getCurrentTurn())
+          controller.placeGuessAndHints(codeVector)(hints)(controller.game.currentTurn)
           if hints.forall(p => p.stringRepresentation.equals("R")) then
             return controller.request(PlayerWinStateEvent())
           else if (controller.game.maxTurn - controller.game.currentTurn) == 0 then
