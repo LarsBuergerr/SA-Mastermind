@@ -22,7 +22,7 @@ trait GameInterface():
 
   val maxTurn: Int
 
-  var currentTurn: Int
+  val currentTurn: Int
 
   def state: State
 

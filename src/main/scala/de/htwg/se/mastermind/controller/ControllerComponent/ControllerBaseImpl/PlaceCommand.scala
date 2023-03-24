@@ -20,14 +20,10 @@ case class PlaceCommand(game: GameInterface, stone: Vector[Stone], hints: Vector
 
   override def execute: Field =
     val newfield = game.field.placeGuessAndHints(stone)(hints)(row)
-    game.currentTurn += 1
     newfield
     
   override def undoStep: Field = 
-    game.currentTurn -= 1
     oldfield
     
   override def redoStep: Field = 
-    if(newfield != oldfield)
-      game.currentTurn += 1
     newfield

@@ -19,7 +19,7 @@ import util.{Request, Event, Observable}
 
 
 //****************************************************************************** CLASS DEFINITION
-class Controller (using var game: GameInterface, var fileIO: FileIOInterface) extends ControllerInterface:
+class Controller (using var game: GameInterface, val fileIO: FileIOInterface) extends ControllerInterface:
 
   val invoker = new Invoker
   
@@ -34,18 +34,19 @@ class Controller (using var game: GameInterface, var fileIO: FileIOInterface) ex
 
   def placeGuessAndHints(stone: Vector[Stone])(hints: Vector[HStone])(row: Int): Field =
     val field = invoker.doStep(PlaceCommand(game, stone, hints, row))
-    game = game.asInstanceOf[Game].copy(field, game.code, game.currentTurn)
+    game = game.asInstanceOf[Game].copy(field, game.code, game.currentTurn + 1)
     notifyObservers
     game.field
 
   def redo =
     val field = invoker.redoStep.getOrElse(game.field)
-    game = game.asInstanceOf[Game].copy(field, game.code, game.currentTurn)
+    game = game.asInstanceOf[Game].copy(field, game.code, game.currentTurn + 1)
     notifyObservers
 
+    //@TODO: check if oldfield == newfield for undo and redo
   def undo =
     val field = invoker.undoStep.getOrElse(game.field)
-    game = game.asInstanceOf[Game].copy(field, game.code, game.currentTurn)
+    game = game.asInstanceOf[Game].copy(field, game.code, game.currentTurn - 1)
     notifyObservers
 
   def save =

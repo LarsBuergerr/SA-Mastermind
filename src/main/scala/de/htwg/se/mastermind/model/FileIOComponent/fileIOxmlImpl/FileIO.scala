@@ -30,27 +30,44 @@ class FileIO extends FileIOInterface:
 
     return game
 
-  
+
   def loadMatrix(xml: NodeSeq, m_type: String): Matrix[Object] =
     val rows = (xml \ "rows").text.trim.toInt
     val cols = (xml \ "cols").text.trim.toInt
 
-    var matrix = if (m_type == "matrix") new Matrix(rows, cols, Stone(" ")) else new Matrix(rows, cols, HintStone(" "))
+    def createMatrix(row: Int, col: Int): Matrix[Object] = {
+      if (m_type == "matrix") new Matrix(row, col, Stone(" "))
+      else new Matrix(row, col, HintStone(" "))
+    }
+
+    def updateMatrix(matrix: Matrix[Object], row: Int, cell: Node): Matrix[Object] = {
+      val cell_y = (cell \ "@col").text.trim.toInt
+      val cell_x = (cell \ "@row").text.trim.toInt
+      val cell_value = (cell \ "value").text.trim
+
+      if (m_type == "matrix") matrix.replaceCell(cell_x, cell_y, Stone(cell_value))
+      else matrix.replaceCell(cell_x, cell_y, HintStone(cell_value))
+    }
+
+    def loop(matrix: Matrix[Object], rows: Seq[Node], rowNum: Int): Matrix[Object] = {
+      if (rows.isEmpty) matrix
+      else {
+        val row = rows.head
+        val row_num = (row \ "@row").text.trim.toInt
+        val all_cells = (row \ "cell")
+
+        val updatedMatrix = all_cells.foldLeft(matrix)((acc, cell) => {
+          updateMatrix(acc, row_num, cell)
+        })
+
+        loop(updatedMatrix, rows.tail, rowNum + 1)
+      }
+    }
+
     val all_rows = (xml \ m_type \ "row")
-    all_rows.map(row => {
-      val row_num = (row \ "@row").text.trim.toInt
-      val all_cells = (row \ "cell")
-      all_cells.map(cell => {
-        val cell_y = (cell \ "@col").text.trim.toInt
-        val cell_x = (cell \ "@row").text.trim.toInt
-        val cell_value = (cell \ "value").text.trim
+    val initialMatrix = createMatrix(rows, cols)
 
-
-        matrix = if (m_type == "matrix") matrix.replaceCell(cell_x, cell_y, Stone(cell_value)) else matrix.replaceCell(cell_x, cell_y, HintStone(cell_value))
-      })
-    })
-
-    return matrix
+    loop(initialMatrix, all_rows, 0)
 
   override def save(game: GameInterface): Unit =
     import java.io._
