@@ -22,8 +22,10 @@ import com.google.inject.Inject
   * @param field  mastermind game field
   * @param state  state in which the game is currently
   */
-case class Game(val field: Field = new Field(10, 4), val code: Code = new Code(4),
-                val currentTurn: Int = 0, val state: State = Init()) extends GameInterface:
+case class Game(val field: Field = new Field(10, 4),
+                val code: Code = new Code(4),
+                val currentTurn: Int = 0,
+                val state: State = Init()) extends GameInterface:
 
   //Partial function gets string and returns a event
   type PartialFunctionRule = PartialFunction[String, Event]
@@ -80,24 +82,21 @@ case class Game(val field: Field = new Field(10, 4), val code: Code = new Code(4
   
   def resetGame(): Game =
     Game(new Field(field.matrix.rows, field.matrix.cols), new Code(field.matrix.cols), 0, Init())
-  
-  
+
   def buildVector(vector: Vector[Stone])(chars: Array[Char]): Vector[Stone] =
-    val stone = chars(vector.size) match
-      case 'R'|'r'|'1'  => Stone("R")
-      case 'G'|'g'|'2'  => Stone("G")
-      case 'B'|'b'|'3'  => Stone("B")
-      case 'Y'|'y'|'4'  => Stone("Y")
-      case 'W'|'w'|'5'  => Stone("W")
-      case 'P'|'p'|'6'  => Stone("P")
+  chars.take(field.cols - vector.size)
+       .map(charToStone)
+       .foldLeft(vector)(_ :+ _)
 
-      val newvector = vector.appended(stone)
-      if (newvector.size < field.cols) then
-        buildVector(newvector)(chars)
-      else
-        return newvector
+    def charToStone(char: Char): Stone =
+      char match
+        case 'R' | 'r' | '1' => Stone("R")
+        case 'G' | 'g' | '2' => Stone("G")
+        case 'B' | 'b' | '3' => Stone("B")
+        case 'Y' | 'y' | '4' => Stone("Y")
+        case 'W' | 'w' | '5' => Stone("W")
+        case 'P' | 'p' | '6' => Stone("P")
 
-  
   /**
     * Return the event that is needed to trigger the current state and 
     * can be used to stay in the current state
