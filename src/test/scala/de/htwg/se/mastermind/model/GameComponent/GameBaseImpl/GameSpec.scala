@@ -69,26 +69,26 @@ class GameSpec extends AnyWordSpec {
         game.request(PlayerAnalyzeEvent()) should be(PlayerAnalyze())
       }
       "should have a getCurrentStateEvent function that return the current state" in {
-        game.state = Init()
-        game.getCurrentStateEvent() should be(HelpStateEvent())
+        val g1 = new Game(new Field(), new Code(), 0, Init())
+        g1.getCurrentStateEvent() should be(HelpStateEvent())
         
-        game.state = Help()
-        game.getCurrentStateEvent() should be(HelpStateEvent())
+        val g2 = new Game(new Field(), new Code(), 0, Help())
+        g2.getCurrentStateEvent() should be(HelpStateEvent())
 
-        game.state = Menu()
-        game.getCurrentStateEvent() should be(MenuStateEvent())
+        val g3 = new Game(new Field(), new Code(), 0, Menu())
+        g3.getCurrentStateEvent() should be(MenuStateEvent())
 
-        game.state = Play()
-        game.getCurrentStateEvent() should be(PlayStateEvent())
+        val g4 = new Game(new Field(), new Code(), 0, Play())
+        g4.getCurrentStateEvent() should be(PlayStateEvent())
 
-        game.state = Quit()
-        game.getCurrentStateEvent() should be(QuitStateEvent())
+        val g5 = new Game(new Field(), new Code(), 0, Quit())
+        g5.getCurrentStateEvent() should be(QuitStateEvent())
 
-        game.state = PlayerInput()
-        game.getCurrentStateEvent() should be(PlayerInputStateEvent())
+        val g6 = new Game(new Field(), new Code(), 0, PlayerInput())
+        g6.getCurrentStateEvent() should be(PlayerInputStateEvent())
       }
       "have a getDefaultInputRule" in {
-        game.getDefaultInputRule("1234") should be(PlayerInputStateEvent())
+        game.getDefaultInputRule("1234") should be(HelpStateEvent())
       }
     }
   }

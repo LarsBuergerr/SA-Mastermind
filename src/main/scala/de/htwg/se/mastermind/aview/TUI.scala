@@ -31,7 +31,7 @@ class TUI(using controller: ControllerInterface) extends Observer:
   
   //@todo Boolean return type for testing?
   def inputLoop(): Unit =
-    
+    print(controller.game.state).toString() + "\n"
     val input = readLine(">> ")
     
     parseInput(input) match 
@@ -104,7 +104,7 @@ class TUI(using controller: ControllerInterface) extends Observer:
           controller.placeGuessAndHints(codeVector)(hints)(controller.game.currentTurn)
           if hints.forall(p => p.stringRepresentation.equals("R")) then
             return controller.request(PlayerWinStateEvent())
-          else if (controller.game.maxTurn - controller.game.currentTurn) == 0 then
+          else if (controller.game.field.matrix.rows - controller.game.currentTurn) == 0 then
             return controller.request(PlayerLoseStateEvent())
           else
             return controller.request(PlayerInputStateEvent())
@@ -114,4 +114,4 @@ class TUI(using controller: ControllerInterface) extends Observer:
   override def update: Unit =
     //println(controller.update)
     println(controller.game.field)
-    println("Remaining Turns: " + (controller.game.maxTurn - controller.game.currentTurn))
+    println("Remaining Turns: " + (controller.game.field.matrix.rows - controller.game.currentTurn))

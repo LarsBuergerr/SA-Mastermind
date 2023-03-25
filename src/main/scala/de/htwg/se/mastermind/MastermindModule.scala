@@ -29,7 +29,7 @@ import model.GameComponent.GameInterface
 import model.GameComponent.GameBaseImpl.Game
 //import model.GameComponent.GameMockImpl.Game
 
-import model.GameComponent.GameBaseImpl.Code
+import model.GameComponent.GameBaseImpl.{Code, Play}
 
 import model.GameModeComponent.GameModeInterface
 import model.GameModeComponent.GameModeBaseImpl.GameMode
@@ -44,6 +44,6 @@ import model.FileIOComponent.fileIOxmlImpl.FileIO
 //****************************************************************************** OBJECT DEFINITION
 object MastermindModule:
   val field = GameMode.selectMode
-  given GameInterface       = Game(field, new Code(field.matrix.cols), 0)
+  given GameInterface       = Game(field, new Code(field.matrix.cols), 0, Play())
   given ControllerInterface = Controller()
   given FileIOInterface     = FileIO()

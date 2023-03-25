@@ -22,20 +22,14 @@ import com.google.inject.Inject
   * @param field  mastermind game field
   * @param state  state in which the game is currently
   */
-case class Game(val field: Field,val code: Code, val currentTurn: Int) extends GameInterface:
-  
-  def this() = this(new Field(10, 4), new Code(4), 0)
-  
-  var state: State = Init()
-
-  val maxTurn: Int = field.matrix.rows
-  
+case class Game(val field: Field = new Field(10, 4), val code: Code = new Code(4), val currentTurn: Int = 0, state: State = Init()) extends GameInterface:
+    
   //Partial function gets string and returns a event
   type PartialFunctionRule = PartialFunction[String, Event]
   
   // Defines the Chain of Responsibility (Pattern)
   val chainSCR: PartialFunctionRule =
-    RequestHandlerSCR.HelpInputRule orElse 
+    RequestHandlerSCR.HelpInputRule orElse
     RequestHandlerSCR.MenuInputRule orElse
     RequestHandlerSCR.PlayInputRule orElse
     RequestHandlerSCR.QuitInputRule orElse
@@ -84,7 +78,7 @@ case class Game(val field: Field,val code: Code, val currentTurn: Int) extends G
   def getCode(): Code = code
   
   def resetGame(): Game =
-    Game(new Field(field.matrix.rows, field.matrix.cols), new Code(field.matrix.cols), 0)
+    Game(new Field(field.matrix.rows, field.matrix.cols), new Code(field.matrix.cols), 0, Init())
   
   
   def buildVector(vector: Vector[Stone])(chars: Array[Char]): Vector[Stone] =

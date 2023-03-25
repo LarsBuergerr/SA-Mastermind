@@ -5,7 +5,7 @@ package FileIOComponent
 package fileIOjsonImpl
 
 import GameComponent.GameInterface
-import GameComponent.GameBaseImpl.{Field, Stone, Matrix, HStone, HintStone, Code, Game}
+import GameComponent.GameBaseImpl.{Field, Stone, Matrix, HStone, HintStone, Code, Game, Play}
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -116,4 +116,4 @@ class FileIO extends FileIOInterface:
     val code = Code(JsonToVector(gameJson("code"), "matrix").asInstanceOf[Vector[Stone]])
     val turn = gameJson("turn").as[Int]
 
-    Game(new Field(matrix, hmatrix), code, turn)
+    Game(new Field(matrix, hmatrix), code, turn, Play())

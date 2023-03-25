@@ -21,7 +21,7 @@
       </value>
     </cell><cell row="0" col="3">
       <value>
-        R
+        G
       </value>
     </cell>
     </row><row row="1">
@@ -192,11 +192,11 @@
       <row row="0">
       <cell row="0" col="0">
       <value>
-        R
+        E
       </value>
     </cell><cell row="0" col="1">
       <value>
-        R
+        E
       </value>
     </cell><cell row="0" col="2">
       <value>
@@ -375,6 +375,6 @@
         1
       </turns>
       <code>
-        YGWR
+        PBBY
       </code>
     </game>

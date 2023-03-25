@@ -5,7 +5,7 @@ package FileIOComponent
 package fileIOxmlImpl
 
 import GameComponent.GameInterface
-import GameComponent.GameBaseImpl.{Field, Stone, Matrix, HintStone, HStone, Code}
+import GameComponent.GameBaseImpl.{Field, Stone, Matrix, HintStone, HStone, Code, Play}
 import GameComponent.GameBaseImpl.Game
 
 import java.io._
@@ -26,7 +26,7 @@ class FileIO extends FileIOInterface:
     val matrix = loadMatrix(xml, "matrix").asInstanceOf[Matrix[Stone]]
     val hint_matrix = loadMatrix(xml, "hint_matrix").asInstanceOf[Matrix[HStone]]
 
-    val game = new Game(new Field(matrix, hint_matrix), code, curr_turn)
+    val game = new Game(new Field(matrix, hint_matrix), code, curr_turn, Play())
 
     return game
 

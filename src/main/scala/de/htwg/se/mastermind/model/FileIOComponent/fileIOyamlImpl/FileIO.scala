@@ -5,7 +5,7 @@ package FileIOComponent
 package fileIOyamlImpl
 
 
-import GameComponent.GameBaseImpl.{Field, Code, Matrix, Stone, HStone, HintStone, Game}
+import GameComponent.GameBaseImpl.{Field, Code, Matrix, Stone, HStone, HintStone, Game, Play}
 import de.htwg.se.mastermind.model.GameComponent.GameInterface
 
 import net.jcazevedo.moultingyaml._
@@ -121,7 +121,7 @@ class FileIO extends FileIOInterface:
           val hm = Matrix(hmatrix.map(_.convertTo[Vector[Object]](VectorProtocol.asInstanceOf[YamlFormat[Vector[Object]]])))
           val c = code.convertTo[Code](CodeProtocol)
           val s = turn.toInt
-          return new Game(new Field(m.asInstanceOf[Matrix[Stone]], hm.asInstanceOf[Matrix[HStone]]), c.asInstanceOf[Code], s)
+          return new Game(new Field(m.asInstanceOf[Matrix[Stone]], hm.asInstanceOf[Matrix[HStone]]), c.asInstanceOf[Code], s, Play())
         case _ => 
           print(yaml_data(0))
           return deserializationError("Game expected")

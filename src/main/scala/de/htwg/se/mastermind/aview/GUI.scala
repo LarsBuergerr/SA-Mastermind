@@ -185,7 +185,8 @@ class GUI(using controller: ControllerInterface) extends JFXApp3 with Observer:
       border.add(hsl_Grid, 1, 3)
             
       // *** Label Current Turn
-      val labelCurrentTurn = new Label("Remaining Turns: " + (controller.game.maxTurn - controller.game.currentTurn))
+      val labelCurrentTurn = new Label("Remaining Turns: " 
+        + (controller.game.field.matrix.rows - controller.game.currentTurn))
             
       //Default Label Style
       val labelStyle_default = s"""
@@ -245,7 +246,7 @@ class GUI(using controller: ControllerInterface) extends JFXApp3 with Observer:
         
   /**
     * This method is called when the check button is clicked
-    */    
+    */
   def checkCode_Button_Handler() : Unit =
     val check = currentStoneVector.filter(stone => stone.stringRepresentation == "E")
     if (check.length == 0) then
@@ -258,7 +259,7 @@ class GUI(using controller: ControllerInterface) extends JFXApp3 with Observer:
             
       if hints.forall(p => p.stringRepresentation.equals("R")) then
         return controller.request(PlayerWinStateEvent())
-      else if (controller.game.maxTurn - controller.game.currentTurn) == 0 then
+      else if (controller.game.field.matrix.rows - controller.game.currentTurn) == 0 then
         return controller.request(PlayerLoseStateEvent())
       else
         return controller.request(PlayerInputStateEvent())
