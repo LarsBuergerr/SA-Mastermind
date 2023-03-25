@@ -9,19 +9,19 @@
       <row row="0">
       <cell row="0" col="0">
       <value>
-        G
+        P
       </value>
     </cell><cell row="0" col="1">
       <value>
-        G
+        P
       </value>
     </cell><cell row="0" col="2">
       <value>
-        G
+        P
       </value>
     </cell><cell row="0" col="3">
       <value>
-        G
+        P
       </value>
     </cell>
     </row><row row="1">
@@ -192,7 +192,7 @@
       <row row="0">
       <cell row="0" col="0">
       <value>
-        E
+        R
       </value>
     </cell><cell row="0" col="1">
       <value>
@@ -375,6 +375,6 @@
         1
       </turns>
       <code>
-        PBBY
+        WPRW
       </code>
     </game>

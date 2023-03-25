@@ -26,6 +26,7 @@ class Controller (using var game: GameInterface, val fileIO: FileIOInterface) ex
   // Pass on the game state to the view and the event to game
   def request(event: Event): State =
     val currState = game.request(event)
+    game = game.asInstanceOf[Game].copy(game.field, game.code, game.currentTurn, currState)
     notifyObservers
     currState
   

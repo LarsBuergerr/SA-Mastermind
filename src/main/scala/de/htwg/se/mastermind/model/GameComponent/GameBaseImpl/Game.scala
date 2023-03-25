@@ -22,8 +22,9 @@ import com.google.inject.Inject
   * @param field  mastermind game field
   * @param state  state in which the game is currently
   */
-case class Game(val field: Field = new Field(10, 4), val code: Code = new Code(4), val currentTurn: Int = 0, state: State = Init()) extends GameInterface:
-    
+case class Game(val field: Field = new Field(10, 4), val code: Code = new Code(4),
+                val currentTurn: Int = 0, val state: State = Init()) extends GameInterface:
+
   //Partial function gets string and returns a event
   type PartialFunctionRule = PartialFunction[String, Event]
   
@@ -70,7 +71,7 @@ case class Game(val field: Field = new Field(10, 4), val code: Code = new Code(4
       case pLos: PlayerLoseStateEvent   =>  PlayerLose()
       case pWin: PlayerWinStateEvent    =>  PlayerWin()
       case pAna: PlayerAnalyzeEvent     =>  PlayerAnalyze()
-      
+    
     return req_state.handle()
   
   override def toString(): String = field.toString
