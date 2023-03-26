@@ -111,7 +111,6 @@ case class Game(val field: Field = new Field(10, 4),
       case help:Help        => HelpStateEvent()
       case pInp:PlayerInput => PlayerInputStateEvent()
 
-  
   def getDefaultInputRule(input: String): Event =
     RequestHandlerSCR.DefaultInputRule(input)
   
