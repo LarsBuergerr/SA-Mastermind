@@ -37,14 +37,13 @@ case class Code(code: Vector[Stone]):
     * @return HintStone Vector (All black: code are equal)
     */
   def compareTo(userInput: Vector[Stone]):Vector[HStone] =
-    
     val equalsList = compareToEqual(userInput, 0, List())
-    
     val presentList = compareToPresent(userInput, 0 , 0, equalsList, List())
-    
-    buildVector(Vector(), this.size, equalsList.size, presentList.size)
-  
+    //buildVector(Vector(), this.size, equalsList.size, presentList.size)
+    //Partially Applied Function, zusammen mit gecurrieten buildVector
+    buildVector(size)(equalsList.size, presentList.size)
 
+  //Alte Version
   def buildVector(returnVector: Vector[HStone], vectorSize: Int, equalCount: Int, presentCount: Int): (Vector[HStone]) =
   
     if(equalCount != 0) then
@@ -57,8 +56,21 @@ case class Code(code: Vector[Stone]):
       return buildVector(returnVector.appended(HintStone("E")), (vectorSize - 1), equalCount, presentCount)
     else
       return returnVector
-  
-  
+
+  //Currying: Funktion wurde in eine Currying-Funktion umgewandelt,
+  // bei der der vectorSize-Parameter als erster Parameter an die Funktion gebunden ist
+  // und die Funktion dann mit equalCount und presentCount aufgerufen wird.
+  def buildVector(vectorSize: Int)(equalCount: Int, presentCount: Int, returnVector: Vector[HStone] = Vector()): Vector[HStone] =
+
+    if (equalCount != 0) buildVector(vectorSize - 1)(equalCount - 1, presentCount, returnVector :+ HintStone("R"))
+
+    else if (presentCount != 0) buildVector(vectorSize - 1)(equalCount, presentCount - 1, returnVector :+ HintStone("W"))
+
+    else if (vectorSize > 0) buildVector(vectorSize - 1)(equalCount, presentCount, returnVector :+ HintStone("E"))
+
+    else returnVector
+
+
   def compareToEqual(inputUser: Vector[Stone], currentPos: Int, equalsList: List[Int]): (List[Int]) =
     
     if(currentPos >= size) then
@@ -68,7 +80,7 @@ case class Code(code: Vector[Stone]):
       return compareToEqual(inputUser, (currentPos + 1), equalsList.appended(currentPos))
     else
       return compareToEqual(inputUser, (currentPos + 1), equalsList)
-  
+
   
   def compareToPresent(inputUser: Vector[Stone], currentPos: Int, secondPos: Int, equalsList: List[Int], presentList: List[Int]): (List[Int]) =
 
@@ -86,3 +98,4 @@ case class Code(code: Vector[Stone]):
           return compareToPresent(inputUser, (currentPos + 1), 0, equalsList, presentList)
         else
           return compareToPresent(inputUser, currentPos, secondPos + 1, equalsList, presentList)
+

@@ -32,7 +32,7 @@ object mastermind extends Thread:
   val gui = GUI()
 
   @main 
-  override def start(): Unit = 
+  override def start(): Unit =
     
     val threadGui = new Thread:
       override def run(): Unit =
