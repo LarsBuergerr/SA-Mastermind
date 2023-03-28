@@ -1,5 +1,5 @@
 val scala3Version = "3.1.2"
-val scalaTestVersion = "3.2.10"
+val scalaTestVersion = "3.2.15"
 
 lazy val root = project
   .in(file("."))
@@ -22,7 +22,7 @@ lazy val root = project
       "org.scala-lang.modules" %% "scala-xml" % "2.0.1", // XML
       "com.lihaoyi" %% "upickle" % "1.4.4", // JSON upickle
       ("net.jcazevedo" %% "moultingyaml" % "0.4.2").cross(CrossVersion.for3Use2_13), //YAML
-      ("com.typesafe.play" %% "play-json" % "2.9.3").cross(CrossVersion.for3Use2_13)), // JSON
+      ("com.typesafe.play" %% "play-json" % "2.9.3").cross(CrossVersion.for3Use2_13)) // JSON
     },
     libraryDependencies ++= {
   // Determine OS version of JavaFX binaries
@@ -35,7 +35,7 @@ lazy val root = project
       Seq("base", "controls", "fxml", "graphics", "media", "swing", "web")
         .map(m => "org.openjfx" % s"javafx-$m" % "16" classifier osName)
     },
-    
+
     jacocoReportSettings := JacocoReportSettings(
       "Jacoco Coverage Report",
       None,
