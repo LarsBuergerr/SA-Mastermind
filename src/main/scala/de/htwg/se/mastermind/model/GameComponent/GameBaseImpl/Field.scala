@@ -38,15 +38,9 @@ case class Field(var matrix: Matrix[Stone], var hmatrix: Matrix[HStone]):
   val rows = matrix.rows
   val cols = matrix.cols
 
-  def barOLD(cellWidth: Int = 3, cellCount: Int = this.cols): String = {
+  def bar(cellWidth: Int = 3, cellCount: Int = this.cols): String = {
     (plus + (minus * cellWidth)) * cellCount + plus + eol
   }
-
-  // Funktion bar nutzt Currying um als Closure mit der Funktion cells aufgerufen zu werden
-  def bar(cellWidth: Int = 3)(cellCount: Int = this.cols): String = {
-    (plus + (minus * cellWidth)) * cellCount + plus + eol
-  }
-
 
   def cells(row: Int = 0, cellWidth: Int = 3, cellCount: Int = this.cols): String = {
     matrix.row(row).map(_.toString).map(" " * ((cellWidth - 1) / 2) + _ + " " * ((cellWidth - 1) / 2)).mkString("|", "|", "|") +
@@ -55,7 +49,7 @@ case class Field(var matrix: Matrix[Stone], var hmatrix: Matrix[HStone]):
 
   def mesh(cellWidth: Int = 3, rows: Int = this.rows, colls: Int = this.cols):String =
   {
-    (0 until rows).map(cells(_)).mkString(bar(cellWidth)(colls), bar(cellWidth)(colls),bar(cellWidth)(colls))
+    (0 until rows).map(cells(_)).mkString(bar(cellWidth, colls), bar(cellWidth, colls), bar(cellWidth, colls))
   }
 
   def placeGuessAndHints(stone: Vector[Stone])(hints: Vector[HStone])(row: Int) = copy(matrix.replaceRow(row, stone), hmatrix.replaceRow(row, hints))
