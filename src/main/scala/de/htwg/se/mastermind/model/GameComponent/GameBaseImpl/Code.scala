@@ -24,7 +24,6 @@ import scala.util.{Try,Success,Failure}
 case class Code(code: Vector[Stone]):
   
   /* AUX CON: used to generate a vector with random values*/
-  //PARTIALLY APPLIED FUNCTION: Function that fills the vector with random values
   def this(size: Int = 4) = this(Vector.fill(size)(Stone.random))
 
   val size = code.size
@@ -41,10 +40,10 @@ case class Code(code: Vector[Stone]):
   def compareTo(userInput: Vector[Stone]):Vector[HStone] =
     //val equalsList = compareToEqual(userInput, 0, List())
     val equalsList = compareToEqual(userInput)
-    //val presentList = compareToPresent(userInput, 0 , 0, equalsList, List())
-    val presentList = compareToPresent(userInput)
+    val presentList = compareToPresent(userInput, 0 , 0, equalsList, List())
     //buildVector(Vector(), this.size, equalsList.size, presentList.size)
-    //Partially Applied Function,with currying buildVector
+
+    //currying buildVector call
     buildVector(size)(equalsList.size, presentList.size)
 
   //Currying:
@@ -72,6 +71,7 @@ case class Code(code: Vector[Stone]):
 // an denen Steine der Eingabe und des Lösungscodes übereinstimmen.
 // Der alte Parameter currentPos ist gebunden und der Eingabeparameter inputUser wird zur Verfügung gestellt.
 // compareToEqual wird in compareToPresent durch compareToEqual(inputUser) aufgerufen.
+
   def compareToEqual(inputUser: Vector[Stone]): List[Int] = {
     def compareEqual(currentPos: Int, equalsList: List[Int]): List[Int] =
       if (currentPos >= size) then
@@ -83,8 +83,20 @@ case class Code(code: Vector[Stone]):
 
     compareEqual(0, List())
   }
+//V2
+/*
+  def compareToEqual(inputUser: Vector[Stone])(size: Int): Int => List[Int] => List[Int] = {
+    def compareEqual(currentPos: Int)(equalsList: List[Int]): List[Int] =
+      if (currentPos >= size) equalsList
+      else if (this.code(currentPos).stringRepresentation.equals(inputUser(currentPos).stringRepresentation))
+        compareEqual(currentPos + 1)(equalsList :+ currentPos)
+      else compareEqual(currentPos + 1)(equalsList)
 
-//OLD
+    compareEqual(0)
+  }
+*/
+
+  //OLD
   def compareToPresent(inputUser: Vector[Stone], currentPos: Int, secondPos: Int, equalsList: List[Int], presentList: List[Int]): (List[Int]) =
     if(currentPos >= size) then
       return presentList
