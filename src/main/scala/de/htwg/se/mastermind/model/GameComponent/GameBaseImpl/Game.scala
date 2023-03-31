@@ -97,6 +97,31 @@ case class Game(val field: Field = new Field(10, 4),
         case 'W' | 'w' | '5' => Stone("W")
         case 'P' | 'p' | '6' => Stone("P")
 
+  import scala.util.{Try, Success, Failure}
+
+// Test for implementing the second task
+// def buildVector(vector: Vector[Stone])(chars: Array[Char]): Try[Vector[Stone]] = {
+//   val remainingChars = chars.take(field.cols - vector.size)
+//   val result = remainingChars
+//     .map(charToStone)
+//     .foldLeft(Try(vector)) {
+//       case (Success(v), stone) => Success(v :+ stone)
+//       case (Failure(ex), _) => Failure(ex)
+//     }
+//   result
+// }
+
+// def charToStone(char: Char): Try[Stone] =
+//   char match {
+//     case 'R' | 'r' | '1' => Success(Stone("R"))
+//     case 'G' | 'g' | '2' => Success(Stone("G"))
+//     case 'B' | 'b' | '3' => Success(Stone("B"))
+//     case 'Y' | 'y' | '4' => Success(Stone("Y"))
+//     case 'W' | 'w' | '5' => Success(Stone("W"))
+//     case 'P' | 'p' | '6' => Success(Stone("P"))
+//     case _ => Failure(new IllegalArgumentException(s"Invalid character: $char"))
+//   }
+
   /**
     * Return the event that is needed to trigger the current state and 
     * can be used to stay in the current state

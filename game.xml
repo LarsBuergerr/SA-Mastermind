@@ -9,37 +9,37 @@
       <row row="0">
       <cell row="0" col="0">
       <value>
-        P
+        G
       </value>
     </cell><cell row="0" col="1">
       <value>
-        P
+        G
       </value>
     </cell><cell row="0" col="2">
       <value>
-        P
+        G
       </value>
     </cell><cell row="0" col="3">
       <value>
-        P
+        G
       </value>
     </cell>
     </row><row row="1">
       <cell row="1" col="0">
       <value>
-        E
+        G
       </value>
     </cell><cell row="1" col="1">
       <value>
-        E
+        R
       </value>
     </cell><cell row="1" col="2">
       <value>
-        E
+        B
       </value>
     </cell><cell row="1" col="3">
       <value>
-        E
+        Y
       </value>
     </cell>
     </row><row row="2">
@@ -192,7 +192,7 @@
       <row row="0">
       <cell row="0" col="0">
       <value>
-        R
+        E
       </value>
     </cell><cell row="0" col="1">
       <value>
@@ -210,11 +210,11 @@
     </row><row row="1">
       <cell row="1" col="0">
       <value>
-        E
+        R
       </value>
     </cell><cell row="1" col="1">
       <value>
-        E
+        W
       </value>
     </cell><cell row="1" col="2">
       <value>
@@ -372,9 +372,9 @@
     </row>
     </hint_matrix>
       <turns>
-        1
+        2
       </turns>
       <code>
-        WPRW
+        BRRW
       </code>
     </game>
