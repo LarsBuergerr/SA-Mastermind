@@ -44,14 +44,14 @@ class GameSpec extends AnyWordSpec {
         resetted_game shouldBe a [Game]
       }
       "should have a buildVector function that return a vector of Stones" in {
-        val vector = game.buildVector(Vector())(Array('R', 'G', 'B', 'Y'))
+        val vector = game.buildVector(Vector())(Array("R", "G", "B", "Y"))
         vector.size should be(4)
         vector(0) should be(Stone("R"))
         vector(1) should be(Stone("G"))
         vector(2) should be(Stone("B"))
         vector(3) should be(Stone("Y"))
 
-        val second_vector = game.buildVector(Vector())(Array('B', 'Y', 'W', 'P'))
+        val second_vector = game.buildVector(Vector())(Array("B", "Y", "W", "P"))
         second_vector.size should be(4)
         second_vector(0) should be(Stone("B"))
         second_vector(1) should be(Stone("Y"))

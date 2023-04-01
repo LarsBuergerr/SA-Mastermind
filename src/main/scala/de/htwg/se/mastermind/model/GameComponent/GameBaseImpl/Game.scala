@@ -13,6 +13,8 @@ package GameBaseImpl
 import util._
 import model._
 import com.google.inject.Inject
+import scala.util.{Try, Success, Failure}
+import scala.language.experimental
 
 
 //****************************************************************************** CLASS DEFINITION
@@ -83,44 +85,28 @@ case class Game(val field: Field = new Field(10, 4),
   def resetGame(): Game =
     Game(new Field(field.matrix.rows, field.matrix.cols), new Code(field.matrix.cols), 0, Init())
 
-  def buildVector(vector: Vector[Stone])(chars: Array[Char]): Vector[Stone] =
-  chars.take(field.cols - vector.size)
-       .map(charToStone)
-       .foldLeft(vector)(_ :+ _)
+  def buildVector(vector: Vector[Stone])(chars: Array[String]): Vector[Stone] =
+    if (chars.length == 0) then
+      return vector
+    Try(Stone.apply(chars.head)) match
+      case Success(s) => buildVector(vector:+s)(chars.tail)
+      case Failure(exception) => throw exception
+    
 
-    def charToStone(char: Char): Stone =
-      char match
-        case 'R' | 'r' | '1' => Stone("R")
-        case 'G' | 'g' | '2' => Stone("G")
-        case 'B' | 'b' | '3' => Stone("B")
-        case 'Y' | 'y' | '4' => Stone("Y")
-        case 'W' | 'w' | '5' => Stone("W")
-        case 'P' | 'p' | '6' => Stone("P")
+  // Old buildVector method
+  // def buildVector(vector: Vector[Stone])(chars: Array[Char]): Vector[Stone] =
+  // chars.take(field.cols - vector.size)
+  //      .map(charToStone)
+  //      .foldLeft(vector)(_ :+ _)
 
-  import scala.util.{Try, Success, Failure}
-
-// Test for implementing the second task
-// def buildVector(vector: Vector[Stone])(chars: Array[Char]): Try[Vector[Stone]] = {
-//   val remainingChars = chars.take(field.cols - vector.size)
-//   val result = remainingChars
-//     .map(charToStone)
-//     .foldLeft(Try(vector)) {
-//       case (Success(v), stone) => Success(v :+ stone)
-//       case (Failure(ex), _) => Failure(ex)
-//     }
-//   result
-// }
-
-// def charToStone(char: Char): Try[Stone] =
-//   char match {
-//     case 'R' | 'r' | '1' => Success(Stone("R"))
-//     case 'G' | 'g' | '2' => Success(Stone("G"))
-//     case 'B' | 'b' | '3' => Success(Stone("B"))
-//     case 'Y' | 'y' | '4' => Success(Stone("Y"))
-//     case 'W' | 'w' | '5' => Success(Stone("W"))
-//     case 'P' | 'p' | '6' => Success(Stone("P"))
-//     case _ => Failure(new IllegalArgumentException(s"Invalid character: $char"))
-//   }
+  //   def charToStone(char: Char): Stone =
+  //     char match
+  //       case 'R' | 'r' | '1' => Stone("R")
+  //       case 'G' | 'g' | '2' => Stone("G")
+  //       case 'B' | 'b' | '3' => Stone("B")
+  //       case 'Y' | 'y' | '4' => Stone("Y")
+  //       case 'W' | 'w' | '5' => Stone("W")
+  //       case 'P' | 'p' | '6' => Stone("P")
 
   /**
     * Return the event that is needed to trigger the current state and 
