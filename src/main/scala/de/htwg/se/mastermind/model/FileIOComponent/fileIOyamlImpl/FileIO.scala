@@ -41,14 +41,14 @@ class FileIO extends FileIOInterface:
     def read(yaml: YamlValue) =
       val yaml_data = yaml.asYamlObject.getFields(YamlString("code"))
       yaml_data match
-        case Seq(YamlArray(code)) => Code(code.map(_.convertTo[Stone](StoneProtocol)))
+        case Seq(YamlArray(code)) => Code(code.map(_.convertTo[Option[Stone]](StoneProtocol)))
         case _ => deserializationError("Code expected")
 
   //-------------------------------Stone yaml protocol--------------------------------
-  val StoneProtocol = new YamlFormat[Stone]:
+  val StoneProtocol = new YamlFormat[Option[Stone]]:
     
     //write Stone to yaml
-    def write(obj: Stone): YamlValue = 
+    def write(obj: Option[Stone]): YamlValue = 
       YamlObject(
         YamlString("stone") -> YamlString(obj.toString())
       )
@@ -56,14 +56,14 @@ class FileIO extends FileIOInterface:
     def read(yaml: YamlValue) =
       val yaml_data = yaml.asYamlObject.getFields(YamlString("stone"))
       yaml_data match
-        case Seq(YamlString(stone)) => Stone(stone)
+        case Seq(YamlString(stone)) => Stone(stone) 
         case _ => deserializationError("Stone expected")
 
   //-------------------------------HStone yaml protocol--------------------------------
-  val HStoneProtocol = new YamlFormat[HStone]:
+  val HStoneProtocol = new YamlFormat[Option[HStone]]:
     
     //write HStone to yaml
-    def write(obj: HStone): YamlValue = 
+    def write(obj: Option[HStone]): YamlValue = 
       YamlObject(
         YamlString("hstone") -> YamlString(obj.toString())
       )
@@ -117,11 +117,11 @@ class FileIO extends FileIOInterface:
       val yaml_data = yaml.asYamlObject.getFields(YamlString("matrix"), YamlString("hmatrix"), YamlString("code"), YamlString("turn"))
       yaml_data match
         case Seq(YamlArray(matrix), YamlArray(hmatrix), code, YamlNumber(turn)) =>
-          val m = Matrix(matrix.map(_.convertTo[Vector[Object]](VectorProtocol.asInstanceOf[YamlFormat[Vector[Object]]])))
-          val hm = Matrix(hmatrix.map(_.convertTo[Vector[Object]](VectorProtocol.asInstanceOf[YamlFormat[Vector[Object]]])))
+          val m = Matrix(matrix.map(_.convertTo[Vector[Option[Object]]](VectorProtocol.asInstanceOf[YamlFormat[Vector[Option[Object]]]])))
+          val hm = Matrix(hmatrix.map(_.convertTo[Vector[Option[Object]]](VectorProtocol.asInstanceOf[YamlFormat[Vector[Option[Object]]]])))
           val c = code.convertTo[Code](CodeProtocol)
           val s = turn.toInt
-          return new Game(new Field(m.asInstanceOf[Matrix[Stone]], hm.asInstanceOf[Matrix[HStone]]), c.asInstanceOf[Code], s, Play())
+          return new Game(new Field(m.asInstanceOf[Matrix[Option[Stone]]], hm.asInstanceOf[Matrix[Option[HStone]]]), c.asInstanceOf[Code], s, Play())
         case _ => 
           print(yaml_data(0))
           return deserializationError("Game expected")

@@ -33,7 +33,7 @@ class Controller (using var game: GameInterface, val fileIO: FileIOInterface) ex
   def handleRequest(request: Request): Event =
     game.handleRequest(request)
 
-  def placeGuessAndHints(stone: Vector[Stone])(hints: Vector[HStone])(row: Int): Field =
+  def placeGuessAndHints(stone: Vector[Option[Stone]])(hints: Vector[Option[HStone]])(row: Int): Field =
     val field = invoker.doStep(PlaceCommand(game, stone, hints, row))
     game = game.asInstanceOf[Game].copy(field, game.code, game.currentTurn + 1)
     notifyObservers

@@ -13,7 +13,7 @@ class PlaceCommandSpec extends AnyWordSpec {
   "A PlaceCommand" when {
     "new" should {
       val game = new Game()
-      val placeCommand = new PlaceCommand(game, Vector[Stone](Stone("B"), Stone("R"), Stone("Y"), Stone("P")), Vector[HStone](HintStone("R"), HintStone("R"), HintStone("R"), HintStone("R")), 0)
+      val placeCommand = new PlaceCommand(game, Vector[Option[Stone]](Stone("B"), Stone("R"), Stone("Y"), Stone("P")), Vector[Option[HStone]](HintStone("R"), HintStone("R"), HintStone("R"), HintStone("R")), 0)
       "have a execute function that places the current vector and hints" in {
         val field = placeCommand.execute
         field.matrix.cell(0, 0) should equal(Stone("B"))

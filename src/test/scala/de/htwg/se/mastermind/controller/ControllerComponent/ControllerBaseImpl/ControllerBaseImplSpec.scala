@@ -34,8 +34,8 @@ class ControllerBaseImplSpec extends AnyWordSpec{
     }
   }
     "should allow to replace whole rows in both the normal matrix and the hint matrix" in {
-      val guessVector = Vector[Stone](Stone("B"), Stone("R"), Stone("Y"), Stone("P"))
-      val hintVector  = Vector[HStone](HintStone("R"), HintStone("R"), HintStone("R"), HintStone("R"))
+      val guessVector = Vector[Option[Stone]](Stone("B"), Stone("R"), Stone("Y"), Stone("P"))
+      val hintVector  = Vector[Option[HStone]](HintStone("R"), HintStone("R"), HintStone("R"), HintStone("R"))
       defaultController.placeGuessAndHints(guessVector)(hintVector)(0)
       defaultController.game.field.matrix.cell(0, 0) should be(Stone("B"))
       defaultController.game.field.matrix.cell(0, 1) should be(Stone("R"))

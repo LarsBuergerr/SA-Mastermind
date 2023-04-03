@@ -14,7 +14,7 @@ class InvokerSpec extends AnyWordSpec {
     "new" should {
       val invoker = new Invoker()
       val game = new Game()
-      val placeCommand = new PlaceCommand(game, Vector[Stone](Stone("B"), Stone("R"), Stone("Y"), Stone("P")), Vector[HStone](HintStone("R"), HintStone("R"), HintStone("R"), HintStone("R")), 0)
+      val placeCommand = new PlaceCommand(game, Vector[Option[Stone]](Stone("B"), Stone("R"), Stone("Y"), Stone("P")), Vector[Option[HStone]](HintStone("R"), HintStone("R"), HintStone("R"), HintStone("R")), 0)
       "have a doStep function that executes the last command" in {
         val field = invoker.doStep(placeCommand)
         field.matrix.cell(0, 0) should equal(Stone("B"))

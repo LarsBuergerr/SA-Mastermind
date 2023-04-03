@@ -26,7 +26,7 @@ class StoneSpec extends AnyWordSpec{
       }
     }
     "have a string representation" in {
-      Stone("R").toString() should be(Stone("R").stringRepresentation)
+      Stone("R").toString() should be(Stone("R").toString)
     }
   }
   "A HintStone object" should {
@@ -34,7 +34,7 @@ class StoneSpec extends AnyWordSpec{
       HintStone should be(HintStone)
     }
     "have a string representation" in {
-      HintStone("R").toString() should be(HintStone("R").stringRepresentation)
+      HintStone("R").toString() should be(HintStone("R").toString)
     }
   }
   

@@ -14,102 +14,56 @@ package GameBaseImpl
 import scala.util.Random
 
 
-//****************************************************************************** INTERFACE DEFINITION
-trait Stone:
-  val stringRepresentation: String
-  override def toString(): String = stringRepresentation
-
-  override def equals(obj: Any): Boolean = obj match
-    case that: Stone => this.stringRepresentation.equals(that.stringRepresentation)
-    case _ => false
-
-trait HStone:
-  val stringRepresentation: String
-  override def toString(): String = stringRepresentation
-
-  override def equals(obj: Any): Boolean = obj match
-    case that: HStone => this.stringRepresentation.equals(that.stringRepresentation)
-    case _ => false
+enum StoneColor:
+  case Red, Green, Blue, Yellow, White, Purple, Empty
 
 
-//****************************************************************************** CLASS DEFINITIONS
-private class Red extends Stone:
-  val stringRepresentation = "R"
-  override def toString(): String = stringRepresentation
 
+enum Stone(color: StoneColor, name: String):
+  case Red extends Stone(StoneColor.Red, "R")
+  case Green extends Stone(StoneColor.Green, "G")
+  case Blue extends Stone(StoneColor.Blue, "B")
+  case Yellow extends Stone(StoneColor.Yellow, "Y")
+  case White extends Stone(StoneColor.White, "W")
+  case Purple extends Stone(StoneColor.Purple, "P")
+  case Empty extends Stone(StoneColor.Empty, "E")
 
-private class Green extends Stone:
-  val stringRepresentation = "G"
-  override def toString(): String = stringRepresentation
+  override def toString: String = name
 
+enum HStone(color: StoneColor, name: String):
+  case Red extends HStone(StoneColor.Red, "R")
+  case White extends HStone(StoneColor.White, "W")
+  case Empty extends HStone(StoneColor.Empty, "E")
 
-private class Blue extends Stone:
-  val stringRepresentation = "B"
-  override def toString(): String = stringRepresentation
+  override def toString: String = name
 
-
-private class Yellow extends Stone:
-  val stringRepresentation = "Y"
-  override def toString(): String = stringRepresentation
-
-
-private class White extends Stone:
-  val stringRepresentation = "W"
-  override def toString(): String = stringRepresentation
-
-
-private class Purple extends Stone:
-  val stringRepresentation = "P"
-  override def toString(): String = stringRepresentation
-
-
-private class Empty extends Stone:
-  val stringRepresentation = "E"
-  override def toString(): String = stringRepresentation
-
-
-private class HRed extends HStone:
-  val stringRepresentation = "R"
-  override def toString(): String = stringRepresentation
-
-
-private class HWhite extends HStone:
-  val stringRepresentation = "W"
-  override def toString(): String = stringRepresentation
-
-
-private class HEmpty extends HStone:
-  val stringRepresentation = "E"
-  override def toString(): String = stringRepresentation
-
-
-//****************************************************************************** OBJECT DEFINITION
 object Stone:
-  def apply(stringRepresentation: String): Stone = stringRepresentation match
-    case "R" => new Red
-    case "G" => new Green
-    case "B" => new Blue
-    case "Y" => new Yellow
-    case "W" => new White
-    case "P" => new Purple
-    case "E" => new Empty
-    case _   => new Empty
-  
+  def apply(stringRepresentation: String): Option[Stone] =
+    stringRepresentation match  
+      case "R" => Some(Stone.Red)
+      case "G" => Some(Stone.Green)
+      case "B" => Some(Stone.Blue)
+      case "Y" => Some(Stone.Yellow)
+      case "W" => Some(Stone.White)
+      case "P" => Some(Stone.Purple)
+      case "E" => Some(Stone.Empty)
+      case _   => None
+
   def random: Stone =
-    Stone.apply(Random.nextInt(6) match
-      case 0 => "R"
-      case 1 => "G"
-      case 2 => "B"
-      case 3 => "Y"
-      case 4 => "W"
-      case 5 => "P"
-      case _ => "E"
-    )
+    Random.nextInt(6) match
+      case 0 => Stone.Red
+      case 1 => Stone.Green
+      case 2 => Stone.Blue
+      case 3 => Stone.Yellow
+      case 4 => Stone.White
+      case 5 => Stone.Purple
+      case _ => Stone.Empty
 
 
 object HintStone:
-  def apply(stringRepresentation: String): HStone = stringRepresentation match
-    case "R" => new HRed
-    case "W" => new HWhite
-    case "E" => new HEmpty
-    case _   => new HEmpty
+  def apply(stringRepresentation: String): Option[HStone] =
+    stringRepresentation match
+      case "R" => Some(HStone.Red)
+      case "W" => Some(HStone.White)
+      case "E" => Some(HStone.Empty)
+      case _   => None

@@ -111,9 +111,9 @@ class FileIO extends FileIOInterface:
 
 
   def JsonToGame(gameJson: JsValue): GameInterface =
-    val matrix = Matrix[Stone](gameJson("matrix").as[Seq[JsValue]].map(vector => JsonToVector(vector, "matrix")).toVector.asInstanceOf[Vector[Vector[Stone]]])
-    val hmatrix = Matrix[HStone](gameJson("hmatrix").as[Seq[JsValue]].map(vector => JsonToVector(vector, "hmatrix")).toVector.asInstanceOf[Vector[Vector[HStone]]])
-    val code = Code(JsonToVector(gameJson("code"), "matrix").asInstanceOf[Vector[Stone]])
+    val matrix = Matrix[Option[Stone]](gameJson("matrix").as[Seq[JsValue]].map(vector => JsonToVector(vector, "matrix")).toVector.asInstanceOf[Vector[Vector[Option[Stone]]]])
+    val hmatrix = Matrix[Option[HStone]](gameJson("hmatrix").as[Seq[JsValue]].map(vector => JsonToVector(vector, "hmatrix")).toVector.asInstanceOf[Vector[Vector[Option[HStone]]]])
+    val code = Code(JsonToVector(gameJson("code"), "matrix").asInstanceOf[Vector[Option[Stone]]])
     val turn = gameJson("turn").as[Int]
 
     Game(new Field(matrix, hmatrix), code, turn, Play())

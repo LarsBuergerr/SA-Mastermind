@@ -32,7 +32,7 @@ class GUI(using controller: ControllerInterface) extends JFXApp3 with Observer:
     
   controller.add(this)
 
-  var currentStoneVector: Vector[Stone] = Vector.from[Stone](Array.fill[Stone](controller.game.field.matrix.cols)(Stone("E")))
+  var currentStoneVector: Vector[Option[Stone]] = Vector.from[Option[Stone]](Array.fill[Option[Stone]](controller.game.field.matrix.cols)(Stone("E")))
   var browseColors = 0
   val selectableColors = Vector("G", "R", "B", "Y", "P", "W")
 
@@ -248,16 +248,16 @@ class GUI(using controller: ControllerInterface) extends JFXApp3 with Observer:
     * This method is called when the check button is clicked
     */
   def checkCode_Button_Handler() : Unit =
-    val check = currentStoneVector.filter(stone => stone.stringRepresentation == "E")
+    val check = currentStoneVector.filter(stone => stone == Stone.Empty)
     if (check.length == 0) then
       val hints = controller.game.getCode().compareTo(currentStoneVector)
       val tmp = currentStoneVector
       for (i <- 0 until controller.game.field.matrix.cols) do
-        currentStoneVector = currentStoneVector.updated(i, Stone("E"))
+        currentStoneVector = currentStoneVector.updated(i, Some(Stone.Empty))
 
       controller.placeGuessAndHints(tmp)(hints)(controller.game.currentTurn)
             
-      if hints.forall(p => p.stringRepresentation.equals("R")) then
+      if hints.forall(p => p.equals(HStone.Red)) then
         return controller.request(PlayerWinStateEvent())
       else if (controller.game.field.matrix.rows - controller.game.currentTurn) == 0 then
         return controller.request(PlayerLoseStateEvent())
@@ -459,9 +459,9 @@ class GUI(using controller: ControllerInterface) extends JFXApp3 with Observer:
     else if y == controller.game.currentTurn then
       label.setGraphic(new ImageView(new Image(getClass.getResource("/stones/stone_animation.gif").toExternalForm(), image_size, image_size, true, true)))
     else if y == (controller.game.currentTurn + 1) then
-      label.setGraphic(new ImageView(new Image(getClass.getResource("/stones/stone_" + currentStoneVector(x).stringRepresentation + ".png").toExternalForm, image_size, image_size, true, true)))
+      label.setGraphic(new ImageView(new Image(getClass.getResource("/stones/stone_" + currentStoneVector(x).getOrElse("E") + ".png").toExternalForm, image_size, image_size, true, true)))
     else 
-      label.setGraphic(new ImageView(new Image(getClass.getResource("/stones/stone_" + controller.game.field.matrix.cell(y, x).stringRepresentation + ".png").toExternalForm, image_size, image_size, true, true)))
+      label.setGraphic(new ImageView(new Image(getClass.getResource("/stones/stone_" + controller.game.field.matrix.cell(y, x).getOrElse("E") + ".png").toExternalForm, image_size, image_size, true, true)))
     this.getChildren().add(label)
 
     
@@ -488,7 +488,7 @@ class GUI(using controller: ControllerInterface) extends JFXApp3 with Observer:
     else if(controller.game.state.isInstanceOf[PlayerLose]) then
       label.setGraphic(new ImageView(new Image(getClass.getResource("/hintstones/hstone_E.png").toExternalForm(), image_size, image_size, true, true)))
     else
-      label.setGraphic(new ImageView(new Image(getClass.getResource("/hintstones/hstone_" + controller.game.field.hmatrix.cell(y, x).stringRepresentation + ".png").toExternalForm(), image_size, image_size, true, true)))
+      label.setGraphic(new ImageView(new Image(getClass.getResource("/hintstones/hstone_" + controller.game.field.hmatrix.cell(y, x).getOrElse("E") + ".png").toExternalForm(), image_size, image_size, true, true)))
 
     this.getChildren().add(label)
     

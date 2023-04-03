@@ -14,7 +14,7 @@ import util.*
 
 
 //****************************************************************************** CLASS DEFINITION
-case class PlaceCommand(game: GameInterface, stone: Vector[Stone], hints: Vector[HStone], row: Int) extends Command():
+case class PlaceCommand(game: GameInterface, stone: Vector[Option[Stone]], hints: Vector[Option[HStone]], row: Int) extends Command():
   val oldfield = game.field
   val newfield = game.field.placeGuessAndHints(stone)(hints)(row)
 

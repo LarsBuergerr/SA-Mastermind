@@ -21,14 +21,14 @@ import scala.util.{Try,Success,Failure}
   *
   * @param code
   */
-case class Code(code: Vector[Stone]):
+case class Code(code: Vector[Option[Stone]]):
   
   /* AUX CON: used to generate a vector with random values*/
-  def this(size: Int = 4) = this(Vector.fill(size)(Stone.random))
+  def this(size: Int = 4) = this(Vector.fill(size)(Some(Stone.random)))
 
   val size = code.size
   
-  override def toString(): String = code.map(_.toString()).mkString(" | ")
+  override def toString(): String = code.map(_.getOrElse(" ").toString()).mkString(" | ")
 
   /**
     * Compares a generated code with the input code done by the user
@@ -37,7 +37,7 @@ case class Code(code: Vector[Stone]):
     * @return HintStone Vector (All black: code are equal)
     */
 
-  def compareTo(userInput: Vector[Stone]):Vector[HStone] =
+  def compareTo(userInput: Vector[Option[Stone]]):Vector[Option[HStone]] =
     //val equalsList = compareToEqual(userInput, 0, List())
     val equalsList = compareToEqual(userInput)
     val presentList = compareToPresent(userInput, 0 , 0, equalsList, List())
@@ -47,7 +47,7 @@ case class Code(code: Vector[Stone]):
     buildVector(size)(equalsList.size, presentList.size)
 
   //Currying:
-  def buildVector(vectorSize: Int)(equalCount: Int, presentCount: Int, returnVector: Vector[HStone] = Vector()): Vector[HStone] =
+  def buildVector(vectorSize: Int)(equalCount: Int, presentCount: Int, returnVector: Vector[Option[HStone]] = Vector()): Vector[Option[HStone]] =
     if (equalCount != 0) buildVector(vectorSize - 1)(equalCount - 1, presentCount, returnVector :+ HintStone("R"))
     else if (presentCount != 0) buildVector(vectorSize - 1)(equalCount, presentCount - 1, returnVector :+ HintStone("W"))
     else if (vectorSize > 0) buildVector(vectorSize - 1)(equalCount, presentCount, returnVector :+ HintStone("E"))
@@ -65,11 +65,11 @@ case class Code(code: Vector[Stone]):
 */
 
 //Innere Closure, Currying
-  def compareToEqual(inputUser: Vector[Stone]): List[Int] = {
+  def compareToEqual(inputUser: Vector[Option[Stone]]): List[Int] = {
     def compareEqual(currentPos: Int, equalsList: List[Int]): List[Int] =
       if (currentPos >= size) then
         equalsList
-      else if (this.code(currentPos).stringRepresentation.equals(inputUser(currentPos).stringRepresentation)) then
+      else if (this.code(currentPos).equals(inputUser(currentPos))) then
         compareEqual(currentPos + 1, equalsList :+ currentPos)
       else
         compareEqual(currentPos + 1, equalsList)
@@ -77,7 +77,7 @@ case class Code(code: Vector[Stone]):
     compareEqual(0, List())
   }
 
-  def compareToPresent(inputUser: Vector[Stone], currentPos: Int, secondPos: Int, equalsList: List[Int], presentList: List[Int]): (List[Int]) =
+  def compareToPresent(inputUser: Vector[Option[Stone]], currentPos: Int, secondPos: Int, equalsList: List[Int], presentList: List[Int]): (List[Int]) =
     if(currentPos >= size) then
       return presentList
     else
@@ -85,7 +85,7 @@ case class Code(code: Vector[Stone]):
         return compareToPresent(inputUser, (currentPos + 1), 0, equalsList, presentList) 
       else
         if(!equalsList.contains(secondPos) && !presentList.contains(secondPos) && (secondPos != currentPos)) then
-          if(inputUser(currentPos).stringRepresentation.equals(this.code(secondPos).stringRepresentation)) then
+          if(inputUser(currentPos).equals(this.code(secondPos))) then
             return compareToPresent(inputUser, (currentPos + 1), 0, equalsList, presentList.appended(secondPos))
         if(secondPos >= size - 1) then
           return compareToPresent(inputUser, (currentPos + 1), 0, equalsList, presentList)

@@ -28,7 +28,7 @@ trait GameInterface():
 
   def getCode(): Code
 
-  def buildVector(vector: Vector[Stone])(chars: List[String]): Vector[Stone]
+  def buildVector(vector: Vector[Option[Stone]])(chars: List[String]): Vector[Option[Stone]]
 
   def getCurrentStateEvent(): Event
 

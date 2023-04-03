@@ -23,8 +23,8 @@ class FileIO extends FileIOInterface:
 
     val curr_turn = (xml \ "turns").text.trim.toInt
     val code = Code((xml \ "code").text.trim.map(c => Stone(c.toString)).toVector)
-    val matrix = loadMatrix(xml, "matrix").asInstanceOf[Matrix[Stone]]
-    val hint_matrix = loadMatrix(xml, "hint_matrix").asInstanceOf[Matrix[HStone]]
+    val matrix = loadMatrix(xml, "matrix").asInstanceOf[Matrix[Option[Stone]]]
+    val hint_matrix = loadMatrix(xml, "hint_matrix").asInstanceOf[Matrix[Option[HStone]]]
 
     val game = new Game(new Field(matrix, hint_matrix), code, curr_turn, Play())
 

@@ -57,7 +57,7 @@ class TUI(using controller: ControllerInterface) extends Observer:
   
   def parseInput(input: String): State =
     
-    val emptyVector: Vector[Stone] = Vector()
+    val emptyVector: Vector[Option[Stone]] = Vector()
     val chars = input.toCharArray()
 
     chars.size match
@@ -92,17 +92,17 @@ class TUI(using controller: ControllerInterface) extends Observer:
         val currentRequest = controller.handleRequest(MultiCharRequest(input))
         if(currentRequest.isInstanceOf[PlayerAnalyzeEvent]) then
 
-          val codeVector: Vector[Stone] =
+          val codeVector: Vector[Option[Stone]] =
             Try(controller.game.buildVector(emptyVector)(chars.asInstanceOf[List[String]])) match
               case Success(vector) => vector
               case Failure(e) =>
                 controller.request(controller.game.getDefaultInputRule(input))
-                Vector.empty[Stone]
+                Vector.empty[Option[Stone]]
 
           val hints         = controller.game.getCode().compareTo(codeVector)
           //print(hints)
           controller.placeGuessAndHints(codeVector)(hints)(controller.game.currentTurn)
-          if hints.forall(p => p.stringRepresentation.equals("R")) then
+          if hints.forall(p => p.equals("R")) then
             return controller.request(PlayerWinStateEvent())
           else if (controller.game.field.matrix.rows - controller.game.currentTurn) == 0 then
             return controller.request(PlayerLoseStateEvent())

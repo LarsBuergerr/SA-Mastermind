@@ -28,13 +28,13 @@ class CodeSpec extends AnyWordSpec{
     "have a compare method which returns a 4 Red Hint Stones Vector when same code is compared" in {
       val redHintStone = HintStone.apply("R")
       //defaultCode.compareTo(defaultCode.code) should contain (redHintStone)	
-      defaultCode.compareTo(defaultCode.code) shouldBe a [Vector[HStone]]
-      defaultCode.compareTo(defaultCode.code)(0) shouldBe a [HStone]
+      defaultCode.compareTo(defaultCode.code) shouldBe a [Vector[Option[HStone]]]
+      defaultCode.compareTo(defaultCode.code)(0) shouldBe a [Option[HStone]]
       
       redHintStone shouldBe a [HStone]
-      redHintStone.stringRepresentation should be("R")
+      redHintStone.toString should be("R")
       
-      defaultCode.compareTo(defaultCode.code)(0).stringRepresentation should be("R")
+      defaultCode.compareTo(defaultCode.code)(0).toString should be("R")
       defaultCode.compareTo(defaultCode.code).toString() should be("Vector(R, R, R, R)")
       
       // Why is this not working?
