@@ -40,22 +40,22 @@ class StoneSpec extends AnyWordSpec{
   
   "A Game-Stone" should {
     "have a String representation of its color [Initial letter]" in {
-      Stone.apply("R").toString() should be("R")
-      Stone.apply("G").toString() should be("G")
-      Stone.apply("B").toString() should be("B")
-      Stone.apply("Y").toString() should be("Y")
-      Stone.apply("P").toString() should be("P")
-      Stone.apply("W").toString() should be("W")
-      Stone.apply(" ").toString() should be("E")
-      Stone.apply("E").toString() should be("E")
+      Stone.apply("R").getOrElse(" ").toString should be("R")
+      Stone.apply("G").getOrElse(" ").toString should be("G")
+      Stone.apply("B").getOrElse(" ").toString should be("B")
+      Stone.apply("Y").getOrElse(" ").toString should be("Y")
+      Stone.apply("P").getOrElse(" ").toString should be("P")
+      Stone.apply("W").getOrElse(" ").toString should be("W")
+      Stone.apply(" ").getOrElse(" ").toString should be(" ")
+      Stone.apply("E").getOrElse(" ").toString should be("E")
     }
   }
   "A Hint-Stone" should {
     "have a String representation of its color [Initial letter]" in {
-      HintStone.apply("R").toString() should be("R")
-      HintStone.apply("W").toString() should be("W")
-      HintStone.apply("E").toString() should be("E")
-      HintStone.apply(" ").toString() should be("E")
+      HintStone.apply("R").getOrElse(" ").toString() should be("R")
+      HintStone.apply("W").getOrElse(" ").toString() should be("W")
+      HintStone.apply("E").getOrElse(" ").toString() should be("E")
+      HintStone.apply(" ").getOrElse(" ").toString() should be(" ")
     }  
   }
 }

@@ -54,22 +54,25 @@ class FileIO extends FileIOInterface:
     pw.write(gameToJson(game).toString())
     pw.close()
 
-  def cellToJson(cell: Object, x: Int, y: Int) = 
+  def cellToJson(cell: Option[Object], x: Int, y: Int) = 
     val cellJson = Json.obj(
       "x" -> x,
       "y" -> y,
-      "value" -> cell.toString()
+      "value" -> cell.getOrElse(" ").toString
     )
     cellJson
 
-  def vectorToJson(vector: Vector[Object], row: Int) =
+  def vectorToJson(vector: Vector[Option[Object]], row: Int) =
     Json.obj(
       "row" -> row,
       "cells" -> {
-        vector.map(cell => cellToJson(cell, row, vector.indexOf(cell)))
+        for {
+          cell <- vector
+          x = vector.indexOf(cell)
+          y = row
+        } yield cellToJson(cell, x, y)
       }
     )
-
 
   def gameToJson(game: GameInterface) =
     Json.obj(
@@ -80,7 +83,7 @@ class FileIO extends FileIOInterface:
         game.field.hmatrix.m.map(vector => vectorToJson(vector, game.field.hmatrix.m.indexOf(vector)))
       },
       "turn" -> game.currentTurn,
-      "code" -> vectorToJson(game.code.code.asInstanceOf[Vector[Object]], 0),
+      "code" -> vectorToJson(game.code.code.asInstanceOf[Vector[Option[Object]]], 0),
     )
 
   def JsonToStone(cellJson: JsValue) = 
@@ -88,13 +91,15 @@ class FileIO extends FileIOInterface:
     val y = cellJson("y").as[Int]
     val value = cellJson("value").as[String]
     val cell = Stone(value)
-      cell
+    
+    cell
 
   def JsonToHStone(cellJson: JsValue) = 
     val x = cellJson("x").as[Int]
     val y = cellJson("y").as[Int]
     val value = cellJson("value").as[String]
     val cell = HintStone(value)
+    
     cell
 
 

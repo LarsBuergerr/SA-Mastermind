@@ -76,28 +76,28 @@ class FileIO extends FileIOInterface:
     pw.write(gameToXml(game).toString())
     pw.close()
 
-  def cellToXml(matrix: Matrix[Object], row: Int, col: Int) =
+  def cellToXml(matrix: Matrix[Option[Object]], row: Int, col: Int) =
     <cell row={row.toString} col={col.toString}>
       <value>
-        {matrix.cell(row, col)}
+        {matrix.cell(row, col).getOrElse(" ").toString()}
       </value>
     </cell>
 
-  def rowToXml(matrix: Matrix[Object], row: Int) =
+  def rowToXml(matrix: Matrix[Option[Object]], row: Int) =
     <row row={row.toString}>
       {
         (0 until matrix.cols).map(col => cellToXml(matrix, row, col))
       }
     </row>
 
-  def matrixToXml(matrix: Matrix[Object]) =
+  def matrixToXml(matrix: Matrix[Option[Object]]) =
     <matrix>
       {
         (0 until matrix.rows).map(row => rowToXml(matrix, row))
       }
     </matrix>
 
-  def hmatrixToXml(hmatrix: Matrix[Object]) =
+  def hmatrixToXml(hmatrix: Matrix[Option[Object]]) =
     <hint_matrix>
       {
         (0 until hmatrix.rows).map(row => rowToXml(hmatrix, row))
@@ -112,8 +112,8 @@ class FileIO extends FileIOInterface:
       <cols>
         {game.field.matrix.cols}
       </cols>
-      {matrixToXml(game.field.matrix.asInstanceOf[Matrix[Object]])}
-      {hmatrixToXml(game.field.hmatrix.asInstanceOf[Matrix[Object]])}
+      {matrixToXml(game.field.matrix.asInstanceOf[Matrix[Option[Object]]])}
+      {hmatrixToXml(game.field.hmatrix.asInstanceOf[Matrix[Option[Object]]])}
       <turns>
         {game.currentTurn}
       </turns>

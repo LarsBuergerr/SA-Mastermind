@@ -50,7 +50,7 @@ class FileIO extends FileIOInterface:
     //write Stone to yaml
     def write(obj: Option[Stone]): YamlValue = 
       YamlObject(
-        YamlString("stone") -> YamlString(obj.toString())
+        YamlString("stone") -> YamlString(obj.getOrElse(" ").toString)
       )
 
     def read(yaml: YamlValue) =
@@ -65,7 +65,7 @@ class FileIO extends FileIOInterface:
     //write HStone to yaml
     def write(obj: Option[HStone]): YamlValue = 
       YamlObject(
-        YamlString("hstone") -> YamlString(obj.toString())
+        YamlString("hstone") -> YamlString(obj.getOrElse(" ").toString)
       )
 
     def read(yaml: YamlValue) =

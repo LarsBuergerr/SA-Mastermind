@@ -86,34 +86,15 @@ case class Game(val field: Field = new Field(10, 4),
     Game(new Field(field.matrix.rows, field.matrix.cols), new Code(field.matrix.cols), 0, Init())
 
   def buildVector(vector: Vector[Option[Stone]])(chars: List[String]): Vector[Option[Stone]] =
-    // if (chars.length == 0) then
-    //   return vector
     chars match {
       case Nil => return vector
       case head :: rest =>
         Try(Stone(head)) match {
           case Success(s) => buildVector(vector:+s)(rest)
-          case Failure(e) => throw e
+          case Failure(e) => buildVector(vector:+None)(rest)
         }
     }
-    
-    
-    
 
-  // Old buildVector method
-  // def buildVector(vector: Vector[Stone])(chars: Array[Char]): Vector[Stone] =
-  // chars.take(field.cols - vector.size)
-  //      .map(charToStone)
-  //      .foldLeft(vector)(_ :+ _)
-
-  //   def charToStone(char: Char): Stone =
-  //     char match
-  //       case 'R' | 'r' | '1' => Stone("R")
-  //       case 'G' | 'g' | '2' => Stone("G")
-  //       case 'B' | 'b' | '3' => Stone("B")
-  //       case 'Y' | 'y' | '4' => Stone("Y")
-  //       case 'W' | 'w' | '5' => Stone("W")
-  //       case 'P' | 'p' | '6' => Stone("P")
 
   /**
     * Return the event that is needed to trigger the current state and 

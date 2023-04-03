@@ -257,7 +257,7 @@ class GUI(using controller: ControllerInterface) extends JFXApp3 with Observer:
 
       controller.placeGuessAndHints(tmp)(hints)(controller.game.currentTurn)
             
-      if hints.forall(p => p.equals(HStone.Red)) then
+      if hints.forall(p => p.getOrElse(" ").toString == "R") then
         return controller.request(PlayerWinStateEvent())
       else if (controller.game.field.matrix.rows - controller.game.currentTurn) == 0 then
         return controller.request(PlayerLoseStateEvent())

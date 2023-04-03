@@ -31,11 +31,11 @@ class CodeSpec extends AnyWordSpec{
       defaultCode.compareTo(defaultCode.code) shouldBe a [Vector[Option[HStone]]]
       defaultCode.compareTo(defaultCode.code)(0) shouldBe a [Option[HStone]]
       
-      redHintStone shouldBe a [HStone]
-      redHintStone.toString should be("R")
+      redHintStone shouldBe a [Option[HStone]]
+      redHintStone.getOrElse(" ").toString should be("R")
       
-      defaultCode.compareTo(defaultCode.code)(0).toString should be("R")
-      defaultCode.compareTo(defaultCode.code).toString() should be("Vector(R, R, R, R)")
+      defaultCode.compareTo(defaultCode.code)(0).getOrElse(" ").toString should be("R")
+      defaultCode.compareTo(defaultCode.code).map(_.getOrElse(" ").toString) should be(Vector("R", "R", "R", "R"))
       
       // Why is this not working?
       //defaultCode.compareTo(defaultCode.code) should be(Vector(HintStone("R"), HintStone("R"), HintStone("R"), HintStone("R")))

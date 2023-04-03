@@ -28,7 +28,7 @@ case class Code(code: Vector[Option[Stone]]):
 
   val size = code.size
   
-  override def toString(): String = code.map(_.getOrElse(" ").toString()).mkString(" | ")
+  override def toString(): String = code.map(_.getOrElse(" ").toString).mkString(" | ")
 
   /**
     * Compares a generated code with the input code done by the user
