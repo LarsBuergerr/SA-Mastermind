@@ -85,12 +85,19 @@ case class Game(val field: Field = new Field(10, 4),
   def resetGame(): Game =
     Game(new Field(field.matrix.rows, field.matrix.cols), new Code(field.matrix.cols), 0, Init())
 
-  def buildVector(vector: Vector[Stone])(chars: Array[String]): Option[Vector[Stone]] =
-    if (chars.length == 0) then
-      return Some(vector)
-    Try(Stone.apply(chars.head)) match
-      case Success(s) => buildVector(vector:+s)(chars.tail)
-      case Failure(exception) => throw exception
+  def buildVector(vector: Vector[Stone])(chars: List[String]): Vector[Stone] =
+    // if (chars.length == 0) then
+    //   return vector
+    chars match {
+      case Nil => return vector
+      case head :: rest =>
+        Try(Stone(head)) match {
+          case Success(s) => buildVector(vector:+s)(rest)
+          case Failure(e) => throw e
+        }
+    }
+    
+    
     
 
   // Old buildVector method

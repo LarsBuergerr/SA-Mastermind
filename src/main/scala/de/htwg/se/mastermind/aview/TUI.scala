@@ -93,8 +93,8 @@ class TUI(using controller: ControllerInterface) extends Observer:
         if(currentRequest.isInstanceOf[PlayerAnalyzeEvent]) then
 
           val codeVector: Vector[Stone] =
-            Try(controller.game.buildVector(emptyVector)(chars.asInstanceOf[Array[String]])) match
-              case Success(vector) => vector.asInstanceOf[Vector[Stone]]
+            Try(controller.game.buildVector(emptyVector)(chars.asInstanceOf[List[String]])) match
+              case Success(vector) => vector
               case Failure(e) =>
                 controller.request(controller.game.getDefaultInputRule(input))
                 Vector.empty[Stone]
