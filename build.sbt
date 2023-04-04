@@ -4,15 +4,15 @@ val scalaTestVersion = "3.2.15"
 lazy val root = project
   .in(file("."))
   .settings(
-    name := "mastermind",
-    
+    name := "Mastermind-Core-Module",
+
     version := "0.1.0-SNAPSHOT",
     fork / run := true, // not pretty but fixes error on second startup
     scalaVersion := scala3Version,
-    
+
     libraryDependencies += "org.scalafx" %% "scalafx" % "16.0.0-R24",
 
-    libraryDependencies ++= { 
+    libraryDependencies ++= {
       Seq(
       "org.scalameta" %% "munit" % "0.7.29" % Test,
       "org.scalactic" %% "scalactic" % scalaTestVersion,
@@ -31,7 +31,7 @@ lazy val root = project
         case n if n.startsWith("Mac") => "mac"
         case n if n.startsWith("Windows") => "win"
         case _ => throw new Exception("Unknown platform!")
-      } 
+      }
       Seq("base", "controls", "fxml", "graphics", "media", "swing", "web")
         .map(m => "org.openjfx" % s"javafx-$m" % "16" classifier osName)
     },
@@ -42,14 +42,14 @@ lazy val root = project
       JacocoThresholds(),
       Seq(JacocoReportFormats.ScalaHTML, JacocoReportFormats.XML),
       "utf-8"),
-    
+
       jacocoExcludes := Seq(
       "*aview.*",
       "*Mastermind.*",
       "*MastermindModule.*"
       ),
-    
-    jacocoCoverallsServiceName := "github-actions", 
+
+    jacocoCoverallsServiceName := "github-actions",
     jacocoCoverallsBranch := sys.env.get("CI_BRANCH"),
     jacocoCoverallsPullRequest := sys.env.get("GITHUB_EVENT_NAME"),
     jacocoCoverallsRepoToken := sys.env.get("COVERALLS_REPO_TOKEN")
