@@ -1,11 +1,11 @@
 package FileIOComponent.fileIOyamlImpl
 
 
-import GameComponent.GameBaseImpl.{Field, Code, Matrix, Stone, HStone, HintStone, Game, Play}
-import de.htwg.se.mastermind.model.GameComponent.GameInterface
+import model.GameComponent.GameBaseImpl.{Field, Code, Matrix, Stone, HStone, HintStone, Game, Play}
+import model.GameComponent.GameInterface
+import FileIOComponent.FileIOInterface
 
 import net.jcazevedo.moultingyaml._
-import MastermindModule.{given}
 
 class FileIO extends FileIOInterface:
   

@@ -9,7 +9,7 @@ package controller.ControllerComponent.ControllerBaseImpl
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers._
 import model.GameComponent.GameBaseImpl.{Game, Stone, HintStone, HStone}
-import model.FileIOComponent.fileIOjsonImpl.FileIO
+import FileIOComponent.fileIOJsonImpl.FileIO
 
 //****************************************************************************** CLASS DEFINITION
 class ControllerBaseImplSpec extends AnyWordSpec{

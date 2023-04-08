@@ -11,7 +11,8 @@ package controller.ControllerComponent.ControllerBaseImpl
 import model.GameComponent.GameInterface
 import model.GameComponent.GameBaseImpl.Game
 import model.GameComponent.GameBaseImpl.{State, Stone, HStone, Field}
-import model.FileIOComponent.FileIOInterface
+import FileIOComponent.FileIOInterface
+import controller.ControllerComponent.ControllerInterface
 import util.{Request, Event, Observable}
 
 

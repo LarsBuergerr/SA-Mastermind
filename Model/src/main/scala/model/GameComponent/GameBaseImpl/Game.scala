@@ -9,7 +9,7 @@ package model.GameComponent.GameBaseImpl
 //****************************************************************************** IMPORTS
 import util._
 import com.google.inject.Inject
-
+import model.GameComponent.GameInterface
 
 //****************************************************************************** CLASS DEFINITION
 /**

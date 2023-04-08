@@ -11,6 +11,7 @@ package model.GameModeComponent.GameModeBaseImpl
 
 //****************************************************************************** IMPORTS
 import model.GameComponent.GameBaseImpl.{Field, Stone, HintStone}
+import model.GameModeComponent.GameModeInterface
 import scala.io.StdIn.readLine
 
 

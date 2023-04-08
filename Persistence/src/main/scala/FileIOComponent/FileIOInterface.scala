@@ -1,7 +1,7 @@
 package FileIOComponent
 
-import GameComponent.GameInterface
-import GameComponent.GameBaseImpl.{Field, Stone, Matrix}
+import model.GameComponent.GameInterface
+import model.GameComponent.GameBaseImpl.{Field, Stone, Matrix}
 
 
 trait FileIOInterface:

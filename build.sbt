@@ -1,50 +1,51 @@
 import sbt.Keys.libraryDependencies
-import dependencies._
+import dependencies._ 
 
 val scala3Version = "3.1.2"
 val scalaTestVersion = "3.2.15"
 
 lazy val allDependencies = Seq(
-  scalactic,
+  scalameta,
+  scalatic,
   scalatest,
-  swing,
-  ginject,
-  well,
+  guice,
+  sguice,
   xml,
-  json,
-  yaml,
   upickle,
-  scalafx,
-  munit
+  yaml,
+  json
 )
 
 lazy val core: Project = Project(id = "Mastermind-Core-Module", base = file("Core"))
+  .dependsOn(model, tools, persistence)
   .settings(
-    dependsOn(model, tools),
     name := "Mastermind-Core-Module",
     version := "0.1.0-SNAPSHOT",
     scalaVersion := scala3Version,
+    commonSettings,
     libraryDependencies ++= allDependencies
   )
 
 
 lazy val model: Project = Project(id = "Mastermind-Model-Module", base = file("Model"))
+  .dependsOn(tools)
   .settings(
-    dependsOn(tools),
     name := "Mastermind-Model-Module",
     version := "0.1.0-SNAPSHOT",
     scalaVersion := scala3Version,
+    commonSettings,
     libraryDependencies ++= allDependencies
   )
 
 
 
 lazy val persistence: Project = Project(id = "Mastermind-Persistence-Module", base = file("Persistence"))
+  .dependsOn(model)
   .settings(
-    dependsOn(model),
     name := "Mastermind-Persistence-Module",
     version := "0.1.0-SNAPSHOT",
     scalaVersion := scala3Version,
+    commonSettings,
     libraryDependencies ++= allDependencies
   )
 
@@ -53,36 +54,40 @@ lazy val tools: Project = Project(id = "Mastermind-Tools-Module", base = file("T
     name := "Mastermind-Tools-Module",
     version := "0.1.0-SNAPSHOT",
     scalaVersion := scala3Version,
+    commonSettings,
     libraryDependencies ++= allDependencies
   )
 
 lazy val ui: Project = Project(id = "Mastermind-UI-Module", base = file("UI"))
+  .dependsOn(core, model, tools)
   .settings(
-    dependsOn(core, model, tools),
+    
     name := "Mastermind-UI-Module",
     version := "0.1.0-SNAPSHOT",
     scalaVersion := scala3Version,
+    commonSettings,
     libraryDependencies ++= allDependencies
   )
 
 
-lazy val root: Project = Project(id = "Mastermind-Core-Module", base = file("."))
+lazy val root: Project = Project(id = "Mastermind-Root-Module", base = file("."))
+  .dependsOn(ui, core, model, tools, persistence)
   .settings(
-    dependsOn(ui),
-    name := "Mastermind-Core-Module",
+    name := "Mastermind-Root-Module",
     version := "0.1.0-SNAPSHOT",
     scalaVersion := scala3Version,
+    commonSettings,
     libraryDependencies ++= allDependencies
   )
 
-lazy val commonSettings = Seq(
+lazy val commonSettings: Seq[Def.Setting[_]] = Seq(
 
   scalaVersion := scala3Version,
   
   jacocoCoverallsServiceName := "github-actions",
   jacocoCoverallsBranch := sys.env.get("CI_BRANCH"),
   jacocoCoverallsPullRequest := sys.env.get("GITHUB_EVENT_NAME"),
-  jacocoCoverallsRepoToken := sys.env.get("COVERALLS_REPO_TOKEN")
+  jacocoCoverallsRepoToken := sys.env.get("COVERALLS_REPO_TOKEN"),
 
   jacocoReportSettings := JacocoReportSettings(
     "Jacoco Coverage Report",
@@ -96,7 +101,7 @@ lazy val commonSettings = Seq(
     "*Mastermind.*",
     "*MastermindModule.*"
     ),
-
+  
   libraryDependencies ++= {
   // Determine OS version of JavaFX binaries
     lazy val osName = System.getProperty("os.name") match {
@@ -111,17 +116,4 @@ lazy val commonSettings = Seq(
 
   libraryDependencies += "org.scalafx" %% "scalafx" % "16.0.0-R24",
 
-  libraryDependencies ++= {
-    Seq(
-    "org.scalameta" %% "munit" % "0.7.29" % Test,
-    "org.scalactic" %% "scalactic" % scalaTestVersion,
-    "org.scalatest" %% "scalatest" % scalaTestVersion % "test",
-    "com.google.inject" % "guice" % "4.2.3",
-    ("net.codingwell" %% "scala-guice" % "5.0.2").cross(CrossVersion.for3Use2_13),
-    "org.scala-lang.modules" %% "scala-xml" % "2.0.1", // XML
-    "com.lihaoyi" %% "upickle" % "1.4.4", // JSON upickle
-    ("net.jcazevedo" %% "moultingyaml" % "0.4.2").cross(CrossVersion.for3Use2_13), //YAML
-    ("com.typesafe.play" %% "play-json" % "2.9.3").cross(CrossVersion.for3Use2_13)) // JSON
-  },
   )
-  .enablePlugins(JacocoPlugin, CoverallsPlugin)

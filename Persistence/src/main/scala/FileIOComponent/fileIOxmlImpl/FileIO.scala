@@ -1,8 +1,9 @@
 package FileIOComponent.fileIOxmlImpl
 
-import GameComponent.GameInterface
-import GameComponent.GameBaseImpl.{Field, Stone, Matrix, HintStone, HStone, Code, Play}
-import GameComponent.GameBaseImpl.Game
+import model.GameComponent.GameInterface
+import model.GameComponent.GameBaseImpl.{Field, Stone, Matrix, HintStone, HStone, Code, Play}
+import model.GameComponent.GameBaseImpl.Game
+import FileIOComponent.FileIOInterface
 
 import java.io._
 import scala.xml._

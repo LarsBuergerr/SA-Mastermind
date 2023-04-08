@@ -14,10 +14,9 @@ import model.GameComponent.GameBaseImpl._
 import util.Observer
 import util._
 import model._
-import model.FileIOComponent.fileIOyamlImpl.FileIO
+import FileIOComponent.fileIOyamlImpl.FileIO
 import scala.io.StdIn.readLine
 import scala.util.{Try, Success, Failure}
-import MastermindModule.{given}
 
 //****************************************************************************** CLASS DEFINITION
 class TUI(using controller: ControllerInterface) extends Observer:

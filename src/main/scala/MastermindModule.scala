@@ -35,10 +35,10 @@ import model.GameModeComponent.GameModeInterface
 import model.GameModeComponent.GameModeBaseImpl.GameMode
 //import model.GameModeComponent.GameModeMockImpl.GameMode
 
-import model.FileIOComponent.FileIOInterface
+import FileIOComponent.FileIOInterface
 //import model.FileIOComponent.fileIOyamlImpl.FileIO
 //import model.FileIOComponent.fileIOjsonImpl.FileIO
-import model.FileIOComponent.fileIOxmlImpl.FileIO
+import FileIOComponent.fileIOxmlImpl.FileIO
 
 import controller.ControllerComponent.ControllerBaseImpl.Controller
 import controller.ControllerComponent.ControllerInterface
