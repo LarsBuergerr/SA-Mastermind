@@ -4,7 +4,7 @@
 
 //****************************************************************************** PACKAGE  
 
-
+package model.GameComponent.GameInterface
 
 //****************************************************************************** IMPORTS
 import GameBaseImpl.{Code, Field, State, Stone}

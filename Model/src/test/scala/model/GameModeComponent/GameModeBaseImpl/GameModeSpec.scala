@@ -4,7 +4,7 @@
 
 //****************************************************************************** PACKAGE  
 
-
+package model.GameModeComponent.GameModeBaseImpl
 
 //****************************************************************************** IMPORTS
 import org.scalatest.wordspec.AnyWordSpec

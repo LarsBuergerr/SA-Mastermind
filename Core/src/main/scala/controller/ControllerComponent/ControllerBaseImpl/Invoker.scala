@@ -3,8 +3,8 @@
   */
 
 //****************************************************************************** PACKAGE  
-package controller.ControllerComponent.ControllerBaseImpl
 
+package controller.ControllerComponent.ControllerBaseImpl
 
 //****************************************************************************** IMPORTS
 import model.GameComponent.GameBaseImpl.{Field}
@@ -13,10 +13,10 @@ import util.Command
 
 //****************************************************************************** CLASS DEFINITION
 case class Invoker():
-  private var undoStack: List[Command] = Nil
-  private var redoStack: List[Command] = Nil
+  private var undoStack: List[Command[Field]] = Nil
+  private var redoStack: List[Command[Field]] = Nil
 
-  def doStep(command: Command): Field =
+  def doStep(command: Command[Field]): Field =
     command match
       case _ =>
         undoStack = command :: undoStack

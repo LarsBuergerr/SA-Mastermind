@@ -4,10 +4,8 @@
   */
 
 //****************************************************************************** PACKAGE  
-package controller
-package ControllerComponent
-package ControllerBaseImpl
 
+package controller.ControllerComponent.ControllerBaseImpl
 
 //****************************************************************************** IMPORTS
 import model.GameComponent.GameInterface

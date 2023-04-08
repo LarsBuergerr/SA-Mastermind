@@ -18,7 +18,7 @@
 
 //****************************************************************************** PACKAGE  
 
-
+package scala
 
 //****************************************************************************** IMPORTS
 import controller.ControllerComponent.ControllerInterface

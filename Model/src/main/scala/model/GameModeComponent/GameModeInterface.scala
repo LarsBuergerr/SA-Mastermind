@@ -6,8 +6,8 @@
 
 
 //****************************************************************************** IMPORTS
-import model.GameComponent.GameBaseImpl.Field
 
+import model.GameComponent.GameBaseImpl.Field
 
 //****************************************************************************** INTERFACE DEFINITION
 trait GameModeInterface:

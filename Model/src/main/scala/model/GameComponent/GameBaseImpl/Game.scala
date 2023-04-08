@@ -4,11 +4,10 @@
 
 //****************************************************************************** PACKAGE
 
-
+package model.GameComponent.GameBaseImpl
 
 //****************************************************************************** IMPORTS
 import util._
-import model._
 import com.google.inject.Inject
 
 

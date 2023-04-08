@@ -4,7 +4,7 @@
 
 //****************************************************************************** PACKAGE  
 
-
+package model.GameComponent.GameBaseImpl
 
 //****************************************************************************** IMPORTS
 import scala.util.{Try,Success,Failure}

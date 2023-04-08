@@ -1,4 +1,4 @@
-
+package FileIOComponent.fileIOyamlImpl
 
 
 import GameComponent.GameBaseImpl.{Field, Code, Matrix, Stone, HStone, HintStone, Game, Play}

@@ -6,7 +6,7 @@
 
 //****************************************************************************** PACKAGE  
 
-
+package aview
 
 //****************************************************************************** IMPORTS
 import controller.ControllerComponent.ControllerInterface

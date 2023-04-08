@@ -1,4 +1,4 @@
-
+package FileIOComponent.fileIOJsonImpl
 
 import GameComponent.GameInterface
 import GameComponent.GameBaseImpl.{Field, Stone, Matrix, HStone, HintStone, Code, Game, Play}

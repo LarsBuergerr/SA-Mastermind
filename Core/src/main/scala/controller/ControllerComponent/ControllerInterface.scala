@@ -3,11 +3,11 @@
   */
 
 //****************************************************************************** PACKAGE  
-package controller
-package ControllerComponent
 
+package controller.ControllerComponent
 
 //****************************************************************************** IMPORTS
+
 import model.GameComponent.GameBaseImpl.{Field, Stone, HStone, State, Game}
 import model.GameComponent.GameInterface
 import util.{Observable, Event, Request}

@@ -7,6 +7,7 @@
 
 //****************************************************************************** PACKAGE  
 
+package model.GameModeComponent.GameModeBaseImpl
 
 //****************************************************************************** IMPORTS
 import model.GameComponent.GameBaseImpl.{Field, Stone, HintStone}

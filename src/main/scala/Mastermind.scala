@@ -18,16 +18,11 @@
 
 //****************************************************************************** PACKAGE  
 
-
+package scala
 
 //****************************************************************************** IMPORTS
 import aview.{TUI, GUI}
 import MastermindModule.{given}
-
-import .MastermindModule
-import .MastermindModule
-import .GUI
-import .TUI
 
 //****************************************************************************** MAIN
 object mastermind extends Thread:
