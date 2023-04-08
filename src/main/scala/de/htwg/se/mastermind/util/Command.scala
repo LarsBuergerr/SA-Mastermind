@@ -12,7 +12,7 @@ import model.GameComponent.GameBaseImpl.Field
 
 
 //****************************************************************************** INTERFACE DEFINITION
-trait Command:
-  def execute:  Field
-  def undoStep: Field
-  def redoStep: Field
+trait Command[T]:
+  def execute:  T
+  def undoStep: T
+  def redoStep: T

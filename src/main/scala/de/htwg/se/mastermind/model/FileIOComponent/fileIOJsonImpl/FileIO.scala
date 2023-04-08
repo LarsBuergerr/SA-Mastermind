@@ -58,7 +58,7 @@ class FileIO extends FileIOInterface:
     val cellJson = Json.obj(
       "x" -> x,
       "y" -> y,
-      "value" -> cell.getOrElse(" ").toString
+      "value" -> cell.getOrElse("E").toString
     )
     cellJson
 

@@ -21,23 +21,23 @@ class FieldSpec extends AnyWordSpec{
     "have a bar as String of form '+---+---+---+---+" in {
       defaultField.bar() should be("+---+---+---+---+" + eol)
     }
-    "have cells as String of form '| E | E | E | E |   [ E | E | E | E ]'" in {
-      defaultField.cells() should be("| E | E | E | E |   [ E | E | E | E ]" + eol)
+    "have cells as String of form '|   |   |   |   |   [   |   |   |   ]'" in {
+      defaultField.cells() should be("|   |   |   |   |   [   |   |   |   ]" + eol)
     }
     "have a mesh in form of a Mastermind field" in {
       defaultField.mesh() should be
       ("""+---+---+---+---+
-          | E | E | E | E |   [ E | E | E | E ]
+          |   |   |   |   |   [   |   |   |   ]
           +---+---+---+---+
-          | E | E | E | E |   [ E | E | E | E ]
+          |   |   |   |   |   [   |   |   |   ]
           +---+---+---+---+
-          | E | E | E | E |   [ E | E | E | E ]
+          |   |   |   |   |   [   |   |   |   ]
           +---+---+---+---+
-          | E | E | E | E |   [ E | E | E | E ]
+          |   |   |   |   |   [   |   |   |   ]
           +---+---+---+---+
-          | E | E | E | E |   [ E | E | E | E ]
+          |   |   |   |   |   [   |   |   |   ]
           +---+---+---+---+
-          | E | E | E | E |   [ E | E | E | E ]
+          |   |   |   |   |   [   |   |   |   ]
           +---+---+---+---+""")
     }
     "have a String representation in form of the mesh" in {
@@ -49,13 +49,13 @@ class FieldSpec extends AnyWordSpec{
     "have a bar as String of form '+---+" in {
       smallField.bar() should be("+---+" + eol)
     }
-    "have cells as String of form '| E |   [ E ]'" in {
-      smallField.cells() should be("| E |   [ E ]" + eol)
+    "have cells as String of form '|   |   [   ]'" in {
+      smallField.cells() should be("|   |   [   ]" + eol)
     }
     "have a mesh in form of a Mastermind field" in {
       smallField.mesh() should be
       ("""+---+
-          | E |   [ E ]
+          |   |   [   ]
           +---+""")
     }
     "have a String representation in form of the mesh" in {

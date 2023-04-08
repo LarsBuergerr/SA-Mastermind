@@ -46,8 +46,7 @@ object Stone:
       case "Y" => Some(Stone.Yellow)
       case "W" => Some(Stone.White)
       case "P" => Some(Stone.Purple)
-      case "E" => Some(Stone.Empty)
-      case _   => None
+      case "E" => None
 
   def random: Stone =
     Random.nextInt(6) match
@@ -65,5 +64,4 @@ object HintStone:
     stringRepresentation match
       case "R" => Some(HStone.Red)
       case "W" => Some(HStone.White)
-      case "E" => Some(HStone.Empty)
-      case _   => None
+      case "E" => None

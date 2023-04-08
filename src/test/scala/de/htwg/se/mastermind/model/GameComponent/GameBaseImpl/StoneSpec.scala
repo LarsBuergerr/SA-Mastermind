@@ -46,16 +46,14 @@ class StoneSpec extends AnyWordSpec{
       Stone.apply("Y").getOrElse(" ").toString should be("Y")
       Stone.apply("P").getOrElse(" ").toString should be("P")
       Stone.apply("W").getOrElse(" ").toString should be("W")
-      Stone.apply(" ").getOrElse(" ").toString should be(" ")
-      Stone.apply("E").getOrElse(" ").toString should be("E")
+      Stone.apply("E").getOrElse(" ").toString should be(" ")
     }
   }
   "A Hint-Stone" should {
     "have a String representation of its color [Initial letter]" in {
       HintStone.apply("R").getOrElse(" ").toString() should be("R")
       HintStone.apply("W").getOrElse(" ").toString() should be("W")
-      HintStone.apply("E").getOrElse(" ").toString() should be("E")
-      HintStone.apply(" ").getOrElse(" ").toString() should be(" ")
+      HintStone.apply("E").getOrElse(" ").toString() should be(" ")
     }  
   }
 }

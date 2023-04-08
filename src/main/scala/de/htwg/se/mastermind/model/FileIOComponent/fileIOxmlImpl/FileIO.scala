@@ -79,7 +79,7 @@ class FileIO extends FileIOInterface:
   def cellToXml(matrix: Matrix[Option[Object]], row: Int, col: Int) =
     <cell row={row.toString} col={col.toString}>
       <value>
-        {matrix.cell(row, col).getOrElse(" ").toString()}
+        {matrix.cell(row, col).getOrElse("E").toString()}
       </value>
     </cell>
 

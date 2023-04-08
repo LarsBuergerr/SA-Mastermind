@@ -31,7 +31,7 @@ private val eol = sys.props("line.separator")
   */
 case class Field(var matrix: Matrix[Option[Stone]], var hmatrix: Matrix[Option[HStone]]):
 
-  def this(rows: Int = 6, cols: Int = 4, filling: Option[Stone] = Stone("E"), hfilling: Option[HStone] = HintStone("E")) = {
+  def this(rows: Int = 6, cols: Int = 4, filling: Option[Stone] = None, hfilling: Option[HStone] = None) = {
     this(new Matrix(rows, cols, filling), new Matrix(rows, cols, hfilling))
   }
 

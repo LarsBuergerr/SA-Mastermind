@@ -32,7 +32,7 @@ class GUI(using controller: ControllerInterface) extends JFXApp3 with Observer:
     
   controller.add(this)
 
-  var currentStoneVector: Vector[Option[Stone]] = Vector.from[Option[Stone]](Array.fill[Option[Stone]](controller.game.field.matrix.cols)(Stone("E")))
+  var currentStoneVector: Vector[Option[Stone]] = Vector.from[Option[Stone]](Array.fill[Option[Stone]](controller.game.field.matrix.cols)(None))
   var browseColors = 0
   val selectableColors = Vector("G", "R", "B", "Y", "P", "W")
 
@@ -248,7 +248,7 @@ class GUI(using controller: ControllerInterface) extends JFXApp3 with Observer:
     * This method is called when the check button is clicked
     */
   def checkCode_Button_Handler() : Unit =
-    val check = currentStoneVector.filter(stone => stone == Stone.Empty)
+    val check = currentStoneVector.filter(stone => stone == None)
     if (check.length == 0) then
       val hints = controller.game.getCode().compareTo(currentStoneVector)
       val tmp = currentStoneVector
