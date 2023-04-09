@@ -36,7 +36,11 @@ lazy val model: Project = Project(id = "Mastermind-Model-Module", base = file("M
     commonSettings,
     libraryDependencies ++= allDependencies,
     // sbt-coverage settings for this submodule
-
+    coverageMinimum := 60,
+    coverageOutputHTML := true,
+    coverageOutputXML := true,
+    coverageOutputCobertura := true,
+    coverageOutputDebug := true,
     /*
     coverageEnabled := true,
     coverageMinimum := 70,
