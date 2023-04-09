@@ -1,3 +1,36 @@
+codecov:
+  require_ci_to_pass: yes
+  coverage:
+    precision: 2
+    round: down
+    range:
+      - 60.0
+      - 80.0
+  notify:
+    require_changes: yes
+    require_base: no
+  comment:
+    behavior: default
+    layout: reach,diff,flags,tree,reach
+    show_carryforward_flags: false
+  flags:
+    sample_flag: "A sample flag"
+  parsers:
+    gcov:
+      branch_detection:
+        conditional: yes
+    clover:
+      project_path: "Mastermind-Model-Module"
+    cobertura:
+      project_path: "Mastermind-Tools-Module"
+  status:
+    changes: false
+    default_rules:
+      flag_coverage_not_uploaded_behavior: include
+    patch: true
+    project: true
+github_checks:
+  annotations: true
 ignore:
   - "**/Mastermind.scala"
   - "**/MastermindModule.scala"
