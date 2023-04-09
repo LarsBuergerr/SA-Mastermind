@@ -32,5 +32,3 @@ codecov:
         conditional: yes
     clover:
       project_path: "Mastermind-Model-Module"
-    cobertura:
-      project_path: "Mastermind-Tools-Module"

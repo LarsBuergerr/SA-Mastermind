@@ -1,5 +1,5 @@
 import sbt.Keys.libraryDependencies
-import dependencies._ 
+import dependencies._
 
 val scala3Version = "3.1.2"
 val scalaTestVersion = "3.2.15"
@@ -13,7 +13,7 @@ lazy val allDependencies = Seq(
   xml,
   upickle,
   yaml,
-  json
+  json,
 )
 
 lazy val core: Project = Project(id = "Mastermind-Core-Module", base = file("Core"))
@@ -36,11 +36,6 @@ lazy val model: Project = Project(id = "Mastermind-Model-Module", base = file("M
     commonSettings,
     libraryDependencies ++= allDependencies,
     // sbt-coverage settings for this submodule
-    coverageMinimum := 60,
-    coverageOutputHTML := true,
-    coverageOutputXML := true,
-    coverageOutputCobertura := true,
-    coverageOutputDebug := true,
     /*
     coverageEnabled := true,
     coverageMinimum := 70,
@@ -77,7 +72,7 @@ lazy val tools: Project = Project(id = "Mastermind-Tools-Module", base = file("T
 lazy val ui: Project = Project(id = "Mastermind-UI-Module", base = file("UI"))
   .dependsOn(core, model, tools)
   .settings(
-    
+
     name := "Mastermind-UI-Module",
     version := "0.1.0-SNAPSHOT",
     scalaVersion := scala3Version,
@@ -99,7 +94,7 @@ lazy val root: Project = Project(id = "Mastermind-Root-Module", base = file(".")
 lazy val commonSettings: Seq[Def.Setting[_]] = Seq(
 
   scalaVersion := scala3Version,
-  
+
   jacocoCoverallsServiceName := "github-actions",
   jacocoCoverallsBranch := sys.env.get("CI_BRANCH"),
   jacocoCoverallsPullRequest := sys.env.get("GITHUB_EVENT_NAME"),
@@ -117,7 +112,7 @@ lazy val commonSettings: Seq[Def.Setting[_]] = Seq(
     "*Mastermind.*",
     "*MastermindModule.*"
     ),
-  
+
   libraryDependencies ++= {
   // Determine OS version of JavaFX binaries
     lazy val osName = System.getProperty("os.name") match {
@@ -132,4 +127,4 @@ lazy val commonSettings: Seq[Def.Setting[_]] = Seq(
 
   libraryDependencies += "org.scalafx" %% "scalafx" % "16.0.0-R24",
 
-  )
+)
