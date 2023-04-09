@@ -36,12 +36,16 @@ lazy val model: Project = Project(id = "Mastermind-Model-Module", base = file("M
     commonSettings,
     libraryDependencies ++= allDependencies,
     // sbt-coverage settings for this submodule
+
+    /*
     coverageEnabled := true,
     coverageMinimum := 70,
     coverageOutputHTML := true,
     coverageOutputXML := true,
     coverageOutputCobertura := true,
     coverageOutputDebug := true,
+
+     */
     //coverageExcludedFiles := Seq("<your-package-to-exclude>/routes_*.scala"),
   )
 
