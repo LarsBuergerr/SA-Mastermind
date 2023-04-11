@@ -1,34 +1,8 @@
-codecov:
-  require_ci_to_pass: true
-  comment:
-    behavior: default
-    layout: reach,diff,flags,tree,reach
-    show_carryforward_flags: false
-  coverage:
-    precision: 2
-    range:
-      - 60.0
-      - 80.0
-    round: down
-    status:
-      changes: false
-      default_rules:
-        flag_coverage_not_uploaded_behavior: include
-      patch: true
-      project: true
-  github_checks:
-    annotations: true
-  ignore:
-    - (?s:.*/Mastermind\.scala.*)\Z
-    - (?s:.*/MastermindModule\.scala.*)\Z
-    - (?s:.*/model/FileIOComponent/fileIOJsonImpl/FileIO\.scala.*)\Z
-    - (?s:.*/model/FileIOComponent/fileIOxmlImpl/FileIO\.scala.*)\Z
-    - (?s:.*/model/FileIOComponent/fileIOyamlImpl/FileIO\.scala.*)\Z
-    - (?s:.*/model/GameComponent/GameMockImpl/Game\.scala.*)\Z
-    - (?s:.*/controller/ControllerComponent/ControllerMockImpl/Controller\.scala.*)\Z
-  parsers:
-    gcov:
-      branch_detection:
-        conditional: yes
-    clover:
-      project_path: "Mastermind-Model-Module"
+ignore:
+  - "**/Mastermind.scala"
+  - "**/MastermindModule.scala"
+  - "Persistence/src/main/scala/FileIOComponent/fileIOJsonImpl/FileIO.scala"
+  - "Persistence/src/main/scala/FileIOComponent/fileIOxmlImpl/FileIO.scala"
+  - "Persistence/src/main/scala/FileIOComponent/fileIOyamlImpl/FileIO.scala"
+  - "**/model/GameComponent/GameMockImpl/Game.scala"
+  - "**/controller/ControllerComponent/ControllerMockImpl/Controller.scala"
