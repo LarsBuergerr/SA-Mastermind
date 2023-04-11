@@ -24,7 +24,7 @@ lazy val core: Project = Project(id = "Mastermind-Core-Module", base = file("Cor
     scalaVersion := scala3Version,
     commonSettings,
     libraryDependencies ++= allDependencies
-  )
+  ).enablePlugins(JacocoPlugin)
 
 
 lazy val model: Project = Project(id = "Mastermind-Model-Module", base = file("Model"))
@@ -46,7 +46,7 @@ lazy val model: Project = Project(id = "Mastermind-Model-Module", base = file("M
 
      */
     //coverageExcludedFiles := Seq("<your-package-to-exclude>/routes_*.scala"),
-  )
+  ).enablePlugins(JacocoPlugin)
 
 
 
@@ -58,7 +58,7 @@ lazy val persistence: Project = Project(id = "Mastermind-Persistence-Module", ba
     scalaVersion := scala3Version,
     commonSettings,
     libraryDependencies ++= allDependencies
-  )
+  ).enablePlugins(JacocoPlugin)
 
 lazy val tools: Project = Project(id = "Mastermind-Tools-Module", base = file("Tools"))
   .settings(
@@ -67,7 +67,7 @@ lazy val tools: Project = Project(id = "Mastermind-Tools-Module", base = file("T
     scalaVersion := scala3Version,
     commonSettings,
     libraryDependencies ++= allDependencies
-  )
+  ).enablePlugins(JacocoPlugin)
 
 lazy val ui: Project = Project(id = "Mastermind-UI-Module", base = file("UI"))
   .dependsOn(core, model, tools)
@@ -78,7 +78,7 @@ lazy val ui: Project = Project(id = "Mastermind-UI-Module", base = file("UI"))
     scalaVersion := scala3Version,
     commonSettings,
     libraryDependencies ++= allDependencies
-  )
+  ).enablePlugins(JacocoPlugin)
 
 
 lazy val root: Project = Project(id = "Mastermind-Root-Module", base = file("."))
