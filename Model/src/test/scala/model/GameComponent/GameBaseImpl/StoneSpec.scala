@@ -55,4 +55,25 @@ class StoneSpec extends AnyWordSpec{
       HintStone.apply(" ").toString() should be("E")
     }  
   }
+  //NEW Test
+  "Stone object's toString method" should {
+    "return the stringRepresentation value" in {
+      Stone("R").toString should be("R")
+      Stone("G").toString should be("G")
+      Stone("B").toString should be("B")
+      Stone("Y").toString should be("Y")
+      Stone("P").toString should be("P")
+      Stone("W").toString should be("W")
+      Stone("E").toString should be("E")
+    }
+  }
+
+  "HintStone object's toString method" should {
+    "return the stringRepresentation value" in {
+      HintStone("R").toString should be("R")
+      HintStone("W").toString should be("W")
+      HintStone("E").toString should be("E")
+    }
+  }
+
 }
