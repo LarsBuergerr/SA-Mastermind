@@ -26,7 +26,6 @@ lazy val core: Project = Project(id = "Mastermind-Core-Module", base = file("Cor
     libraryDependencies ++= allDependencies
   ).enablePlugins(JacocoPlugin)
 
-
 lazy val model: Project = Project(id = "Mastermind-Model-Module", base = file("Model"))
   .dependsOn(tools)
   .settings(
@@ -35,20 +34,7 @@ lazy val model: Project = Project(id = "Mastermind-Model-Module", base = file("M
     scalaVersion := scala3Version,
     commonSettings,
     libraryDependencies ++= allDependencies,
-    // sbt-coverage settings for this submodule
-    /*
-    coverageEnabled := true,
-    coverageMinimum := 70,
-    coverageOutputHTML := true,
-    coverageOutputXML := true,
-    coverageOutputCobertura := true,
-    coverageOutputDebug := true,
-
-     */
-    //coverageExcludedFiles := Seq("<your-package-to-exclude>/routes_*.scala"),
   ).enablePlugins(JacocoPlugin)
-
-
 
 lazy val persistence: Project = Project(id = "Mastermind-Persistence-Module", base = file("Persistence"))
   .dependsOn(model)
@@ -72,14 +58,12 @@ lazy val tools: Project = Project(id = "Mastermind-Tools-Module", base = file("T
 lazy val ui: Project = Project(id = "Mastermind-UI-Module", base = file("UI"))
   .dependsOn(core, model, tools)
   .settings(
-
     name := "Mastermind-UI-Module",
     version := "0.1.0-SNAPSHOT",
     scalaVersion := scala3Version,
     commonSettings,
     libraryDependencies ++= allDependencies
   ).enablePlugins(JacocoPlugin)
-
 
 lazy val root: Project = Project(id = "Mastermind-Root-Module", base = file("."))
   .dependsOn(ui, core, model, tools, persistence)
@@ -93,7 +77,6 @@ lazy val root: Project = Project(id = "Mastermind-Root-Module", base = file(".")
   ).enablePlugins(JacocoPlugin)
 
 lazy val commonSettings: Seq[Def.Setting[_]] = Seq(
-
   scalaVersion := scala3Version,
 
   jacocoCoverallsServiceName := "github-actions",

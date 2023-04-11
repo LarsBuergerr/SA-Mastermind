@@ -1,5 +1,4 @@
-import sbt._
-import Keys._
+import sbt.*
 
 object dependencies{
     val scalameta = "org.scalameta" %% "munit" % "0.7.29" % Test
@@ -11,10 +10,4 @@ object dependencies{
     val upickle = "com.lihaoyi" %% "upickle" % "1.4.4" // JSON upickle
     val yaml = ("net.jcazevedo" %% "moultingyaml" % "0.4.2").cross(CrossVersion.for3Use2_13) //YAML
     val json = ("com.typesafe.play" %% "play-json" % "2.9.3").cross(CrossVersion.for3Use2_13) // JSON
-
-    //test
-    val cov1 = "org.scoverage" %% "scalac-scoverage-plugin" % "1.7.0"
-    val cov11 = "org.scoverage" %% "scoverage-runtime" % "1.7.0"
-    val cov111 = "org.scoverage" %% "scalac-scoverage-runtime" % "1.7.0"
-    val cov1111 = "com.github.vlachjosef" %% "scalac-scapegoat-plugin" % "1.4.10"
 }
