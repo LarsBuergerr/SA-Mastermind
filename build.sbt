@@ -14,6 +14,10 @@ lazy val allDependencies = Seq(
   upickle,
   yaml,
   json,
+  akkaHttp,
+  akkaActorTyped,
+  akkaStream,
+  akkaActor
 )
 
 lazy val core: Project = Project(id = "Mastermind-Core-Module", base = file("Core"))

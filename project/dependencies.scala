@@ -10,4 +10,8 @@ object dependencies{
     val upickle = "com.lihaoyi" %% "upickle" % "1.4.4" // JSON upickle
     val yaml = ("net.jcazevedo" %% "moultingyaml" % "0.4.2").cross(CrossVersion.for3Use2_13) //YAML
     val json = ("com.typesafe.play" %% "play-json" % "2.9.3").cross(CrossVersion.for3Use2_13) // JSON
+    val akkaHttp = ("com.typesafe.akka" %% "akka-http" % "10.5.0").cross(CrossVersion.for3Use2_13)
+    val akkaActorTyped = "com.typesafe.akka" %% "akka-actor-typed" % "2.8.0"
+    val akkaStream = "com.typesafe.akka" %% "akka-stream" % "2.8.0"
+    val akkaActor = "com.typesafe.akka" %% "akka-actor" % "2.8.0"
 }
