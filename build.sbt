@@ -15,6 +15,8 @@ lazy val allDependencies = Seq(
   yaml,
   json,
   akkaHttp,
+  akkaHttpSpray,
+  akkaHttpCore,
   akkaActorTyped,
   akkaStream,
   akkaActor,
