@@ -11,7 +11,7 @@ import FileIOComponent.fileIOyamlImpl.FileIO
 import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
 import akka.http.scaladsl.Http
-import akka.http.scaladsl.server.Directives.*
+import akka.http.scaladsl.server.Directives.{put, *}
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity}
 import controller.ControllerComponent.ControllerInterface
 import util.Observer
@@ -41,6 +41,7 @@ class RestUI(using controller: ControllerInterface):
       pathSingleSlash {
         complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, routes))
       },
+      //get maps read
       get {
         path("hello") {
           complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<h1>Say hello to akka-httpX</h1>"))
@@ -50,6 +51,7 @@ class RestUI(using controller: ControllerInterface):
           complete(HttpEntity(ContentTypes.`application/json`, "Your save has been loaded"))
         }
       },
+      //post maps create
       post {
         path("save") {
           controller.save
