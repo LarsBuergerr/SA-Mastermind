@@ -17,7 +17,8 @@ lazy val allDependencies = Seq(
   akkaHttp,
   akkaActorTyped,
   akkaStream,
-  akkaActor
+  akkaActor,
+  slf4jNop
 )
 
 lazy val core: Project = Project(id = "Mastermind-Core-Module", base = file("Core"))

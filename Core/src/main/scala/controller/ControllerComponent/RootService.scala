@@ -7,22 +7,17 @@
 package controller.ControllerComponent
 
 //****************************************************************************** IMPORTS
-import akka.http.scaladsl.server.Directives.{complete, concat, get, path}
 import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
 import akka.http.scaladsl.Http
-import akka.http.scaladsl.server.Directives.*
-import akka.http.scaladsl.model.StatusCode
-import akka.http.scaladsl.server.{ExceptionHandler, Route}
-import akka.http._
-import akka.http.impl.util.JavaAccessors.HttpEntity
+import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpMethods, HttpRequest}
+import akka.http.scaladsl.server.Directives._
 
 import com.google.inject.{Guice, Injector}
 import scala.util.{Failure, Success}
-import Mastermind-Root-Module.MastermindModule //TODO import MastermindModule???
-
-
+//import Mastermind-Root-Module.MastermindModule //TODO import MastermindModule???
 object RootService {
+  /*
   val injector: Injector = Guice.createInjector(MastermindModule())
   val controller = injector.getInstance(classOf[ControllerInterface])
 
@@ -59,5 +54,6 @@ object RootService {
       }
     }
   }
+  */
 }
 
