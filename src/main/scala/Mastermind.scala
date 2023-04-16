@@ -21,15 +21,16 @@
 package scala
 
 //****************************************************************************** IMPORTS
-import aview.{TUI, GUI}
-import MastermindModule.{given}
+import aview.{GUI, RestUI, TUI}
+
+import MastermindModule.given
 
 //****************************************************************************** MAIN
 object mastermind extends Thread:
 
   val tui = TUI()
   val gui = GUI()
-  //val restUI = RestUI
+  val restUI = RestUI()
 
   @main 
   override def start(): Unit =
@@ -39,6 +40,6 @@ object mastermind extends Thread:
         gui.main(Array[String]())
 
     threadGui.start()
+    restUI.start()
     Thread.sleep(1000)
     tui.run()
-    //restUI.start()
