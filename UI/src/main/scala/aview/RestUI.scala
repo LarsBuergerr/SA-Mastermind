@@ -47,15 +47,15 @@ class RestUI(using controller: ControllerInterface):
         }
         path("load") {
           controller.load
-          complete(HttpEntity(ContentTypes.`application/json`, "loaded"))
+          complete(HttpEntity(ContentTypes.`application/json`, "Your save has been loaded"))
         }
-
       },
       post {
         path("save") {
-          val fileIO = new FileIO()
-          fileIO.save(controller.game)
-          complete(HttpEntity(ContentTypes.`application/json`, "saved"))
+          controller.save
+          //val fileIO = new FileIO()
+          //fileIO.save(controller.game)
+          complete(HttpEntity(ContentTypes.`application/json`, "Your Game has been saved"))
         }
       }
     )
