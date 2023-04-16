@@ -22,12 +22,24 @@ class RestUI {
   implicit val system: ActorSystem[Nothing] = ActorSystem(Behaviors.empty, "my-system")
   implicit val executionContext: ExecutionContextExecutor = system.executionContext
   val RestUIPort = 8080
+  val routes: String =
+    """
+        <h1>Welcome to the Persistence REST service!</h1>
+        <br>Available routes:
+          <br>GET   /fileio/load
+          <br>POST  /fileio/save
+        """.stripMargin
+
 
   val route =
     concat(
-
+      pathSingleSlash {
+        complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, routes))
+      },
       get {
-
+        path("") {
+          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<h1>start/h1>"))
+        }
         path("hello") {
           complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<h1>Say hello to akka-httpX</h1>"))
         }
