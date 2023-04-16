@@ -7,27 +7,32 @@
 package aview
 
 //****************************************************************************** IMPORTS
+import FileIOComponent.fileIOyamlImpl.FileIO
 import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives.*
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity}
+import controller.ControllerComponent.ControllerInterface
+import util.Observer
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
-import scala.util.{Success,Failure}
+import scala.util.{Failure, Success}
 
 //****************************************************************************** CLASS DEFINITION
-class RestUI {
+class RestUI(using controller: ControllerInterface):
+  //controller.add(this)
 
   implicit val system: ActorSystem[Nothing] = ActorSystem(Behaviors.empty, "my-system")
   implicit val executionContext: ExecutionContextExecutor = system.executionContext
+
   val RestUIPort = 8080
   val routes: String =
     """
         <h1>Welcome to the Persistence REST service!</h1>
         <br>Available routes:
-          <br>GET   /fileio/load
-          <br>POST  /fileio/save
+          <br>GET   /load
+          <br>POST  /save
         """.stripMargin
 
 
@@ -37,25 +42,22 @@ class RestUI {
         complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, routes))
       },
       get {
-        path("") {
-          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<h1>start/h1>"))
-        }
         path("hello") {
           complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<h1>Say hello to akka-httpX</h1>"))
         }
-
-      },/*
-      post {
-
-        path("save") {
-
-          controller.saveGame()
-          complete(HttpEntity(ContentTypes.`application/json`, "saved"))
-
+        path("load") {
+          controller.load
+          complete(HttpEntity(ContentTypes.`application/json`, "loaded"))
         }
 
+      },
+      post {
+        path("save") {
+          val fileIO = new FileIO()
+          fileIO.save(controller.game)
+          complete(HttpEntity(ContentTypes.`application/json`, "saved"))
+        }
       }
-        */
     )
   def start(): Unit = {
     val binding = Http().newServerAt("localhost", RestUIPort).bind(route)
@@ -69,4 +71,3 @@ class RestUI {
       }
     }
   }
-}
