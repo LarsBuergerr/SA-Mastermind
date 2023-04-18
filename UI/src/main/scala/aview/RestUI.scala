@@ -29,12 +29,15 @@ class RestUI(using controller: ControllerInterface):
   val RestUIPort = 8080
   val routes: String =
     """
-        <h1>Welcome to the Persistence REST service!</h1>
-        <br>Available routes:
-          <br>GET   /load
-          <br>POST  /save
+        <h1>Welcome to the Mastermind Game REST service!</h1>
+        <h2>Available routes:</h2>
+        <p><a href="/load">GET   /load</a></p>
+            <p><a href="/undo">GET   /undo</a></p>
+            <p><a href="/redo">GET   /redo</a></p>
+            <p><a href="/reset">GET   /reset</a></p>
+          <br>
+        <p><a href="/save">POST   /save</a></p>
         """.stripMargin
-
 
   val route =
     concat(
@@ -46,12 +49,33 @@ class RestUI(using controller: ControllerInterface):
         path("hello") {
           complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<h1>Say hello to akka-httpX</h1>"))
         }
+      },
+      get {
         path("load") {
           controller.load
           complete(HttpEntity(ContentTypes.`application/json`, "Your save has been loaded"))
         }
       },
+      get {
+        path("undo") {
+          controller.undo
+          complete(HttpEntity(ContentTypes.`application/json`, "Your move has been undone"))
+        }
+      },
+      get {
+        path("redo") {
+          controller.redo
+          complete(HttpEntity(ContentTypes.`application/json`, "Your move has been done again"))
+        }
+      },
+      get {
+        path("reset") {
+          controller.reset
+          complete(HttpEntity(ContentTypes.`application/json`, "Your reset your game"))
+        }
+      },
       //post maps create
+      //TODO
       post {
         path("save") {
           controller.save
@@ -61,6 +85,7 @@ class RestUI(using controller: ControllerInterface):
         }
       }
     )
+
   def start(): Unit = {
     val binding = Http().newServerAt("localhost", RestUIPort).bind(route)
 
