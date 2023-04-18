@@ -31,7 +31,8 @@ class RestUI(using controller: ControllerInterface):
     """
         <h1>Welcome to the Mastermind Game REST service!</h1>
         <h2>Available routes:</h2>
-        <p><a href="/load">GET   /load</a></p>
+          <p><a href="/tui">GET   /tui</a></p>
+          <p><a href="/load">GET   /load</a></p>
             <p><a href="/undo">GET   /undo</a></p>
             <p><a href="/redo">GET   /redo</a></p>
             <p><a href="/reset">GET   /reset</a></p>
@@ -48,6 +49,11 @@ class RestUI(using controller: ControllerInterface):
       get {
         path("hello") {
           complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<h1>Say hello to akka-httpX</h1>"))
+        }
+      },
+      get {
+        path("tui") {
+          complete(HttpEntity(ContentTypes.`application/json`, "Mastermind\n\n" +controller.game.field.toString()))
         }
       },
       get {
@@ -78,10 +84,12 @@ class RestUI(using controller: ControllerInterface):
       //TODO
       post {
         path("save") {
-          controller.save
-          //val fileIO = new FileIO()
-          //fileIO.save(controller.game)
-          complete(HttpEntity(ContentTypes.`application/json`, "Your Game has been saved"))
+          entity(as[String]) { game =>
+            //controller.save
+            val fileIO = new FileIO()
+            fileIO.save(controller.game)
+            complete(HttpEntity(ContentTypes.`application/json`, "Your Game has been saved"))
+          }
         }
       }
     )
