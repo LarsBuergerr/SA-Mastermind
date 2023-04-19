@@ -21,7 +21,10 @@
 package scala
 
 //****************************************************************************** IMPORTS
-import aview.{GUI, RestUI, TUI}
+
+import aview.RestUI.RestUiAPI
+import aview.{GUI, TUI}
+import controller.ControllerComponent.RestControllerAPI
 
 import MastermindModule.given
 
@@ -30,7 +33,8 @@ object mastermind extends Thread:
 
   val tui = TUI()
   val gui = GUI()
-  val restUI = RestUI()
+  val restUI = RestUiAPI()
+  val restConAPI = RestControllerAPI()
 
   @main 
   override def start(): Unit =
@@ -40,6 +44,8 @@ object mastermind extends Thread:
         gui.main(Array[String]())
 
     threadGui.start()
+    //REST Services
     restUI.start()
+    restConAPI.start()
     Thread.sleep(1000)
     tui.run()

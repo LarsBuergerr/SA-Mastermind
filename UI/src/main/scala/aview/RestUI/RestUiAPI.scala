@@ -1,26 +1,28 @@
 /**
- * RestUI.scala
+ * RestUiAPI.scala
  * Class for the REST Akaa HTTP Server Interface of the Mastermind game.
  */
 
 //****************************************************************************** PACKAGE
-package aview
+package aview.RestUI
 
 //****************************************************************************** IMPORTS
 import FileIOComponent.fileIOyamlImpl.FileIO
 import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
 import akka.http.scaladsl.Http
-import akka.http.scaladsl.server.Directives.{put, *}
-import akka.http.scaladsl.model.{ContentTypes, HttpEntity}
+import akka.http.scaladsl.model.*
+import akka.http.scaladsl.server.Directives.{entity, *}
+import akka.stream.ActorMaterializer
 import controller.ControllerComponent.ControllerInterface
-import util.Observer
+import model.GameComponent.GameBaseImpl.PlayerInput
+import util.{MultiCharRequest, Observer}
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.util.{Failure, Success}
 
 //****************************************************************************** CLASS DEFINITION
-class RestUI(using controller: ControllerInterface):
+class RestUiAPI(using controller: ControllerInterface):
   //controller.add(this)
 
   implicit val system: ActorSystem[Nothing] = ActorSystem(Behaviors.empty, "my-system")
@@ -48,7 +50,7 @@ class RestUI(using controller: ControllerInterface):
       //get maps read
       get {
         path("hello") {
-          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<h1>Say hello to akka-httpX</h1>"))
+          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<h1>Say hello to akka-http</h1>"))
         }
       },
       get {
@@ -80,6 +82,30 @@ class RestUI(using controller: ControllerInterface):
           complete(HttpEntity(ContentTypes.`application/json`, "Your reset your game"))
         }
       },
+      //user input via url
+      path("input" / Segment) { command => {
+
+        var x = controller.request(controller.handleRequest(MultiCharRequest(command)))
+        println(x)
+        complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, command))
+      }
+      },
+      path("state" / Segment) { command => {
+
+        var x = controller.request(controller.handleRequest(MultiCharRequest(command)))
+        println(x)
+        complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, command))
+      }
+      },
+      path("api" / "myResource") {
+        post {
+          entity(as[String]) { data =>
+
+            println(s"Post-Body als JSON-Text: $data")
+            complete(HttpResponse(StatusCodes.OK, entity  = "POST erfolgreich verarbeitet"))
+          }
+        }
+      },
       //post maps create
       //TODO
       post {
@@ -99,10 +125,10 @@ class RestUI(using controller: ControllerInterface):
 
     binding.onComplete {
       case Success(binding) => {
-        println(s"Server online at http://localhost:$RestUIPort/")
+        println(s"Mastermind UiAPI service online at http://localhost:$RestUIPort/")
       }
       case Failure(exception) => {
-        println(s"Server failed to start: ${exception.getMessage}")
+        println(s"Mastermind UiAPI service failed to start: ${exception.getMessage}")
       }
     }
   }
