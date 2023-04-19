@@ -29,7 +29,7 @@ class RestControllerAPI(using controller: ControllerInterface):
   implicit val system: ActorSystem[Nothing] = ActorSystem(Behaviors.empty, "my-system")
   implicit val executionContext: ExecutionContextExecutor = system.executionContext
 
-  val RestUIPort = 8081
+  val RestUIPort = 8080
   val routes: String =
     """
         <h1>Welcome to the Mastermind REST Controller API service!</h1>
@@ -112,10 +112,10 @@ class RestControllerAPI(using controller: ControllerInterface):
 
     binding.onComplete {
       case Success(binding) => {
-        println(s"Mastermind ControlerAPI service online at http://localhost:$RestUIPort/")
+        println(s"Mastermind ControllerAPI service online at http://localhost:$RestUIPort/")
       }
       case Failure(exception) => {
-        println(s"Mastermind ControlerAPI service failed to start: ${exception.getMessage}")
+        println(s"Mastermind ControllerAPI service failed to start: ${exception.getMessage}")
       }
     }
   }

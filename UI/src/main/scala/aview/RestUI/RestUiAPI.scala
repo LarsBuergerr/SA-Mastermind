@@ -28,7 +28,7 @@ class RestUiAPI(using controller: ControllerInterface):
   implicit val system: ActorSystem[Nothing] = ActorSystem(Behaviors.empty, "my-system")
   implicit val executionContext: ExecutionContextExecutor = system.executionContext
 
-  val RestUIPort = 8080
+  val RestUIPort = 8081
   val routes: String =
     """
         <h1>Welcome to the Mastermind Game REST service!</h1>
