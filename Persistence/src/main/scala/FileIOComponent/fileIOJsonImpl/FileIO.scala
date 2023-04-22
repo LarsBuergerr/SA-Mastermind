@@ -69,7 +69,7 @@ class FileIO extends FileIOInterface:
 
 
   def gameToJson(game: GameInterface) =
-    Json.obj(
+    val json = Json.obj(
       "matrix" -> {
         game.field.matrix.m.map(vector => vectorToJson(vector, game.field.matrix.m.indexOf(vector)))
       },
@@ -79,6 +79,7 @@ class FileIO extends FileIOInterface:
       "turn" -> game.currentTurn,
       "code" -> vectorToJson(game.code.code.asInstanceOf[Vector[Object]], 0),
     )
+    json
 
   def JsonToStone(cellJson: JsValue) = 
     val x = cellJson("x").as[Int]
@@ -105,7 +106,7 @@ class FileIO extends FileIOInterface:
       else
         cells.as[Seq[JsValue]].map(cell => JsonToHStone(cell))
     vector.toVector
-
+  
 
   def JsonToGame(gameJson: JsValue): GameInterface =
     val matrix = Matrix[Stone](gameJson("matrix").as[Seq[JsValue]].map(vector => JsonToVector(vector, "matrix")).toVector.asInstanceOf[Vector[Vector[Stone]]])

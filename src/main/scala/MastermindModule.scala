@@ -37,8 +37,8 @@ import model.GameModeComponent.GameModeBaseImpl.GameMode
 
 import FileIOComponent.FileIOInterface
 //import model.FileIOComponent.fileIOyamlImpl.FileIO
-//import model.FileIOComponent.fileIOjsonImpl.FileIO
-import FileIOComponent.fileIOxmlImpl.FileIO
+import FileIOComponent.fileIOJsonImpl.FileIO
+//import FileIOComponent.fileIOxmlImpl.FileIO
 
 import controller.ControllerComponent.ControllerBaseImpl.Controller
 import controller.ControllerComponent.ControllerInterface

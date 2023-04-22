@@ -31,10 +31,15 @@ import MastermindModule.given
 //****************************************************************************** MAIN
 object mastermind extends Thread:
 
-  val tui = TUI()
-  val gui = GUI()
+
   val restUI = RestUiAPI()
   val restConAPI = RestControllerAPI()
+  restUI.start()
+  restConAPI.start()
+
+
+  val tui = TUI()
+  val gui = GUI()
 
   @main 
   override def start(): Unit =
@@ -45,7 +50,5 @@ object mastermind extends Thread:
 
     threadGui.start()
     //REST Services
-    restUI.start()
-    restConAPI.start()
     Thread.sleep(1000)
     tui.run()

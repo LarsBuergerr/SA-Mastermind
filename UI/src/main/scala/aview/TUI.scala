@@ -17,6 +17,14 @@ import model._
 import FileIOComponent.fileIOyamlImpl.FileIO
 import scala.io.StdIn.readLine
 import scala.util.{Try, Success, Failure}
+import akka.actor.typed.{ActorSystem}
+import akka.actor.typed.scaladsl.Behaviors
+import akka.http.scaladsl.Http
+import akka.http.scaladsl.server.Directives.*
+import akka.http.scaladsl.model.{ContentTypes, HttpEntity, StatusCode, HttpMethods, HttpResponse, HttpRequest}
+import akka.http.scaladsl.server.{ExceptionHandler, Route}
+
+import akka.http.scaladsl.unmarshalling.Unmarshal
 
 //****************************************************************************** CLASS DEFINITION
 class TUI(using controller: ControllerInterface) extends Observer:
@@ -54,7 +62,7 @@ class TUI(using controller: ControllerInterface) extends Observer:
 
   
   def parseInput(input: String): State =
-    
+
     val emptyVector: Vector[Stone] = Vector()
     val chars = input.toCharArray()
 

@@ -8,7 +8,7 @@ package controller.ControllerComponent
 
 //****************************************************************************** IMPORTS
 
-import FileIOComponent.fileIOyamlImpl.FileIO
+import FileIOComponent.fileIOJsonImpl.FileIO
 import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
 import akka.http.scaladsl.Http
@@ -18,16 +18,22 @@ import akka.stream.ActorMaterializer
 import controller.ControllerComponent.ControllerInterface
 import model.GameComponent.GameBaseImpl.PlayerInput
 import util.{MultiCharRequest, Observer}
+import model.GameComponent.GameInterface
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.util.{Failure, Success}
+import akka.protobufv3.internal.compiler.PluginProtos.CodeGeneratorResponse.File
+import play.api.libs.json.*
 
 //****************************************************************************** CLASS DEFINITION
 class RestControllerAPI(using controller: ControllerInterface):
-  //controller.add(this)
 
   implicit val system: ActorSystem[Nothing] = ActorSystem(Behaviors.empty, "my-system")
   implicit val executionContext: ExecutionContextExecutor = system.executionContext
+
+  //print("before redo")
+  //print(controller.game)
+  //print("after redo")
 
   val RestUIPort = 8080
   val routes: String =
@@ -36,9 +42,11 @@ class RestControllerAPI(using controller: ControllerInterface):
         <h2>Available routes:</h2>
           <p><a href="controller/tui">GET ->    controller/tui</a></p>
           <p><a href="controller/load">GET  ->   controller/load</a></p>
-            <p><a href="controller/undo">GET  ->    controllerundo</a></p>
-            <p><a href="controller/redo">GET  ->    controller"/redo</a></p>
-            <p><a href="controller/reset">GET ->     controller"/reset</a></p>
+            <p><a href="controller/undo">GET  ->    controller/undo</a></p>
+            <p><a href="controller/redo">GET  ->    controller/redo</a></p>
+            <p><a href="controller/reset">GET ->     controller/reset</a></p>
+            <p><a href="controller/save">GET  ->     controller/save</a></p>
+            <p><a href="controller/get">GET  ->     controller/get</a></p>
           <br>
         <p><a href=""controller"/ /save">POST ->     controller/save</a></p>
         """.stripMargin
@@ -49,6 +57,9 @@ class RestControllerAPI(using controller: ControllerInterface):
         complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, routes))
       },
       //Todo
+      path("controller"/ "tui") {
+        complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "Mastermind\n\n" +controller.game.field.toString()))
+      },
       path("controller"/ "request"/ Segment) { command => {
 
         controller.request(controller.handleRequest(MultiCharRequest(command)))
@@ -70,15 +81,20 @@ class RestControllerAPI(using controller: ControllerInterface):
       }
       },
       get {
+        path("controller"/ "get") {
+          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, controller.gameToJson(controller.game)))
+        }
+      },
+      get {
         path("controller"/ "redo") {
-          controller.redo
-          complete(HttpEntity(ContentTypes.`application/json`, "Your move has been done again"))
+          val game = controller.redo
+          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, controller.gameToJson(game)))
         }
       },
       get {
         path("controller"/ "undo") {
-          controller.undo
-          complete(HttpEntity(ContentTypes.`application/json`, "Your move has been undone"))
+          print(controller.undo)
+          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "Du kleiner HS"))
         }
       },
       //post maps create
