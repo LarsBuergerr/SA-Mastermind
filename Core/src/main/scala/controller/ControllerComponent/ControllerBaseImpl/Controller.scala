@@ -33,11 +33,11 @@ class Controller(using var game: GameInterface, val fileIO: FileIOInterface) ext
   def handleRequest(request: Request): Event =
     game.handleRequest(request)
 
-  def placeGuessAndHints(stone: Vector[Stone])(hints: Vector[HStone])(row: Int): Field =
+  def placeGuessAndHints(stone: Vector[Stone])(hints: Vector[HStone])(row: Int): GameInterface =
     val field = invoker.doStep(PlaceCommand(game, stone, hints, row))
     game = game.asInstanceOf[Game].copy(field, game.code, game.currentTurn + 1)
     notifyObservers
-    game.field
+    game
 
   def redo =
     val field = invoker.redoStep.getOrElse(game.field)
@@ -85,6 +85,12 @@ class Controller(using var game: GameInterface, val fileIO: FileIOInterface) ext
       }
     )
 
+  def stateToJson(state: State) =
+    val json = Json.obj(
+      "value" -> state.toString()
+    )
+    json
+
   def gameToJson(game: GameInterface) =
     val json = Json.obj(
       "matrix" -> {
@@ -95,5 +101,6 @@ class Controller(using var game: GameInterface, val fileIO: FileIOInterface) ext
       },
       "turn" -> game.currentTurn,
       "code" -> vectorToJson(game.code.code.asInstanceOf[Vector[Object]], 0),
+      "state" -> stateToJson(game.state),
     )
     json.toString()

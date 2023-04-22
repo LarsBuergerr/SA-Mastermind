@@ -30,7 +30,7 @@ class Init extends State:
     printf(eol + horizontalLine + welcomeMessage + horizontalLine)
     return this
 
-  override def toString(): String = "State: Init"
+  override def toString(): String = "Init"
 
 
 class Menu extends State:
@@ -39,7 +39,7 @@ class Menu extends State:
     printf(line)
     return this
 
-  override def toString(): String = "State: Menu"
+  override def toString(): String = "Menu"
 
 
 class Play extends State:
@@ -48,7 +48,7 @@ class Play extends State:
     printf(line)
     return this
 
-  override def toString(): String = "State: Play"
+  override def toString(): String = "Play"
 
 
 class Help extends State:
@@ -69,7 +69,7 @@ class Help extends State:
     printf(line + linePlay + lineMenu + lineQuit + lineHelp + lineGame + redLine + greenLine + blueLine + yellowLine + whiteLine + purpleLine + lineInput + horizontalLine)
     return this    
 
-  override def toString(): String = "State: Help"
+  override def toString(): String = "Help"
 
 
 
@@ -79,21 +79,21 @@ class Quit extends State:
     printf(line)
     return this
 
-  override def toString(): String = "State: Quit"
+  override def toString(): String = "Quit"
 
 
 class PlayerInput extends State:
   override def handle(): State =
     return this
 
-  override def toString(): String = "State: PlayerInput"
+  override def toString(): String = "PlayerInput"
 
 
 class PlayerAnalyseState() extends State:
   override def handle(): State =
     return this
 
-  override def toString(): String = "State: PlayerAnalysis"
+  override def toString(): String = "PlayerAnalysis"
 
 
 class PlayerLose extends State:
@@ -102,7 +102,7 @@ class PlayerLose extends State:
     printf(line)
     return this
 
-  override def toString(): String = "State: PlayerLose"
+  override def toString(): String = "PlayerLose"
 
 
 class PlayerWin extends State:
@@ -111,7 +111,7 @@ class PlayerWin extends State:
     printf(line)
     return this
 
-  override def toString(): String = "State: PlayerWin"
+  override def toString(): String = "PlayerWin"
 
 
 class PlayerAnalyze extends State:
@@ -120,4 +120,4 @@ class PlayerAnalyze extends State:
     printf(line)
     return this
 
-  override def toString(): String = "State: PlayerAnalyzes"
+  override def toString(): String = "PlayerAnalyze"

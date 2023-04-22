@@ -1,10 +1,10 @@
 package FileIOComponent.fileIOJsonImpl
 
 import model.GameComponent.GameInterface
-import model.GameComponent.GameBaseImpl.{Field, Stone, Matrix, HStone, HintStone, Code, Game, Play}
 import FileIOComponent.FileIOInterface
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import model.GameComponent.GameBaseImpl._
 
 //import json lib
 import play.api.libs.json.*
@@ -67,6 +67,11 @@ class FileIO extends FileIOInterface:
       }
     )
 
+  def stateToJson(state: State) =
+    val json = Json.obj(
+      "value" -> state.toString()
+    )
+    json
 
   def gameToJson(game: GameInterface) =
     val json = Json.obj(
@@ -78,8 +83,11 @@ class FileIO extends FileIOInterface:
       },
       "turn" -> game.currentTurn,
       "code" -> vectorToJson(game.code.code.asInstanceOf[Vector[Object]], 0),
+      "state" -> stateToJson(game.state),
     )
     json
+
+
 
   def JsonToStone(cellJson: JsValue) = 
     val x = cellJson("x").as[Int]
@@ -106,6 +114,21 @@ class FileIO extends FileIOInterface:
       else
         cells.as[Seq[JsValue]].map(cell => JsonToHStone(cell))
     vector.toVector
+
+  def JsonToState(stateJson: JsValue) =
+    val state = stateJson("value").as[String]
+    state match
+      case "Init" => Init()
+      case "Menu" => Menu()
+      case "Play" => Play()
+      case "Help" => Help()
+      case "Quit" => Quit()
+      case "PlayerInput" => PlayerInput()
+      case "PlayerAnalyseState" => PlayerAnalyseState()
+      case "PlayerLose" => PlayerLose()
+      case "PlayerWin" => PlayerWin()
+      case "PlayerAnalyze" => PlayerAnalyze()
+      case _ => Play()
   
 
   def JsonToGame(gameJson: JsValue): GameInterface =
@@ -113,5 +136,6 @@ class FileIO extends FileIOInterface:
     val hmatrix = Matrix[HStone](gameJson("hmatrix").as[Seq[JsValue]].map(vector => JsonToVector(vector, "hmatrix")).toVector.asInstanceOf[Vector[Vector[HStone]]])
     val code = Code(JsonToVector(gameJson("code"), "matrix").asInstanceOf[Vector[Stone]])
     val turn = gameJson("turn").as[Int]
+    val state = JsonToState(gameJson("state"))
 
-    Game(new Field(matrix, hmatrix), code, turn, Play())
+    Game(new Field(matrix, hmatrix), code, turn, state)

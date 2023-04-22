@@ -25,6 +25,7 @@ package scala
 import aview.RestUI.RestUiAPI
 import aview.{GUI, TUI}
 import controller.ControllerComponent.RestControllerAPI
+import scala.io.StdIn.readLine
 
 import MastermindModule.given
 
@@ -50,5 +51,6 @@ object mastermind extends Thread:
 
     threadGui.start()
     //REST Services
+    
     Thread.sleep(1000)
     tui.run()

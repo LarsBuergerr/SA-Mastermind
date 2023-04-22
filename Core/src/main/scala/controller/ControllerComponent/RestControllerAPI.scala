@@ -18,7 +18,9 @@ import akka.stream.ActorMaterializer
 import controller.ControllerComponent.ControllerInterface
 import model.GameComponent.GameBaseImpl.PlayerInput
 import util.{MultiCharRequest, Observer}
+import util._
 import model.GameComponent.GameInterface
+import model.GameComponent.GameBaseImpl.{Stone, HintStone, HStone}
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.util.{Failure, Success}
@@ -60,25 +62,45 @@ class RestControllerAPI(using controller: ControllerInterface):
       path("controller"/ "tui") {
         complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "Mastermind\n\n" +controller.game.field.toString()))
       },
-      path("controller"/ "request"/ Segment) { command => {
+      //Todo
+      path("controller"/ "handleRequest" / Segment) { command => { 
 
         controller.request(controller.handleRequest(MultiCharRequest(command)))
         complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, command))
       }
       },
-      //Todo
-      path("controller"/ "handleRequest" / Segment) { command => {
+      get {
+        path("controller"/ "request"/ Segment) { command => {
+          val event = 
+            command match {
+              case "init" => InitStateEvent()
+              case "menu" => MenuStateEvent()
+              case "play" => PlayStateEvent()
+              case "quit" => QuitStateEvent()
+              case "help" => HelpStateEvent()
 
-        controller.request(controller.handleRequest(MultiCharRequest(command)))
-        complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, command))
-      }
+              case "pInp" => PlayerInputStateEvent()
+              case "pLos" => PlayerLoseStateEvent()
+              case "pWin" => PlayerWinStateEvent()
+              case "pAna" => PlayerAnalyzeEvent()
+              case _ => HelpStateEvent()
+            }
+          controller.request(event)
+          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, controller.gameToJson(controller.game)))
+          }
+        }
       },
-      //Todo
-      path("controller"/ "placeGuessAndHints" / Segment) { command => {
+      get {
+        path("controller"/ "placeGuessAndHints" / Segments) { command => {
+          //make Vector of Stones
+          val stonesVector = command(0).split("").toVector.map(stone => Stone(stone))
+          val hintsVector = command(1).split("").toVector.map(hint => HintStone(hint))
+          val turn = command(2).toInt
 
-        controller.request(controller.handleRequest(MultiCharRequest(command)))
-        complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, command))
-      }
+          controller.placeGuessAndHints(stonesVector)(hintsVector)(turn)
+          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, controller.gameToJson(controller.game)))
+          }
+        }
       },
       get {
         path("controller"/ "get") {
@@ -87,14 +109,14 @@ class RestControllerAPI(using controller: ControllerInterface):
       },
       get {
         path("controller"/ "redo") {
-          val game = controller.redo
-          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, controller.gameToJson(game)))
+          controller.redo
+          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, controller.gameToJson(controller.game)))
         }
       },
       get {
+        controller.undo
         path("controller"/ "undo") {
-          print(controller.undo)
-          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "Du kleiner HS"))
+          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, controller.gameToJson(controller.game)))
         }
       },
       //post maps create
@@ -105,20 +127,20 @@ class RestControllerAPI(using controller: ControllerInterface):
             //controller.save
             val fileIO = new FileIO()
             fileIO.save(controller.game)
-            complete(HttpEntity(ContentTypes.`application/json`, "Your Game has been saved"))
+            complete(HttpEntity(ContentTypes.`application/json`, "Game saved"))
           }
         }
       },
       get {
         path("controller"/ "load") {
           controller.load
-          complete(HttpEntity(ContentTypes.`application/json`, "Your save has been loaded"))
+          complete(HttpEntity(ContentTypes.`application/json`, controller.gameToJson(controller.game)))
         }
       },
       get {
         path("controller"/ "reset") {
           controller.reset
-          complete(HttpEntity(ContentTypes.`application/json`, "Your reset your game"))
+          complete(HttpEntity(ContentTypes.`application/json`, controller.gameToJson(controller.game)))
         }
       },
     )

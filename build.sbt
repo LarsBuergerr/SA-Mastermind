@@ -44,7 +44,7 @@ lazy val model: Project = Project(id = "Mastermind-Model-Module", base = file("M
   ).enablePlugins(JacocoPlugin)
 
 lazy val persistence: Project = Project(id = "Mastermind-Persistence-Module", base = file("Persistence"))
-  .dependsOn(model)
+  .dependsOn(model, tools)
   .settings(
     name := "Mastermind-Persistence-Module",
     version := "0.1.0-SNAPSHOT",

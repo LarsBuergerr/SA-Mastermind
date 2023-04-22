@@ -119,5 +119,4 @@ class FileIO extends FileIOInterface:
           val s = turn.toInt
           return new Game(new Field(m.asInstanceOf[Matrix[Stone]], hm.asInstanceOf[Matrix[HStone]]), c.asInstanceOf[Code], s, Play())
         case _ => 
-          print(yaml_data(0))
           return deserializationError("Game expected")

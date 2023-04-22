@@ -29,7 +29,7 @@ import akka.http.scaladsl.unmarshalling.Unmarshal
 //****************************************************************************** CLASS DEFINITION
 class TUI(using controller: ControllerInterface) extends Observer:
 
-  controller.add(this)
+  //controller.add(this)
 
   def run(): Unit =
     controller.request(InitStateEvent())
@@ -37,7 +37,6 @@ class TUI(using controller: ControllerInterface) extends Observer:
   
   //@todo Boolean return type for testing?
   def inputLoop(): Unit =
-    print(controller.game.state).toString() + "\n"
     val input = readLine(">> ")
     
     parseInput(input) match 
@@ -73,7 +72,6 @@ class TUI(using controller: ControllerInterface) extends Observer:
 
       case 1 =>  //Handles single char user input (first with CoR, then with State Pattern)
         val currentRequest = controller.handleRequest(SingleCharRequest(input))
-        print(currentRequest)
           currentRequest match
           case undo: UndoStateEvent  =>
             controller.undo
@@ -118,6 +116,7 @@ class TUI(using controller: ControllerInterface) extends Observer:
           return controller.request(currentRequest)
   
   override def update: Unit =
+    println()
     //println(controller.update)
-    println(controller.game.field)
-    println("Remaining Turns: " + (controller.game.field.matrix.rows - controller.game.currentTurn))
+    //println(controller.game.field)
+    //println("Remaining Turns: " + (controller.game.field.matrix.rows - controller.game.currentTurn))
