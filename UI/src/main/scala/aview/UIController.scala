@@ -11,6 +11,7 @@ import scala.util.{Try, Success, Failure}
 import play.api.libs.json.*
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import scala.concurrent.duration._
+import scala.concurrent.Await
 
 import FileIOComponent.fileIOJsonImpl.FileIO
 import model.GameComponent.GameInterface
@@ -18,6 +19,7 @@ import model.GameComponent.GameBaseImpl.{Stone, HintStone, HStone}
 import scalafx.scene.input.KeyCode.G
 import akka.stream.ActorMaterializer
 import _root_.util.Event
+import akka.http.javadsl.model.StatusCodes
 
 
 class UIController {
@@ -29,21 +31,23 @@ class UIController {
 
         implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
         implicit val executionContext = system.executionContext
-        val responseFuture = Http().singleRequest(HttpRequest(uri = "http://localhost:8080/controller/" + apiEndpoint))
 
-        responseFuture
-        .onComplete {
-            case Failure(_) => sys.error("Failed getting Json")
-            case Success(value) => {
-            Unmarshal(value.entity).to[String].onComplete {
-                case Failure(_) => sys.error("Failed unmarshalling")
-                case Success(value) => {
-                    val loadedGame = Json.parse(value)
-                    this.game = fio.JsonToGame(loadedGame)
-                    }
-                }
+        val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(uri = "http://localhost:8080/controller/" + apiEndpoint))
+
+        val res = responseFuture.flatMap { response =>
+        response.status match {
+            case StatusCodes.OK =>
+            Unmarshal(response.entity).to[String].map { jsonStr =>
+                val loadedGame = Json.parse(jsonStr)
+                print(s"Loaded Game: $loadedGame\n")
+                this.game = fio.JsonToGame(loadedGame)
+            }
+            case _ =>
+            Future.failed(new RuntimeException(s"HTTP request failed with status ${response.status} and entity ${response.entity}"))
             }
         }
+        // Wait for the future to complete and get the result
+        val result = Await.result(res, 10.seconds)
     }
 
     def fetchGame() = {
@@ -74,6 +78,20 @@ class UIController {
     def request(req: String) = {
         val endpoint = "request/" + req
         fetchData(endpoint)
+    }
+
+    def handleSingleCharReq(req: String) = {
+        val endpoint = "handleSingleCharReq/" + req
+        fetchData(endpoint)
+        print("Request: " + req + "\n")
+        print(this.game)
+    }
+
+    def handleMultiCharReq(req: String) = {
+        val endpoint = "handleMultiCharReq/" + req
+        fetchData(endpoint)
+        print("Request: " + req + "\n")
+        print(this.game)
     }
 
     def placeGuessAndHints(stoneVector: Vector[Stone], hints: Vector[HStone], turn: Int) =

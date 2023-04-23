@@ -26,6 +26,8 @@ import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.util.{Failure, Success}
 import akka.protobufv3.internal.compiler.PluginProtos.CodeGeneratorResponse.File
 import play.api.libs.json.*
+import scala.util.{Try, Success, Failure}
+
 
 //****************************************************************************** CLASS DEFINITION
 class RestControllerAPI(using controller: ControllerInterface):
@@ -49,6 +51,10 @@ class RestControllerAPI(using controller: ControllerInterface):
             <p><a href="controller/reset">GET ->     controller/reset</a></p>
             <p><a href="controller/save">GET  ->     controller/save</a></p>
             <p><a href="controller/get">GET  ->     controller/get</a></p>
+            <p><a href="controller/placeGuessAndHints">GET ->    controller/placeGuessAndHints</a></p>
+            <p><a href="controller/handleSingleCharReq">GET ->    controller/handleSingleCharReq</a></p>
+            <p><a href="controller/handleMultiCharReq">GET ->    controller/handleMultiCharReq</a></p>
+
           <br>
         <p><a href=""controller"/ /save">POST ->     controller/save</a></p>
         """.stripMargin
@@ -61,13 +67,6 @@ class RestControllerAPI(using controller: ControllerInterface):
       //Todo
       path("controller"/ "tui") {
         complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "Mastermind\n\n" +controller.game.field.toString()))
-      },
-      //Todo
-      path("controller"/ "handleRequest" / Segment) { command => { 
-
-        controller.request(controller.handleRequest(MultiCharRequest(command)))
-        complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, command))
-      }
       },
       get {
         path("controller"/ "request"/ Segment) { command => {
@@ -86,6 +85,71 @@ class RestControllerAPI(using controller: ControllerInterface):
               case _ => HelpStateEvent()
             }
           controller.request(event)
+          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, controller.gameToJson(controller.game)))
+          }
+        }
+      },
+      get {
+        path("controller"/ "handleSingleCharReq" / Segment) { str => { 
+        str.size match
+          case 0 =>  // Handles no user input -> stay in current state
+            controller.request(controller.handleRequest(SingleCharRequest(" ")))
+            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, controller.gameToJson(controller.game)))
+
+          case 1 =>  //Handles single char user input (first with CoR, then with State Pattern)
+            val currentRequest = controller.handleRequest(SingleCharRequest(str))
+              currentRequest match
+              case undo: UndoStateEvent  =>
+                controller.undo
+                controller.request(PlayerInputStateEvent())
+
+              case redo: RedoStateEvent  =>
+                controller.redo
+                controller.request(PlayerInputStateEvent())
+
+              case save: SaveStateEvent  =>
+                val fileIO = new FileIO()
+                fileIO.save(controller.game)
+                controller.request(PlayerInputStateEvent())
+
+              case load: LoadStateEvent  =>
+                controller.load
+                controller.request(PlayerInputStateEvent())
+
+              case _ => controller.request(currentRequest)
+              controller.request(controller.handleRequest(SingleCharRequest(str)))
+            print("after handleSingleCharReq")
+            print(controller.game)
+            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, controller.gameToJson(controller.game)))
+          }
+        }
+      },
+      get {
+        path("controller"/ "handleMultiCharReq" / Segment) { str => { 
+          val emptyVector: Vector[Stone] = Vector()
+          val currentRequest = controller.handleRequest(MultiCharRequest(str))
+          if(currentRequest.isInstanceOf[PlayerAnalyzeEvent]) then
+
+            val codeVector: Vector[Stone] =
+              Try(controller.game.buildVector(emptyVector)(str.toCharArray())) match
+                case Success(vector) => vector.asInstanceOf[Vector[Stone]]
+                case Failure(e) =>
+                  controller.request(controller.game.getDefaultInputRule(str))
+                  Vector.empty[Stone]
+
+            val hints = controller.game.getCode().compareTo(codeVector)
+            //print(hints)
+            controller.placeGuessAndHints(codeVector)(hints)(controller.game.currentTurn)
+            if hints.forall(p => p.stringRepresentation.equals("R")) then
+              controller.request(PlayerWinStateEvent())
+            else if (controller.game.field.matrix.rows - controller.game.currentTurn) == 0 then
+              controller.request(PlayerLoseStateEvent())
+            else
+              controller.request(PlayerInputStateEvent())
+          else  //Invalid input -> stay in current state
+            controller.request(currentRequest)
+          print("after handleMultiCharReq")
+          print(controller.game)
           complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, controller.gameToJson(controller.game)))
           }
         }

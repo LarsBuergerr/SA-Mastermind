@@ -53,7 +53,7 @@ class GUI() extends JFXApp3:
       }
     })
   }
-    
+
   def refreshScene() : Scene = {
     uiController.fetchGame()
     currentStoneVector = Vector.from[Stone](Array.fill[Stone](uiController.game.field.matrix.cols)(Stone("E")))

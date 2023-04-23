@@ -9,7 +9,6 @@
 package aview
 
 //****************************************************************************** IMPORTS
-import controller.ControllerComponent.ControllerInterface
 import model.GameComponent.GameBaseImpl._
 import util.Observer
 import util._
@@ -27,12 +26,13 @@ import akka.http.scaladsl.server.{ExceptionHandler, Route}
 import akka.http.scaladsl.unmarshalling.Unmarshal
 
 //****************************************************************************** CLASS DEFINITION
-class TUI(using controller: ControllerInterface) extends Observer:
+class TUI():
 
-  //controller.add(this)
+  val uiController = new UIController()
+  uiController.fetchGame()
 
   def run(): Unit =
-    controller.request(InitStateEvent())
+    print(uiController.game)
     inputLoop()
   
   //@todo Boolean return type for testing?
@@ -51,10 +51,9 @@ class TUI(using controller: ControllerInterface) extends Observer:
       case help: Help         =>
         inputLoop()
       case menu: Menu         =>
-        print("Code:" + controller.game.getCode().toString() + "\n")
+        print("Code:" + uiController.game.getCode().toString() + "\n")
         inputLoop()
       case play: Play         =>
-        println(controller.game.field.toString())
         inputLoop()    
       case quit: Quit         =>
         print("--- See you later alligator...\n")
@@ -67,56 +66,17 @@ class TUI(using controller: ControllerInterface) extends Observer:
 
     chars.size match
       case 0 =>  // Handles no user input -> stay in current state
-        val currentRequest = controller.handleRequest(SingleCharRequest(" "))
-        return controller.request(currentRequest)
+        uiController.handleSingleCharReq("h")
+        return uiController.game.state
 
       case 1 =>  //Handles single char user input (first with CoR, then with State Pattern)
-        val currentRequest = controller.handleRequest(SingleCharRequest(input))
-          currentRequest match
-          case undo: UndoStateEvent  =>
-            controller.undo
-            return controller.request(PlayerInputStateEvent())
-
-          case redo: RedoStateEvent  =>
-            controller.redo
-            return controller.request(PlayerInputStateEvent())
-
-          case save: SaveStateEvent  =>
-            val fileIO = new FileIO()
-            fileIO.save(controller.game)
-            return controller.request(PlayerInputStateEvent())
-
-          case load: LoadStateEvent  =>
-            controller.load
-            return controller.request(PlayerInputStateEvent())
-
-          case _ => return controller.request(currentRequest)
+        uiController.handleSingleCharReq(input)
+        return uiController.game.state
 
       case _ => //Handles multi char user input
-        val currentRequest = controller.handleRequest(MultiCharRequest(input))
-        if(currentRequest.isInstanceOf[PlayerAnalyzeEvent]) then
+        uiController.handleMultiCharReq(input)
+        return uiController.game.state
 
-          val codeVector: Vector[Stone] =
-            Try(controller.game.buildVector(emptyVector)(chars)) match
-              case Success(vector) => vector.asInstanceOf[Vector[Stone]]
-              case Failure(e) =>
-                controller.request(controller.game.getDefaultInputRule(input))
-                Vector.empty[Stone]
-
-          val hints         = controller.game.getCode().compareTo(codeVector)
-          //print(hints)
-          controller.placeGuessAndHints(codeVector)(hints)(controller.game.currentTurn)
-          if hints.forall(p => p.stringRepresentation.equals("R")) then
-            return controller.request(PlayerWinStateEvent())
-          else if (controller.game.field.matrix.rows - controller.game.currentTurn) == 0 then
-            return controller.request(PlayerLoseStateEvent())
-          else
-            return controller.request(PlayerInputStateEvent())
-        else  //Invalid input -> stay in current state
-          return controller.request(currentRequest)
-  
-  override def update: Unit =
-    println()
-    //println(controller.update)
-    //println(controller.game.field)
-    //println("Remaining Turns: " + (controller.game.field.matrix.rows - controller.game.currentTurn))
+  def update() =
+    println(uiController.game.field)
+    println("Remaining Turns: " + (uiController.game.field.matrix.rows - uiController.game.currentTurn))
