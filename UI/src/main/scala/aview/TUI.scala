@@ -32,11 +32,11 @@ class TUI():
   uiController.fetchGame()
 
   def run(): Unit =
-    print(uiController.game)
     inputLoop()
   
   //@todo Boolean return type for testing?
   def inputLoop(): Unit =
+    update()
     val input = readLine(">> ")
     
     parseInput(input) match 

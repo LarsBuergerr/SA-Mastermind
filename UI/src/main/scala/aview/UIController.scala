@@ -39,7 +39,6 @@ class UIController {
             case StatusCodes.OK =>
             Unmarshal(response.entity).to[String].map { jsonStr =>
                 val loadedGame = Json.parse(jsonStr)
-                print(s"Loaded Game: $loadedGame\n")
                 this.game = fio.JsonToGame(loadedGame)
             }
             case _ =>
@@ -83,15 +82,11 @@ class UIController {
     def handleSingleCharReq(req: String) = {
         val endpoint = "handleSingleCharReq/" + req
         fetchData(endpoint)
-        print("Request: " + req + "\n")
-        print(this.game)
     }
 
     def handleMultiCharReq(req: String) = {
         val endpoint = "handleMultiCharReq/" + req
         fetchData(endpoint)
-        print("Request: " + req + "\n")
-        print(this.game)
     }
 
     def placeGuessAndHints(stoneVector: Vector[Stone], hints: Vector[HStone], turn: Int) =

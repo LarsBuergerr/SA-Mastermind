@@ -35,10 +35,6 @@ class RestControllerAPI(using controller: ControllerInterface):
   implicit val system: ActorSystem[Nothing] = ActorSystem(Behaviors.empty, "my-system")
   implicit val executionContext: ExecutionContextExecutor = system.executionContext
 
-  //print("before redo")
-  //print(controller.game)
-  //print("after redo")
-
   val RestUIPort = 8080
   val routes: String =
     """
@@ -118,8 +114,6 @@ class RestControllerAPI(using controller: ControllerInterface):
 
               case _ => controller.request(currentRequest)
               controller.request(controller.handleRequest(SingleCharRequest(str)))
-            print("after handleSingleCharReq")
-            print(controller.game)
             complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, controller.gameToJson(controller.game)))
           }
         }
@@ -138,7 +132,6 @@ class RestControllerAPI(using controller: ControllerInterface):
                   Vector.empty[Stone]
 
             val hints = controller.game.getCode().compareTo(codeVector)
-            //print(hints)
             controller.placeGuessAndHints(codeVector)(hints)(controller.game.currentTurn)
             if hints.forall(p => p.stringRepresentation.equals("R")) then
               controller.request(PlayerWinStateEvent())
@@ -148,8 +141,6 @@ class RestControllerAPI(using controller: ControllerInterface):
               controller.request(PlayerInputStateEvent())
           else  //Invalid input -> stay in current state
             controller.request(currentRequest)
-          print("after handleMultiCharReq")
-          print(controller.game)
           complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, controller.gameToJson(controller.game)))
           }
         }
