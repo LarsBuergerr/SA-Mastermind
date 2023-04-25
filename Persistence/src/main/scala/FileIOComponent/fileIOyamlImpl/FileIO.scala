@@ -9,7 +9,7 @@ import net.jcazevedo.moultingyaml._
 
 class FileIO extends FileIOInterface:
   
-  override def load(game: GameInterface): GameInterface = 
+  override def load(): GameInterface = 
     val source = scala.io.Source.fromFile("game.yaml")
     val yaml = source.mkString.parseYaml
     source.close()

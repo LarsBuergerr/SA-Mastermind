@@ -6,6 +6,6 @@ import play.api.libs.json.*
 
 trait FileIOInterface:
 
-  def load(game: GameInterface): GameInterface
+  def load(): GameInterface
 
   def save(game: GameInterface): Unit

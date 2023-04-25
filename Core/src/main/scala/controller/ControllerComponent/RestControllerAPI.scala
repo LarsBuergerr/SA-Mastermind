@@ -192,7 +192,7 @@ class RestControllerAPI(using controller: ControllerInterface):
       },
       get {
         path("controller"/ "load") {
-          controller.load
+          controller.game = controller.load
           complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, controller.gameToJson(controller.game)))
         }
       },

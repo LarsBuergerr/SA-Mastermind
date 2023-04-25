@@ -27,8 +27,6 @@ trait ControllerInterface extends Observable:
   def undo: GameInterface
     
   def reset: Field
-  
-  def save: Unit
 
   def save(game: GameInterface): Unit
 

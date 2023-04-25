@@ -12,13 +12,16 @@ import model.GameComponent.GameInterface
 import model.GameComponent.GameBaseImpl.Game
 import model.GameComponent.GameBaseImpl.{State, Stone, HStone, Field}
 import FileIOComponent.FileIOInterface
+import FileIOComponent.fileIOJsonImpl.FileIO
 import controller.ControllerComponent.ControllerInterface
 import util.{Request, Event, Observable}
 import play.api.libs.json.*
+import controller.ControllerComponent.aview.PersistenceController
 
 //****************************************************************************** CLASS DEFINITION
-class Controller(using var game: GameInterface, val fileIO: FileIOInterface) extends ControllerInterface:
+class Controller(using var game: GameInterface) extends ControllerInterface:
 
+  val persistenceController = new PersistenceController
   val invoker = new Invoker
   
   def getGame: GameInterface = game
@@ -52,17 +55,13 @@ class Controller(using var game: GameInterface, val fileIO: FileIOInterface) ext
     notifyObservers
     game
 
-  def save =
-    fileIO.save(game)
-
-
   def save(game: GameInterface) =
-    fileIO.save(game)
+    persistenceController.save(game)
 
   def load =
-    game = fileIO.load(game)
+    persistenceController.load()
     notifyObservers
-    game
+    persistenceController.game
 
   def reset =
     game = game.resetGame()

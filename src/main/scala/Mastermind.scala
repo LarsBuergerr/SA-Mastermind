@@ -22,9 +22,10 @@ package scala
 
 //****************************************************************************** IMPORTS
 
-import aview.RestUI.RestUiAPI
 import aview.{GUI, TUI}
 import controller.ControllerComponent.RestControllerAPI
+import FileIOComponent.FileIOInterface
+import FileIOComponent.RestPersistenceAPI
 import scala.io.StdIn.readLine
 
 import MastermindModule.given
@@ -32,10 +33,10 @@ import MastermindModule.given
 //****************************************************************************** MAIN
 object mastermind extends Thread:
 
-
-  val restUI = RestUiAPI()
+  val restPersistenceAPI = RestPersistenceAPI()
   val restConAPI = RestControllerAPI()
-  restUI.start()
+
+  restPersistenceAPI.start()
   restConAPI.start()
 
 
