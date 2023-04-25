@@ -21,6 +21,7 @@ import util.{MultiCharRequest, Observer}
 import util._
 import model.GameComponent.GameInterface
 import model.GameComponent.GameBaseImpl.{Stone, HintStone, HStone}
+import FileIOComponent.fileIOJsonImpl.FileIO
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.util.{Failure, Success}
@@ -169,33 +170,36 @@ class RestControllerAPI(using controller: ControllerInterface):
         }
       },
       get {
-        controller.undo
         path("controller"/ "undo") {
+          controller.undo
           complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, controller.gameToJson(controller.game)))
         }
       },
       //post maps create
       //TODO
-      post {
-        path("controller"/ "save") {
-          entity(as[String]) { game =>
-            //controller.save
-            val fileIO = new FileIO()
-            fileIO.save(controller.game)
-            complete(HttpEntity(ContentTypes.`application/json`, "Game saved"))
+      path("controller"/ "save") {
+        post {
+          entity(as[String]) { saveGame =>
+            //turn String to Json
+            val jsonGame = Json.parse(saveGame)
+            //turn Json to Game
+            val fio = new FileIO()
+            val game = fio.JsonToGame(jsonGame)
+            controller.save(game)
+            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "Game saved"))
           }
         }
       },
       get {
         path("controller"/ "load") {
           controller.load
-          complete(HttpEntity(ContentTypes.`application/json`, controller.gameToJson(controller.game)))
+          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, controller.gameToJson(controller.game)))
         }
       },
       get {
         path("controller"/ "reset") {
           controller.reset
-          complete(HttpEntity(ContentTypes.`application/json`, controller.gameToJson(controller.game)))
+          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, controller.gameToJson(controller.game)))
         }
       },
     )

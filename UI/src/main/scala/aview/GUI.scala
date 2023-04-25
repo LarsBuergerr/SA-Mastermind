@@ -365,7 +365,7 @@ class GUI() extends JFXApp3:
     update
 
   def save_Button_Handler() : Unit =
-    print("NOT IMPLEMENTED YET")
+    uiController.save()
 
   def load_Button_Handler() : Unit =
     uiController.load()

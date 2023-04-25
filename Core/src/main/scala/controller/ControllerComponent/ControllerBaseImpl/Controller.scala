@@ -55,10 +55,14 @@ class Controller(using var game: GameInterface, val fileIO: FileIOInterface) ext
   def save =
     fileIO.save(game)
 
+
+  def save(game: GameInterface) =
+    fileIO.save(game)
+
   def load =
     game = fileIO.load(game)
     notifyObservers
-    game.field
+    game
 
   def reset =
     game = game.resetGame()

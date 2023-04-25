@@ -30,7 +30,9 @@ trait ControllerInterface extends Observable:
   
   def save: Unit
 
-  def load: Field
+  def save(game: GameInterface): Unit
+
+  def load: GameInterface
 
   def update: String
     

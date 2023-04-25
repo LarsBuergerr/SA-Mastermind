@@ -46,7 +46,7 @@ class UIController {
             }
         }
         // Wait for the future to complete and get the result
-        val result = Await.result(res, 10.seconds)
+        Await.result(res, 10.seconds)
     }
 
     def fetchGame() = {
@@ -67,6 +67,16 @@ class UIController {
     def load() = {
         val endpoint = "load"
         fetchData(endpoint)
+    }
+    def save() = {
+        implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
+
+        implicit val executionContext = system.executionContext
+
+        val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
+        method = HttpMethods.POST,
+        uri = "http://localhost:8080/controller/save",
+        entity = fio.gameToJson(game).toString()))
     }
 
     def reset() = {
