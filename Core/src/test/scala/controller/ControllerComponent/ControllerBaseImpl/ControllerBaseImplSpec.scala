@@ -14,7 +14,7 @@ import FileIOComponent.fileIOJsonImpl.FileIO
 //****************************************************************************** CLASS DEFINITION
 class ControllerBaseImplSpec extends AnyWordSpec{
   val game = new Game()
-  val defaultController = new Controller(using game, new FileIO)
+  val defaultController = new Controller(using game)
 
   "A default controller" should {
     "contain a default field" in{
