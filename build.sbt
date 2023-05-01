@@ -23,6 +23,9 @@ lazy val allDependencies = Seq(
   slf4jNop
 )
 
+/** Docker */
+val dockerAppPath = "/app/"
+
 lazy val core: Project = Project(id = "Mastermind-Core-Module", base = file("Core"))
   .dependsOn(model, tools, persistence)
   .settings(

@@ -1,0 +1,36 @@
+version: "3.9"
+
+services:
+  persistence:
+    image: mastermind-persistence-service
+    build:
+      context: ./Persistence/
+      dockerfile: ./Dockerfile
+    ports:
+      - "8081:8081"
+    stdin_open: true
+    container_name: persistence_service
+    environment:
+      FILEIO_SERVICE_HOST: persistence
+      FILEIO_SERVICE_PORT: 8081
+    tty: true
+
+  mastermind:
+    image: mastermind-core-service
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    ports:
+      - "8080:8080"
+    stdin_open: true
+    container_name: mastermind-core-service
+    depends_on:
+      - persistence
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    environment:
+      DISPLAY: $DISPLAY
+      CONNECTFOUR_SERVICE_HOST: mastermind
+      CONNECTFOUR_SERVICE_PORT: 8080
+      FILEIO_SERVICE_HOST: persistence
+      FILEIO_SERVICE_PORT: 8081
