@@ -8,29 +8,44 @@ services:
       dockerfile: ./Dockerfile
     ports:
       - "8081:8081"
-    stdin_open: true
     container_name: persistence_service
     environment:
       FILEIO_SERVICE_HOST: persistence
       FILEIO_SERVICE_PORT: 8081
     tty: true
 
-  mastermind:
+  core:
+
     image: mastermind-core-service
     build:
-      context: ./
+      context: ./Core/
       dockerfile: ./Dockerfile
     ports:
       - "8080:8080"
-    stdin_open: true
-    container_name: mastermind-core-service
+    container_name: core_service
     depends_on:
+      - persistence
+    environment:
+      CORE_SERVICE_HOST: core
+      CORE_SERVICE_PORT: 8080
+    tty: true
+
+  ui:
+    network_mode: "host"
+    image: mastermind-ui-service
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    stdin_open: true
+    container_name: ui_service
+    depends_on:
+      - core
       - persistence
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
     environment:
       DISPLAY: $DISPLAY
-      CONNECTFOUR_SERVICE_HOST: mastermind
-      CONNECTFOUR_SERVICE_PORT: 8080
       FILEIO_SERVICE_HOST: persistence
       FILEIO_SERVICE_PORT: 8081
+      CORE_SERVICE_HOST: core
+      CORE_SERVICE_PORT: 8080

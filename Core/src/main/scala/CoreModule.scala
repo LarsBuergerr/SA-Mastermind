@@ -16,34 +16,28 @@
   * © LarsBuergerr & Smokey95
   */
 
-//****************************************************************************** PACKAGE  
-
-package scala
+package controller
 
 //****************************************************************************** IMPORTS
+import controller.ControllerComponent.ControllerInterface
+import controller.ControllerComponent.ControllerBaseImpl.Controller
+//import controller.ControllerComponent.ControllerMockImpl.Controller
 
-import aview.{GUI, TUI}
-import controller.ControllerComponent.RestControllerAPI
-import FileIOComponent.FileIOInterface
-import FileIOComponent.RestPersistenceAPI
-import scala.io.StdIn.readLine
+import model.GameComponent.GameInterface
+import model.GameComponent.GameBaseImpl.Game
+//import model.GameComponent.GameMockImpl.Game
 
-import MastermindModule.given
+import model.GameComponent.GameBaseImpl.{Code, Play}
 
-//****************************************************************************** MAIN
-object mastermind extends Thread:
-  val tui = TUI()
-  //val gui = GUI()
+import model.GameModeComponent.GameModeInterface
+import model.GameModeComponent.GameModeBaseImpl.GameMode
+//import model.GameModeComponent.GameModeMockImpl.GameMode
 
-  @main 
-  override def start(): Unit =
-    
-//    val threadGui = new Thread:
-//      override def run(): Unit =
-//        gui.main(Array[String]())
-//
-//    threadGui.start()
-//    //REST Services
-//
-//    Thread.sleep(1000)
-    tui.run()
+import controller.ControllerComponent.ControllerBaseImpl.Controller
+import controller.ControllerComponent.ControllerInterface
+
+//****************************************************************************** OBJECT DEFINITION
+object CoreModule:
+  val field = GameMode.strategy_medium
+  given GameInterface       = Game(field, new Code(field.matrix.cols), 0, Play())
+  given ControllerInterface = Controller()

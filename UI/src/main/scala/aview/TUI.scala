@@ -22,14 +22,15 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives.*
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity, StatusCode, HttpMethods, HttpResponse, HttpRequest}
 import akka.http.scaladsl.server.{ExceptionHandler, Route}
-
+import model.GameModeComponent.GameModeBaseImpl.GameMode
 import akka.http.scaladsl.unmarshalling.Unmarshal
 
 //****************************************************************************** CLASS DEFINITION
 class TUI():
 
   val uiController = new UIController()
-  uiController.fetchGame()
+  uiController.game = new Game(GameMode.strategy_medium, new Code(4), 0, Play())
+  //uiController.fetchGame()
 
   def run(): Unit =
     inputLoop()

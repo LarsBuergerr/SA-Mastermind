@@ -205,11 +205,11 @@ class RestControllerAPI(using controller: ControllerInterface):
     )
 
   def start(): Unit = {
-    val binding = Http().newServerAt("localhost", RestUIPort).bind(route)
+    val binding = Http().newServerAt("0.0.0.0", RestUIPort).bind(route)
 
     binding.onComplete {
       case Success(binding) => {
-        println(s"Mastermind ControllerAPI service online at http://localhost:$RestUIPort/")
+        println(s"Mastermind ControllerAPI service online at http://0.0.0.0:$RestUIPort/")
       }
       case Failure(exception) => {
         println(s"Mastermind ControllerAPI service failed to start: ${exception.getMessage}")
