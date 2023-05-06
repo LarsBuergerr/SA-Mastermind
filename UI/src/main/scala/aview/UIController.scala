@@ -32,7 +32,7 @@ class UIController {
         implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
         implicit val executionContext = system.executionContext
 
-        val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(uri = "http://core:8080/controller/" + apiEndpoint))
+        val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(uri = "http://localhost:8080/controller/" + apiEndpoint))
 
         val res = responseFuture.flatMap { response =>
         response.status match {
@@ -74,7 +74,7 @@ class UIController {
 
         val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
         method = HttpMethods.POST,
-        uri = "http://core:8080/controller/save",
+        uri = "http://localhost:8080/controller/save",
         entity = fio.gameToJson(game).toString()))
     }
 

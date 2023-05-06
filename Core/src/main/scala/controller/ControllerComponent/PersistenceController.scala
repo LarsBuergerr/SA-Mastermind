@@ -34,7 +34,7 @@ class PersistenceController {
         implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
         implicit val executionContext = system.executionContext
 
-        val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(uri = "http://persistence:8081/persistence/" + apiEndpoint))
+        val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(uri = "http://0.0.0.0:8081/persistence/" + apiEndpoint))
 
         val res = responseFuture.flatMap { response =>
         response.status match {
@@ -64,7 +64,7 @@ class PersistenceController {
 
         val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
         method = HttpMethods.POST,
-        uri = "http://persistence:8081/persistence/save",
+        uri = "http://0.0.0.0:8081/persistence/save",
         entity = fio.gameToJson(game).toString()))
     }
 }
