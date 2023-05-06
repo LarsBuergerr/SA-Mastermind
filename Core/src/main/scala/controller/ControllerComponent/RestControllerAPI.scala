@@ -209,7 +209,7 @@ class RestControllerAPI(using controller: ControllerInterface):
 
     binding.onComplete {
       case Success(binding) => {
-        println(s"Mastermind ControllerAPI service online at http://0.0.0.0:$RestUIPort/")
+        println(s"Mastermind ControllerAPI service online at http://localhost:$RestUIPort/")
       }
       case Failure(exception) => {
         println(s"Mastermind ControllerAPI service failed to start: ${exception.getMessage}")

@@ -15,7 +15,6 @@ services:
     tty: true
 
   core:
-
     image: mastermind-core-service
     build:
       context: ./Core/

@@ -85,7 +85,7 @@ class RestPersistenceAPI():
 
     binding.onComplete {
       case Success(binding) => {
-        println(s"Mastermind PersistenceAPI service online at http://0.0.0.0:$RestUIPort/")
+        println(s"Mastermind PersistenceAPI service online at http://localhost:$RestUIPort/")
       }
       case Failure(exception) => {
         println(s"Mastermind PersistenceAPI service failed to start: ${exception.getMessage}")
