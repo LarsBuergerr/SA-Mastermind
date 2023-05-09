@@ -81,7 +81,7 @@ lazy val ui: Project = Project(id = "Mastermind-UI-Module", base = file("UI"))
   ).enablePlugins(JacocoPlugin)
 
 lazy val database: Project = Project(id = "Mastermind-Database-Module", base = file("Database"))
-  .dependsOn(model, tools)
+  .dependsOn(model, persistence, tools)
   .settings(
     name := "Mastermind-Database-Module",
     version := "0.1.0-SNAPSHOT",
