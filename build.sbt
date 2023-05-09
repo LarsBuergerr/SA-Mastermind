@@ -34,6 +34,7 @@ lazy val core: Project = Project(id = "Mastermind-Core-Module", base = file("Cor
   .settings(
     name := "Mastermind-Core-Module",
     version := "0.1.0-SNAPSHOT",
+    dockerExposedPorts := Seq(8080),
     scalaVersion := scala3Version,
     commonSettings,
     libraryDependencies ++= allDependencies
@@ -52,11 +53,9 @@ lazy val model: Project = Project(id = "Mastermind-Model-Module", base = file("M
 lazy val persistence: Project = Project(id = "Mastermind-Persistence-Module", base = file("Persistence"))
   .dependsOn(model, tools)
   .settings(
-    //expose port 8081
-    //Docker / dockerExposedPorts := Seq(8081),
-
     name := "Mastermind-Persistence-Module",
     version := "0.1.0-SNAPSHOT",
+    dockerExposedPorts := Seq(8081),
     scalaVersion := scala3Version,
     commonSettings,
     libraryDependencies ++= allDependencies
@@ -87,6 +86,7 @@ lazy val database: Project = Project(id = "Mastermind-Database-Module", base = f
     name := "Mastermind-Database-Module",
     version := "0.1.0-SNAPSHOT",
     scalaVersion := scala3Version,
+    //dockerExposedPorts := Seq(8082),
     commonSettings,
     libraryDependencies ++= allDependencies
   ).enablePlugins(JacocoPlugin)

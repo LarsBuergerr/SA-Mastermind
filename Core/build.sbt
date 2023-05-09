@@ -1,1 +1,1 @@
-ThisBuild / Docker / dockerExposedPorts := Seq(8080)
+//ThisBuild / Docker / dockerExposedPorts := Seq(8080)
