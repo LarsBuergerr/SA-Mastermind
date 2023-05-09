@@ -20,14 +20,17 @@ lazy val allDependencies = Seq(
   akkaActorTyped,
   akkaStream,
   akkaActor,
-  slf4jNop
+  slf4jNop,
+  slick,
+  mysql
 )
 
-/** Docker */
+/** Docker **/
 val dockerAppPath = "/app/"
 
+/** Modules **/
 lazy val core: Project = Project(id = "Mastermind-Core-Module", base = file("Core"))
-  .dependsOn(model, tools, persistence)
+  .dependsOn(model, tools, persistence, database)
   .settings(
     name := "Mastermind-Core-Module",
     version := "0.1.0-SNAPSHOT",
@@ -78,9 +81,19 @@ lazy val ui: Project = Project(id = "Mastermind-UI-Module", base = file("UI"))
     libraryDependencies ++= allDependencies
   ).enablePlugins(JacocoPlugin)
 
+lazy val database: Project = Project(id = "Mastermind-Database-Module", base = file("Database"))
+  .dependsOn(model, tools)
+  .settings(
+    name := "Mastermind-Database-Module",
+    version := "0.1.0-SNAPSHOT",
+    scalaVersion := scala3Version,
+    commonSettings,
+    libraryDependencies ++= allDependencies
+  ).enablePlugins(JacocoPlugin)
+
 lazy val root: Project = Project(id = "Mastermind-Root-Module", base = file("."))
-  .dependsOn(ui, core, model, tools, persistence)
-  .aggregate(ui, core, model, tools, persistence)
+  .dependsOn(ui, core, model, tools, persistence, database)
+  .aggregate(ui, core, model, tools, persistence, database)
   .settings(
     run / connectInput := true,
     name := "Mastermind-Root-Module",
