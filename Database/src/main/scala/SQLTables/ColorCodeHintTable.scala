@@ -1,5 +1,0 @@
-package SQLTables
-
-class ColorCodeHintTable {
-
-}
