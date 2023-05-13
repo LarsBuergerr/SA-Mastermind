@@ -112,6 +112,14 @@ class RestControllerAPI(using controller: ControllerInterface):
                 controller.load
                 controller.request(PlayerInputStateEvent())
 
+              case dbsave: DBSaveStateEvent  =>
+                controller.dbsave(controller.game)
+                controller.request(PlayerInputStateEvent())
+
+              case dbload: DBLoadStateEvent  =>
+                controller.dbload
+                controller.request(PlayerInputStateEvent())
+
               case _ => 
                 controller.request(currentRequest)
                 

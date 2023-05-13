@@ -124,6 +124,8 @@ case class Game(val field: Field = new Field(10, 4),
     val RedoInputRule: PartialFunctionRule = singleCharRule(_ == "r", RedoStateEvent())
     val SaveInputRule: PartialFunctionRule = singleCharRule(_ == "s", SaveStateEvent())
     val LoadInputRule: PartialFunctionRule = singleCharRule(_ == "l", LoadStateEvent())
+    val DBSaveInputRule: PartialFunctionRule = singleCharRule(_ == "d", DBSaveStateEvent())
+    val DBLoadInputRule: PartialFunctionRule = singleCharRule(_ == "b", DBLoadStateEvent())
     
     //defines the default rule
     def DefaultInputRule(userinput: String): Event =

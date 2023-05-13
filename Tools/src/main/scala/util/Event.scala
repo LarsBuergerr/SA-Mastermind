@@ -29,3 +29,5 @@ case class UndoStateEvent()         extends Event
 case class RedoStateEvent()         extends Event
 case class SaveStateEvent()         extends Event
 case class LoadStateEvent()         extends Event
+case class DBSaveStateEvent()       extends Event
+case class DBLoadStateEvent()       extends Event

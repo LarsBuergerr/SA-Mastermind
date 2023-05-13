@@ -67,4 +67,19 @@ class PersistenceController {
         uri = "http://persistence_service:8081/persistence/save",
         entity = fio.gameToJson(game).toString()))
     }
+
+    def dbload() = {
+        val endpoint = "dbload"
+        fetchData(endpoint)
+    }
+
+    def dbsave(game: GameInterface) = {
+        implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
+        implicit val executionContext = system.executionContext
+
+        val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
+        method = HttpMethods.POST,
+        uri = "http://persistence_service:8081/persistence/dbsave",
+        entity = fio.gameToJson(game).toString()))
+    }
 }

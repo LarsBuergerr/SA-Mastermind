@@ -1,3 +1,5 @@
+package scala
+
 import model.GameComponent.GameInterface
 import scala.util.Try
 

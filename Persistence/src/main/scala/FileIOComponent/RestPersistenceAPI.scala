@@ -23,6 +23,7 @@ import util._
 import model.GameComponent.GameInterface
 import model.GameComponent.GameBaseImpl.{Stone, HintStone, HStone}
 import FileIOComponent.fileIOJsonImpl.FileIO
+import SlickDB.SlickDAO
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.util.{Failure, Success}
@@ -38,6 +39,7 @@ class RestPersistenceAPI():
   implicit val executionContext: ExecutionContextExecutor = system.executionContext
 
   val fileIO = new FileIO()
+  val slickDAO = new SlickDAO() 
   val RestUIPort = 8081
   val routes: String =
     """
@@ -78,6 +80,22 @@ class RestPersistenceAPI():
           complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, fileIO.gameToJson(game).toString))
         }
       },
+
+      path("persistence" / "dbsave") {
+        post {
+          entity(as[String]) { saveGame =>
+            print("saved Game")
+            //turn String to Json
+            val jsonGame = Json.parse(saveGame)
+            //save to db
+            val fio = new FileIO()
+            val game = fio.JsonToGame(jsonGame)
+            slickDAO.save(game)
+
+            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "Game saved"))
+          }
+        }
+      }
     )
 
   def start(): Unit = {
