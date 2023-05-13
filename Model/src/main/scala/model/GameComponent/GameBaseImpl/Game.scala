@@ -35,7 +35,9 @@ case class Game(val field: Field = new Field(10, 4),
     RequestHandlerSCR.UndoInputRule orElse
     RequestHandlerSCR.RedoInputRule orElse
     RequestHandlerSCR.SaveInputRule orElse
-    RequestHandlerSCR.LoadInputRule
+    RequestHandlerSCR.LoadInputRule orElse
+    RequestHandlerSCR.DBLoadInputRule orElse
+    RequestHandlerSCR.DBSaveInputRule
   
   /**
     * Calls the responsible chain

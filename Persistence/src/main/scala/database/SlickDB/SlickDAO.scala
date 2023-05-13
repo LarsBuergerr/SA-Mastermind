@@ -17,6 +17,8 @@ import java.sql.SQLNonTransientException
 import play.api.libs.json.{JsObject, Json}
 import slick.jdbc.JdbcBackend.Database
 import slick.jdbc.MySQLProfile.api.*
+import model.GameComponent.GameBaseImpl.Game
+import play.api.libs.json.JsValue
 
 val WAIT_TIME = 5.seconds
 val WAIT_DB = 5000
@@ -57,8 +59,40 @@ class SlickDAO extends DAOInterface {
   }
   println("tables created")
 
-  override def load(id: Option[Int] = None): Try[GameInterface] =
-    ??? // TODO
+  override def load(id: Option[Int] = None): Try[GameInterface] = {
+    print("got into db load\n")
+
+    print("another print before the try\n")
+    Try {
+      print("before query")
+      val query = id.map(id => gameTable.filter(_.id === id))
+        .getOrElse(gameTable.filter(_.id === gameTable.map(_.id).max))
+
+      print(query.result)
+      val game = Await.result(database.run(query.result), WAIT_TIME)
+
+      print(game)
+      val matrix = game.head._2
+      print(matrix)
+      val hmatrix = game.head._3
+      print(hmatrix)
+      val code = game.head._4
+      print(code)
+      val turn = game.head._5
+      print(turn)
+      val state = game.head._6
+
+      val jsonGame = Json.obj(
+        "matrix" -> Json.parse(matrix),
+        "hmatrix" -> Json.parse(hmatrix),
+        "code" -> Json.parse(code),
+        "turn" -> Json.toJson(turn),
+        "state" -> Json.toJson(state)
+      )
+      print("end of function\n")
+      fileIO.JsonToGame(jsonGame)
+    }
+  }
 
   override def save(game: GameInterface) =
     Try {

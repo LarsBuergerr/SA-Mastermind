@@ -95,6 +95,13 @@ class RestPersistenceAPI():
             complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "Game saved"))
           }
         }
+      },
+
+      get {
+        path("persistence" / "dbload") {
+          val game = slickDAO.load(Some(1))
+          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, fileIO.gameToJson(game.asInstanceOf[GameInterface]).toString))
+        }
       }
     )
 
