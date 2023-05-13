@@ -81,11 +81,11 @@ class RestPersistenceAPI():
     )
 
   def start(): Unit = {
-    val binding = Http().newServerAt("localhost", RestUIPort).bind(route)
+    val binding = Http().newServerAt("persistence_service", RestUIPort).bind(route)
 
     binding.onComplete {
       case Success(binding) => {
-        println(s"Mastermind PersistenceAPI service online at http://localhost:$RestUIPort/")
+        println(s"Mastermind PersistenceAPI service online at http://persistence_service:$RestUIPort/")
       }
       case Failure(exception) => {
         println(s"Mastermind PersistenceAPI service failed to start: ${exception.getMessage}")

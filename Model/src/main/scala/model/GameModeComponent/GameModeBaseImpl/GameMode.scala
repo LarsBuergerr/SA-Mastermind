@@ -18,7 +18,7 @@ import scala.io.StdIn.readLine
 //****************************************************************************** OBJECT DEFINITION
 object GameMode extends GameModeInterface:
 
-  val selectMode = parseInput()
+  val selectMode = "Not used anymore!!!!"
 
   def strategy_easy =   new Field(12, 4, Stone("E"), HintStone("E"))
   

@@ -45,7 +45,7 @@ import controller.ControllerComponent.ControllerInterface
 
 //****************************************************************************** OBJECT DEFINITION
 object MastermindModule:
-  val field = GameMode.selectMode
+  val field = GameMode.strategy_medium
   given GameInterface       = Game(field, new Code(field.matrix.cols), 0, Play())
   given ControllerInterface = Controller()
   given FileIOInterface     = FileIO()

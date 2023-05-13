@@ -2,7 +2,7 @@ name: Scala Codecov
 
 on:
   push:
-    branches: [ master, 01-FunctionalStyle, 03-Microservices, 04-REST]
+    branches: [ master, 01-FunctionalStyle, 03-Microservices, 04-REST, 05-Docker]
   pull_request:
     branches: [ master, develop ]
 

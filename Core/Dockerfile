@@ -1,0 +1,1 @@
+FROM mastermind-core-module:0.1.0-SNAPSHOT
