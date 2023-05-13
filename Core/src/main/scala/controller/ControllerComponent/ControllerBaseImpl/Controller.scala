@@ -61,7 +61,8 @@ class Controller(using var game: GameInterface) extends ControllerInterface:
   def load =
     persistenceController.load()
     notifyObservers
-    persistenceController.game
+    game = persistenceController.game
+    game
 
   def reset =
     game = game.resetGame()

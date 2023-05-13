@@ -34,19 +34,18 @@ class PersistenceController {
         implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
         implicit val executionContext = system.executionContext
 
-        val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(uri = "http://0.0.0.0:8081/persistence/" + apiEndpoint))
+        val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(uri = "http://persistence_service:8081/persistence/" + apiEndpoint))
+
 
         val res = responseFuture.flatMap { response =>
         response.status match {
             case StatusCodes.OK =>
             Unmarshal(response.entity).to[String].map { jsonStr =>
-                print("1")
                 val loadedGame = Json.parse(jsonStr)
                 this.game = fio.JsonToGame(loadedGame)
-                print("2")
             }
             case _ =>
-            Future.failed(new RuntimeException(s"HTTP request failed with status ${response.status} and entity ${response.entity}"))
+            Future.failed(new RuntimeException(s"HTTP request to Persistence API failed with status ${response.status} and entity ${response.entity}"))
             }
         }
         // Wait for the future to complete and get the result
@@ -56,15 +55,16 @@ class PersistenceController {
     def load() = {
         val endpoint = "load"
         fetchData(endpoint)
-        print(game)
     }
+
+
     def save(game: GameInterface) = {
-        implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
+       implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
         implicit val executionContext = system.executionContext
 
         val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
         method = HttpMethods.POST,
-        uri = "http://0.0.0.0:8081/persistence/save",
+        uri = "http://persistence_service:8081/persistence/save",
         entity = fio.gameToJson(game).toString()))
     }
 }

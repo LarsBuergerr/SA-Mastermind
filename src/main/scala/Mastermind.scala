@@ -32,18 +32,24 @@ import MastermindModule.given
 
 //****************************************************************************** MAIN
 object mastermind extends Thread:
+  // val persistenceService = RestPersistenceAPI()
+  // val controllerService = RestControllerAPI()
+
+  // persistenceService.start()
+  // controllerService.start()
+
   val tui = TUI()
   //val gui = GUI()
 
   @main 
   override def start(): Unit =
     
-//    val threadGui = new Thread:
-//      override def run(): Unit =
-//        gui.main(Array[String]())
-//
-//    threadGui.start()
-//    //REST Services
-//
-//    Thread.sleep(1000)
+  //  val threadGui = new Thread:
+  //    override def run(): Unit =
+  //      gui.main(Array[String]())
+
+  //  threadGui.start()
+  //  //REST Services
+
+  //  Thread.sleep(1000)
     tui.run()
