@@ -1,7 +1,7 @@
 package SlickDB
 
 import FileIOComponent.fileIOJsonImpl.FileIO
-import SQLTables.ColorCodeTable
+import SQLTables.{MatrixTable, TurnTable, CodeTable}
 import slick.jdbc.JdbcBackend.Database
 
 import java.sql.SQLNonTransientException
@@ -38,8 +38,11 @@ class SlickDAO
     user = databaseUser,
     password = databasePassword
   )
+  val matrixTable = new TableQuery(new MatrixTable(_))
+  val turnTable = new TableQuery(new TurnTable(_))
+  val codeTable = new TableQuery(new CodeTable(_))
 
-  val setup: DBIOAction[Unit, NoStream, Effect.Schema] = DBIO.seq(ColorCodeTable.schema.createIfNotExists)
+  val setup: DBIOAction[Unit, NoStream, Effect.Schema] = DBIO.seq(matrixTable.schema.createIfNotExists, turnTable.schema.createIfNotExists)
   println("create tables")
   try {
     Await.result(database.run(setup), WAIT_TIME)
@@ -50,6 +53,4 @@ class SlickDAO
       Await.result(database.run(setup), WAIT_TIME)
   }
   println("tables created")
-
-
 }
