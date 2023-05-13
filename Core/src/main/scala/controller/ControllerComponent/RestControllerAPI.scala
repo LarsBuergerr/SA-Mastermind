@@ -105,16 +105,17 @@ class RestControllerAPI(using controller: ControllerInterface):
                 controller.request(PlayerInputStateEvent())
 
               case save: SaveStateEvent  =>
-                val fileIO = new FileIO()
-                fileIO.save(controller.game)
+                controller.save(controller.game)
                 controller.request(PlayerInputStateEvent())
 
               case load: LoadStateEvent  =>
                 controller.load
                 controller.request(PlayerInputStateEvent())
 
-              case _ => controller.request(currentRequest)
-              controller.request(controller.handleRequest(SingleCharRequest(str)))
+              case _ => 
+                controller.request(currentRequest)
+                
+            //controller.request(controller.handleRequest(SingleCharRequest(str)))
             complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, controller.gameToJson(controller.game)))
           }
         }

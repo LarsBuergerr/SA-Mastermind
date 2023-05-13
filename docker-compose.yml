@@ -13,6 +13,9 @@ services:
       FILEIO_SERVICE_HOST: persistence
       FILEIO_SERVICE_PORT: 8081
     tty: true
+    working_dir: /fileio
+    volumes:
+      - ./:/fileio:xro
 
   core:
     image: mastermind-core-service

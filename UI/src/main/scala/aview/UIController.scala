@@ -33,7 +33,6 @@ class UIController {
         implicit val executionContext = system.executionContext
 
         val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(uri = "http://localhost:8080/controller/" + apiEndpoint))
-
         val res = responseFuture.flatMap { response =>
         response.status match {
             case StatusCodes.OK =>
@@ -42,7 +41,7 @@ class UIController {
                 this.game = fio.JsonToGame(loadedGame)
             }
             case _ =>
-            Future.failed(new RuntimeException(s"HTTP request failed with status ${response.status} and entity ${response.entity}"))
+            Future.failed(new RuntimeException(s"HTTP request to Controller API failed with status ${response.status} and entity ${response.entity}"))
             }
         }
         // Wait for the future to complete and get the result
