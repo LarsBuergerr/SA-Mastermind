@@ -42,7 +42,7 @@ class PersistenceController {
             case StatusCodes.OK =>
             Unmarshal(response.entity).to[String].map { jsonStr =>
                 val loadedGame = Json.parse(jsonStr)
-                this.game = fio.JsonToGame(loadedGame)
+                this.game = fio.jsonToGame(loadedGame)
             }
             case _ =>
             Future.failed(new RuntimeException(s"HTTP request to Persistence API failed with status ${response.status} and entity ${response.entity}"))

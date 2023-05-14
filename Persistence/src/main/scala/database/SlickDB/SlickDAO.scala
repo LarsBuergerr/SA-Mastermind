@@ -68,19 +68,18 @@ class SlickDAO extends DAOInterface {
       val query = id.map(id => gameTable.filter(_.id === id))
         .getOrElse(gameTable.filter(_.id === gameTable.map(_.id).max))
 
-      print(query.result)
       val game = Await.result(database.run(query.result), WAIT_TIME)
 
-      print(game)
       val matrix = game.head._2
-      print(matrix)
+      print(matrix + "\n")
       val hmatrix = game.head._3
-      print(hmatrix)
+      print(hmatrix + "\n")
       val code = game.head._4
-      print(code)
+      print(code + "\n")
       val turn = game.head._5
-      print(turn)
-      val state = game.head._6
+      print(turn + "\n")
+      val state = sanitize(game.head._6)
+      print(state + "\n")
 
       val jsonGame = Json.obj(
         "matrix" -> Json.parse(matrix),
@@ -89,8 +88,14 @@ class SlickDAO extends DAOInterface {
         "turn" -> Json.toJson(turn),
         "state" -> Json.toJson(state)
       )
-      print("end of function\n")
-      fileIO.JsonToGame(jsonGame)
+      val res = try {
+        fileIO.jsonToGame(jsonGame.asInstanceOf[JsValue])
+      } catch {
+        case e: Exception =>
+          e.printStackTrace()
+          throw e
+      }
+      res
     }
   }
 
@@ -100,11 +105,11 @@ class SlickDAO extends DAOInterface {
       val jsonGame = fileIO.gameToJson(game)
       
       val gameID = storeMatrix(
-        (jsonGame \ "matrix").get.toString(),
-        (jsonGame \ "hmatrix").get.toString(),
-        (jsonGame \ "code").get.toString(),
-        (jsonGame \ "turn").get.toString().toInt,
-        (jsonGame \ "state").get.toString()
+        jsonGame("matrix").toString(),
+        jsonGame("hmatrix").toString(),
+        jsonGame("code").toString(),
+        jsonGame("turn").toString().toInt,
+        jsonGame("state").toString()
       )
     }
 
@@ -112,4 +117,16 @@ class SlickDAO extends DAOInterface {
     val gameID = Await.result(database.run(gameTable returning gameTable.map(_.id) += (0, matrix, hmatrix, code, turn, state)), WAIT_TIME)
     gameID
   }
+
+
+  def sanitize(str: String): String =
+    str.replace("\\n", "\n")
+      .replace("\\r", "\r")
+      .replace("\\t", "\t")
+      .replace("\\b", "\b")
+      .replace("\\f", "\f")
+      .replace("\\\\", "\\")
+      .replace("\\\"", "\"")
+      .replace("\\'", "'")
+      .replace("\"\"", "\"")
 }

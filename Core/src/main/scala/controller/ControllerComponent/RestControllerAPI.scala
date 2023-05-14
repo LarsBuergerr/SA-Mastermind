@@ -193,7 +193,7 @@ class RestControllerAPI(using controller: ControllerInterface):
             val jsonGame = Json.parse(saveGame)
             //turn Json to Game
             val fio = new FileIO()
-            val game = fio.JsonToGame(jsonGame)
+            val game = fio.jsonToGame(jsonGame)
             controller.save(game)
             complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "Game saved"))
           }

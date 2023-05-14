@@ -68,7 +68,7 @@ class RestPersistenceAPI():
             val jsonGame = Json.parse(saveGame)
             //turn Json to Game
             val fio = new FileIO()
-            val game = fio.JsonToGame(jsonGame)
+            val game = fio.jsonToGame(jsonGame)
             fileIO.save(game)
             complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "Game saved"))
           }
@@ -89,7 +89,7 @@ class RestPersistenceAPI():
             val jsonGame = Json.parse(saveGame)
             //save to db
             val fio = new FileIO()
-            val game = fio.JsonToGame(jsonGame)
+            val game = fio.jsonToGame(jsonGame)
             slickDAO.save(game)
 
             complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "Game saved"))
@@ -99,8 +99,9 @@ class RestPersistenceAPI():
 
       get {
         path("persistence" / "dbload") {
-          val game = slickDAO.load(Some(1))
-          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, fileIO.gameToJson(game.asInstanceOf[GameInterface]).toString))
+          val game = slickDAO.load()          
+          val unpacked_game = game.getOrElse("ERROR LOADING GAME")
+          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, fileIO.gameToJson(unpacked_game.asInstanceOf[GameInterface]).toString))
         }
       }
     )

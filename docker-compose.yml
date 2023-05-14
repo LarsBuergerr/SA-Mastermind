@@ -16,6 +16,8 @@ services:
     working_dir: /fileio
     volumes:
       - ./:/fileio:xro
+    depends_on:
+      - database
 
   database:
     image: mysql:5.7

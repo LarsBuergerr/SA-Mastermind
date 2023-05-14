@@ -22,7 +22,16 @@ lazy val allDependencies = Seq(
   akkaActor,
   slf4jNop,
   slick,
-  mysql
+  mysql,
+  mockito
+)
+
+libraryDependencies ++= Seq(
+  "com.typesafe.slick" %% "slick" % "3.3.3",
+  "com.typesafe.slick" %% "slick-hikaricp" % "3.3.3",
+  "mysql" % "mysql-connector-java" % "8.0.27",
+  "org.scalatest" %% "scalatest" % "3.2.9" % Test,
+  "org.scalatestplus" %% "mockito-3-4" % "3.2.9.0" % Test
 )
 
 /** Docker **/

@@ -23,4 +23,5 @@ object dependencies{
     val mysql = "mysql" % "mysql-connector-java" % "8.0.32"
     val slick = ("com.typesafe.slick" %% "slick" % "3.5.0-M3").cross(CrossVersion.for3Use2_13)
 
+    val mockito = "org.scalatestplus" %% "mockito-3-4" % "3.2.9.0" % Test
 }
