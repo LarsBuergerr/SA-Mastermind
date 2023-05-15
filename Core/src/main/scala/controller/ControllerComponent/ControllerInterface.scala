@@ -36,6 +36,8 @@ trait ControllerInterface extends Observable:
 
   def dbload: GameInterface
 
+  def dblist: Unit
+
   def update: String
     
   def request(event: Event): State

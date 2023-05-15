@@ -17,6 +17,7 @@ import scala.concurrent.Await
 
 import FileIOComponent.fileIOJsonImpl.FileIO
 import model.GameComponent.GameInterface
+import model.GameComponent.GameBaseImpl.Game
 import model.GameComponent.GameBaseImpl.{Stone, HintStone, HStone}
 import scalafx.scene.input.KeyCode.G
 import akka.stream.ActorMaterializer
@@ -27,7 +28,7 @@ import akka.http.javadsl.model.StatusCodes
 class PersistenceController {
 
     val fio = new FileIO()
-    var game: GameInterface = null
+    var game: GameInterface = new Game()
 
     def fetchData(apiEndpoint: String) = {
 
@@ -81,5 +82,19 @@ class PersistenceController {
         method = HttpMethods.POST,
         uri = "http://persistence_service:8081/persistence/dbsave",
         entity = fio.gameToJson(game).toString()))
+    }
+
+    def dblist() = {
+        try {
+            implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
+            implicit val executionContext = system.executionContext
+
+            val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
+            method = HttpMethods.POST,
+            uri = "http://persistence_service:8081/persistence/dblist",
+            entity = fio.gameToJson(game).toString()))
+        } catch {
+            case e: Exception => print(e.printStackTrace())
+        }
     }
 }

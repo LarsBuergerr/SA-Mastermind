@@ -2,20 +2,7 @@ package SlickDB
 
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
-import org.scalatest.funsuite.AnyFunSuite
-import org.scalatest.matchers.should.Matchers
-import scala.concurrent.Future
-import slick.jdbc.JdbcBackend.Database
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Await
-import scala.concurrent.duration.Duration
-import concurrent.duration._
 
-import scala.util.Try
-import com.mysql.cj.jdbc.exceptions.CommunicationsException
-import slick.jdbc.JdbcBackend.Database
-import slick.jdbc.MySQLProfile.api._
-import slick.lifted.TableQuery
 import FileIOComponent.fileIOJsonImpl.FileIO
 import SQLTables.{MatrixTable, TurnTable, CodeTable, GameTable}
 import model.GameComponent.GameInterface
@@ -23,8 +10,8 @@ import model.GameComponent.GameBaseImpl.Game
 import org.scalatest.{BeforeAndAfterEach}
 import org.scalatest.wordspec.AnyWordSpec
 import org.mockito.ArgumentMatchers._
-import java.io.ByteArrayOutputStream
-import java.io.PrintStream
+import slick.jdbc.JdbcBackend.Database
+import scala.util.Try
 
 class SlickDAOSPec extends AnyWordSpec with MockitoSugar with BeforeAndAfterEach {
 

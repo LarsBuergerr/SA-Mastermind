@@ -103,6 +103,16 @@ class RestPersistenceAPI():
           val unpacked_game = game.getOrElse("ERROR LOADING GAME")
           complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, fileIO.gameToJson(unpacked_game.asInstanceOf[GameInterface]).toString))
         }
+      },
+
+      path("persistence" / "dblist") {
+        post {
+          entity(as[String]) { saveGame =>
+            
+            slickDAO.listAllGames()
+            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "Game saved"))
+          }
+        }
       }
     )
 

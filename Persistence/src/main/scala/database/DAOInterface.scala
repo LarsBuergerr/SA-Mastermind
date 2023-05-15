@@ -9,4 +9,7 @@ trait DAOInterface {
 
   def load(id: Option[Int]): Try[GameInterface]
 
+  def delete(id: Int): Try[Boolean]
+
+  def update(game: GameInterface,  id: Int): Try[Boolean]
 }

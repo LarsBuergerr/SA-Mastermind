@@ -130,28 +130,43 @@ class RestControllerAPI(using controller: ControllerInterface):
       },
       get {
         path("controller"/ "handleMultiCharReq" / Segment) { str => { 
-          val emptyVector: Vector[Stone] = Vector()
-          val currentRequest = controller.handleRequest(MultiCharRequest(str))
-          if(currentRequest.isInstanceOf[PlayerAnalyzeEvent]) then
 
-            val codeVector: Vector[Stone] =
-              Try(controller.game.buildVector(emptyVector)(str.toCharArray())) match
-                case Success(vector) => vector.asInstanceOf[Vector[Stone]]
-                case Failure(e) =>
-                  controller.request(controller.game.getDefaultInputRule(str))
-                  Vector.empty[Stone]
+          if(str == "dbload") then
+            controller.dbload
+            controller.request(PlayerInputStateEvent())
+            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, controller.gameToJson(controller.game)))
+          else if(str == "dbsave") then
+            controller.dbsave(controller.game)
+            controller.request(PlayerInputStateEvent())
+            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, controller.gameToJson(controller.game)))
+          else if(str == "dblist") then
+            print("controller.dblist")
+            controller.dblist
+            controller.request(PlayerInputStateEvent())
+            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, controller.gameToJson(controller.game)))
+          else
+            val emptyVector: Vector[Stone] = Vector()
+            val currentRequest = controller.handleRequest(MultiCharRequest(str))
+            if(currentRequest.isInstanceOf[PlayerAnalyzeEvent]) then
 
-            val hints = controller.game.getCode().compareTo(codeVector)
-            controller.placeGuessAndHints(codeVector)(hints)(controller.game.currentTurn)
-            if hints.forall(p => p.stringRepresentation.equals("R")) then
-              controller.request(PlayerWinStateEvent())
-            else if (controller.game.field.matrix.rows - controller.game.currentTurn) == 0 then
-              controller.request(PlayerLoseStateEvent())
-            else
-              controller.request(PlayerInputStateEvent())
-          else  //Invalid input -> stay in current state
-            controller.request(currentRequest)
-          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, controller.gameToJson(controller.game)))
+              val codeVector: Vector[Stone] =
+                Try(controller.game.buildVector(emptyVector)(str.toCharArray())) match
+                  case Success(vector) => vector.asInstanceOf[Vector[Stone]]
+                  case Failure(e) =>
+                    controller.request(controller.game.getDefaultInputRule(str))
+                    Vector.empty[Stone]
+
+              val hints = controller.game.getCode().compareTo(codeVector)
+              controller.placeGuessAndHints(codeVector)(hints)(controller.game.currentTurn)
+              if hints.forall(p => p.stringRepresentation.equals("R")) then
+                controller.request(PlayerWinStateEvent())
+              else if (controller.game.field.matrix.rows - controller.game.currentTurn) == 0 then
+                controller.request(PlayerLoseStateEvent())
+              else
+                controller.request(PlayerInputStateEvent())
+            else  //Invalid input -> stay in current state
+              controller.request(currentRequest)
+            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, controller.gameToJson(controller.game)))
           }
         }
       },

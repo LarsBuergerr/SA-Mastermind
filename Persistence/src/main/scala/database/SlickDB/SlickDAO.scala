@@ -68,15 +68,10 @@ class SlickDAO extends DAOInterface {
       val game = Await.result(database.run(query.result), WAIT_TIME)
 
       val matrix = game.head._2
-      print(matrix + "\n")
       val hmatrix = game.head._3
-      print(hmatrix + "\n")
       val code = game.head._4
-      print(code + "\n")
       val turn = game.head._5
-      print(turn + "\n")
       val state = sanitize(game.head._6)
-      print(state + "\n")
 
       val jsonGame = Json.obj(
         "matrix" -> Json.parse(matrix),
@@ -85,13 +80,7 @@ class SlickDAO extends DAOInterface {
         "turn" -> Json.toJson(turn),
         "state" -> Json.parse(state)
       )
-      val res = try {
-        fileIO.jsonToGame(jsonGame.asInstanceOf[JsValue])
-      } catch {
-        case e: Exception =>
-          e.printStackTrace()
-          throw e
-      }
+      val res = fileIO.jsonToGame(jsonGame.asInstanceOf[JsValue])
       res
     }
   }
@@ -109,6 +98,37 @@ class SlickDAO extends DAOInterface {
         jsonGame("state").toString()
       )
     }
+
+  override def delete(id: Int): Try[Boolean] = {
+    Try {
+      Await.result(database.run(gameTable.filter(_.id === id).delete), WAIT_TIME)
+      true
+    }
+  }
+
+  override def update(game: GameInterface, id: Int): Try[Boolean] = {
+    Try{
+      val jsonGame = fileIO.gameToJson(game)
+      val query = gameTable.filter(_.id === id)
+      val action = query.update(
+        (id, jsonGame("matrix").toString(), jsonGame("hmatrix").toString(), jsonGame("code").toString(), jsonGame("turn").toString().toInt, jsonGame("state").toString())
+      )
+      Await.result(database.run(action), WAIT_TIME)
+      true
+    }
+  }
+
+  def listAllGames() = {
+    val query = gameTable
+    val games = Await.result(database.run(query.result), WAIT_TIME)
+    printGames(games)
+  }
+
+  def printGames(games: Seq[(Int, String, String, String, Int, String)]) = {
+
+    games.foreach(game => println("GameID: " + game._1))
+  }
+
 
   def storeMatrix(matrix: String, hmatrix: String, code: String, turn: Int, state: String) = {
     val gameID = Await.result(database.run(gameTable returning gameTable.map(_.id) += (0, matrix, hmatrix, code, turn, state)), WAIT_TIME)
