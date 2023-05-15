@@ -60,9 +60,6 @@ class SlickDAO extends DAOInterface {
   println("tables created")
 
   override def load(id: Option[Int] = None): Try[GameInterface] = {
-    print("got into db load\n")
-
-    print("another print before the try\n")
     Try {
       print("before query")
       val query = id.map(id => gameTable.filter(_.id === id))
@@ -86,7 +83,7 @@ class SlickDAO extends DAOInterface {
         "hmatrix" -> Json.parse(hmatrix),
         "code" -> Json.parse(code),
         "turn" -> Json.toJson(turn),
-        "state" -> Json.toJson(state)
+        "state" -> Json.parse(state)
       )
       val res = try {
         fileIO.jsonToGame(jsonGame.asInstanceOf[JsValue])
