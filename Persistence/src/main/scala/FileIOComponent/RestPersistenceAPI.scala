@@ -1,16 +1,12 @@
-
-
 /**
  * RootSevice.scala
  *  implementation for AKKA RestControllerAPI
  */
 
 //****************************************************************************** PACKAGE
-
 package FileIOComponent
 
 //****************************************************************************** IMPORTS
-
 import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
 import akka.http.scaladsl.Http
@@ -19,18 +15,20 @@ import akka.http.scaladsl.server.Directives.{entity, *}
 import akka.stream.ActorMaterializer
 import model.GameComponent.GameBaseImpl.PlayerInput
 import util.{MultiCharRequest, Observer}
-import util._
+import util.*
 import model.GameComponent.GameInterface
-import model.GameComponent.GameBaseImpl.{Stone, HintStone, HStone}
+import model.GameComponent.GameBaseImpl.{HStone, HintStone, Stone}
 import FileIOComponent.fileIOJsonImpl.FileIO
 import SlickDB.SlickDAO
+import MongoDB.MongoDAO
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.util.{Failure, Success}
 import akka.protobufv3.internal.compiler.PluginProtos.CodeGeneratorResponse.File
-import play.api.libs.json.*
-import scala.util.{Try, Success, Failure}
 
+import play.api.libs.json.*
+
+import scala.util.{Failure, Success, Try}
 
 //****************************************************************************** CLASS DEFINITION
 class RestPersistenceAPI():
@@ -39,7 +37,8 @@ class RestPersistenceAPI():
   implicit val executionContext: ExecutionContextExecutor = system.executionContext
 
   val fileIO = new FileIO()
-  val slickDAO = new SlickDAO() 
+  val slickDAO = new SlickDAO()
+  val mongo = new MongoDAO()
   val RestUIPort = 8081
   val routes: String =
     """

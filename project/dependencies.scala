@@ -17,11 +17,9 @@ object dependencies{
     val akkaActorTyped = "com.typesafe.akka" %% "akka-actor-typed" % "2.8.0"
     val akkaStream = "com.typesafe.akka" %% "akka-stream" % "2.8.0"
     val akkaActor = "com.typesafe.akka" %% "akka-actor" % "2.8.0"
-
     val slf4jNop = "org.slf4j" % "slf4j-nop" % "2.0.5"
-
     val mysql = "mysql" % "mysql-connector-java" % "8.0.32"
     val slick = ("com.typesafe.slick" %% "slick" % "3.5.0-M3").cross(CrossVersion.for3Use2_13)
-
-    val mockito = "org.scalatestplus" %% "mockito-3-4" % "3.2.9.0" % Test
+    val mockito = "org.scalatestplus" %% "mockito-3-4" % "3.2.10.0" % Test
+    val mongodb = ("org.mongodb.scala" %% "mongo-scala-driver" % "4.9.1").cross(CrossVersion.for3Use2_13)
 }

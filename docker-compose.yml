@@ -19,6 +19,16 @@ services:
     depends_on:
       - database
 
+  mongoDB:
+    image: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: mongo
+      MONGI_INITDB_DATABASE: mastermind
+
   database:
     image: mysql:5.7
     restart: always

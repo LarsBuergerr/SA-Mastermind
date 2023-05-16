@@ -23,7 +23,8 @@ lazy val allDependencies = Seq(
   slf4jNop,
   slick,
   mysql,
-  mockito
+  mockito,
+  mongodb
 )
 
 /** Docker **/
