@@ -97,4 +97,15 @@ class PersistenceController {
             case e: Exception => print(e.printStackTrace())
         }
     }
+    
+    def dbupdate(game: GameInterface, id: Int) = {
+        implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
+        implicit val executionContext = system.executionContext
+
+        val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
+        method = HttpMethods.POST,
+        uri = "http://persistence_service:8081/persistence/dbupdate/" + id.toString(),
+        entity = fio.gameToJson(game).toString())
+        )
+    }
 }

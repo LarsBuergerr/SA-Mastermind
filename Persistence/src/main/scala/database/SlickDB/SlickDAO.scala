@@ -19,6 +19,7 @@ import slick.jdbc.JdbcBackend.Database
 import slick.jdbc.MySQLProfile.api.*
 import model.GameComponent.GameBaseImpl.Game
 import play.api.libs.json.JsValue
+import concurrent.ExecutionContext.Implicits.global
 
 val WAIT_TIME = 5.seconds
 val WAIT_DB = 5000
@@ -155,7 +156,7 @@ class SlickDAO extends DAOInterface {
         "hmatrix" -> Json.parse(hmatrix),
         "code" -> Json.parse(code),
         "turn" -> Json.toJson(turn),
-        "state" -> Json.parse(state)
+        "state" -> Json.parse (state)
       )
       val res = fileIO.jsonToGame(jsonGame.asInstanceOf[JsValue])
       res
@@ -163,25 +164,44 @@ class SlickDAO extends DAOInterface {
 
   override def delete(id: Int): Try[Boolean] = {
     Try {
-      Await.result(database.run(gameTable.filter(_.id === id).delete), WAIT_TIME)
+      Await.result(database.run(gameTable2.filter(_.id === id).delete), WAIT_TIME)
       true
     }
   }
 
-  override def update(game: GameInterface, id: Int): Try[Boolean] = {
-    Try{
-      val jsonGame = fileIO.gameToJson(game)
-      val query = gameTable.filter(_.id === id)
-      val action = query.update(
-        (id, jsonGame("matrix").toString(), jsonGame("hmatrix").toString(), jsonGame("code").toString(), jsonGame("turn").toString().toInt, jsonGame("state").toString())
-      )
-      Await.result(database.run(action), WAIT_TIME)
-      true
-    }
-  }
+
   def storeGame(matrixID: Int, hmatrixID: Int, codeID: Int, turnID: Int, stateID: Int, save_name: String) = {
     val gameID = Await.result(database.run(gameTable2 returning gameTable2.map(_.id) += (0, matrixID, hmatrixID, codeID, turnID, stateID, save_name)), WAIT_TIME)
     gameID
+  }
+
+  override def update(game: GameInterface, id: Int): Boolean = {
+    val jsonGame = fileIO.gameToJson(game)
+
+    val matrix = jsonGame("matrix").toString()
+    val hmatrix = jsonGame("hmatrix").toString()
+    val code = jsonGame("code").toString()
+    val turn = jsonGame("turn").toString().toInt
+    val state = jsonGame("state").toString()
+
+    val gameQ = gameTable2.filter(_.id === id)
+    val gameRes = Await.result(database.run(gameQ.result), WAIT_TIME)
+
+    val matrixID = gameRes.head._2
+    val hmatrixID = gameRes.head._3
+    val codeID = gameRes.head._4
+    val turnID = gameRes.head._5
+    val stateID = gameRes.head._6
+
+    val matrixQ = matrixTable.filter(_.id === matrixID).update((matrixID, matrix))
+    val hmatrixQ = hmatrixTable.filter(_.id === hmatrixID).update((hmatrixID, hmatrix))
+    val codeQ = codeTable.filter(_.id === codeID).update((codeID, code))
+    val turnQ = turnTable.filter(_.id === turnID).update((turnID, turn))
+    val stateQ = stateTable.filter(_.id === stateID).update((stateID, state))
+
+    val query = matrixQ andThen hmatrixQ andThen codeQ andThen turnQ andThen stateQ
+    Await.result(database.run(query), WAIT_TIME)
+    true
   }
   
   def listAllGames() = {

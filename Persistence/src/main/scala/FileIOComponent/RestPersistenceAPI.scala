@@ -105,6 +105,25 @@ class RestPersistenceAPI():
         }
       },
 
+      path ("persistence" / "dbupdate" / Segment) { id => 
+        post {
+          entity(as[String]) { saveGame =>
+            print("saved Game")
+            //turn String to Json
+            val jsonGame = Json.parse(saveGame)
+            //save to db
+            val fio = new FileIO()
+            val game = fio.jsonToGame(jsonGame)
+            print("inside restpersistenceapi\n")
+            print(game)
+            print(id)
+            slickDAO.update(game, id.toInt)
+
+            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "Game saved"))
+          }
+        }
+      },
+
       path("persistence" / "dblist") {
         post {
           entity(as[String]) { saveGame =>

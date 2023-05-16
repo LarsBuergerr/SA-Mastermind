@@ -139,6 +139,10 @@ class RestControllerAPI(using controller: ControllerInterface):
             controller.dblist
             controller.request(PlayerInputStateEvent())
             complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, controller.gameToJson(controller.game)))
+          else if(action == "dbupdate") then
+            controller.dbupdate(controller.game, num.toInt)
+            controller.request(PlayerInputStateEvent())
+            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, controller.gameToJson(controller.game)))
           else
             val emptyVector: Vector[Stone] = Vector()
             val currentRequest = controller.handleRequest(MultiCharRequest(action))

@@ -68,7 +68,7 @@ class SlickDAOSPec extends AnyWordSpec with MockitoSugar with BeforeAndAfterEach
       val gameId = 1
       when(mockDatabase.run(any)).thenReturn(gameId)
 
-      val result = slickDAO.save(game)
+      val result = slickDAO.save(game, "0")
 
       assert(result.asInstanceOf[Try[Int]].isSuccess)
 
