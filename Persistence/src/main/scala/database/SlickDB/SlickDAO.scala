@@ -1,25 +1,21 @@
 package SlickDB
 
 import FileIOComponent.fileIOJsonImpl.FileIO
-import model.GameComponent.GameInterface
-import SQLTables.{MatrixTable, TurnTable, CodeTable, GameTable, GameTable2, StateTable, HMatrixTable}
-import slick.jdbc.JdbcBackend.Database
-
-import java.sql.SQLNonTransientException
-import concurrent.duration.DurationInt
-import scala.annotation.unused
-import scala.concurrent.Await
-import scala.util.Try
-import slick.lifted.TableQuery
+import SQLTables.*
 import com.mysql.cj.jdbc.exceptions.CommunicationsException
-
-import java.sql.SQLNonTransientException
-import play.api.libs.json.{JsObject, Json}
+import model.GameComponent.GameBaseImpl.Game
+import model.GameComponent.GameInterface
+import play.api.libs.json.{JsObject, JsValue, Json}
 import slick.jdbc.JdbcBackend.Database
 import slick.jdbc.MySQLProfile.api.*
-import model.GameComponent.GameBaseImpl.Game
-import play.api.libs.json.JsValue
-import concurrent.ExecutionContext.Implicits.global
+import slick.lifted.TableQuery
+
+import java.sql.SQLNonTransientException
+import scala.annotation.unused
+import scala.concurrent.Await
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration.DurationInt
+import scala.util.Try
 
 val WAIT_TIME = 5.seconds
 val WAIT_DB = 5000

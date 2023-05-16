@@ -8,15 +8,14 @@
 package controller.ControllerComponent.ControllerBaseImpl
 
 //****************************************************************************** IMPORTS
-import model.GameComponent.GameInterface
-import model.GameComponent.GameBaseImpl.Game
-import model.GameComponent.GameBaseImpl.{State, Stone, HStone, Field}
 import FileIOComponent.FileIOInterface
 import FileIOComponent.fileIOJsonImpl.FileIO
 import controller.ControllerComponent.ControllerInterface
-import util.{Request, Event, Observable}
-import play.api.libs.json.*
 import controller.ControllerComponent.aview.PersistenceController
+import model.GameComponent.GameBaseImpl.*
+import model.GameComponent.GameInterface
+import util.{Event, Observable, Request}
+import play.api.libs.json.*
 
 //****************************************************************************** CLASS DEFINITION
 class Controller(using var game: GameInterface) extends ControllerInterface:

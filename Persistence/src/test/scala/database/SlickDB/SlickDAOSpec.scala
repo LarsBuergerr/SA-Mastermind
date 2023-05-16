@@ -1,36 +1,24 @@
 package SlickDB
 
-import org.mockito.Mockito.*
-import org.scalatestplus.mockito.MockitoSugar
-import FileIOComponent.fileIOJsonImpl.FileIO
-import SQLTables.{CodeTable, GameTable, MatrixTable, TurnTable}
-import model.GameComponent.GameInterface
-import model.GameComponent.GameBaseImpl.Game
-import org.scalatest.BeforeAndAfterEach
-import org.scalatest.wordspec.AnyWordSpec
-import org.mockito.ArgumentMatchers.*
-import slick.jdbc.JdbcBackend.Database
-
-import scala.concurrent.Future
-import scala.util.Try
-import scala.concurrent.Await
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
-import scala.util.Try
-import slick.jdbc.JdbcBackend.Database
-import slick.jdbc.MySQLProfile.api.*
-import slick.lifted.TableQuery
 import FileIOComponent.fileIOJsonImpl.FileIO
 import SQLTables.{CodeTable, GameTable, MatrixTable, TurnTable}
 import com.github.nscala_time.time.Imports.Duration
-import model.GameComponent.GameInterface
 import model.GameComponent.GameBaseImpl.Game
+import model.GameComponent.GameInterface
+import org.mockito.ArgumentMatchers.*
+import org.mockito.Mockito.*
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers.shouldBe
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatestplus.mockito.MockitoSugar
+import slick.jdbc.JdbcBackend.Database
+import slick.jdbc.MySQLProfile.api.*
+import slick.lifted.TableQuery
 
-import java.io.ByteArrayOutputStream
-import java.io.PrintStream
-
-import FileIOComponent.fileIOJsonImpl.FileIO
+import java.io.{ByteArrayOutputStream, PrintStream}
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.{Await, Future}
+import scala.util.Try
 
 
 class SlickDAOSPec extends AnyWordSpec with MockitoSugar with BeforeAndAfterEach {
@@ -130,10 +118,10 @@ class SlickDAOSPec extends AnyWordSpec with MockitoSugar with BeforeAndAfterEach
         state = loadedGame.state
       )
 
+
       val updateResult = slickDAO.update(updatedGame, gameId)
 
-      assert(updateResult.isSuccess)
-      assert(updateResult.get)
+      updateResult shouldBe true
 
       verify(mockDatabase, times(2)).run(any)
     }

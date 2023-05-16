@@ -14,20 +14,16 @@ import akka.actor.typed.scaladsl.Behaviors
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpResponse, StatusCodes}
 import akka.http.scaladsl.server.Directives.{entity, *}
+import akka.protobufv3.internal.compiler.PluginProtos.CodeGeneratorResponse.File
 import akka.stream.ActorMaterializer
 import controller.ControllerComponent.ControllerInterface
-import model.GameComponent.GameBaseImpl.PlayerInput
-import util.{MultiCharRequest, Observer}
-import util._
+import model.GameComponent.GameBaseImpl.{HStone, HintStone, PlayerInput, Stone}
 import model.GameComponent.GameInterface
-import model.GameComponent.GameBaseImpl.{Stone, HintStone, HStone}
-import FileIOComponent.fileIOJsonImpl.FileIO
+import util.*
+import play.api.libs.json.*
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
-import scala.util.{Failure, Success}
-import akka.protobufv3.internal.compiler.PluginProtos.CodeGeneratorResponse.File
-import play.api.libs.json.*
-import scala.util.{Try, Success, Failure}
+import scala.util.{Failure, Success, Try}
 
 
 //****************************************************************************** CLASS DEFINITION

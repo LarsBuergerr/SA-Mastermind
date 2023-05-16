@@ -8,9 +8,9 @@ package controller.ControllerComponent
 
 //****************************************************************************** IMPORTS
 
-import model.GameComponent.GameBaseImpl.{Field, Stone, HStone, State, Game}
+import model.GameComponent.GameBaseImpl.*
 import model.GameComponent.GameInterface
-import util.{Observable, Event, Request}
+import util.{Event, Observable, Request}
 import play.api.libs.json.*
 
 //****************************************************************************** INTERFACE DEFINITION

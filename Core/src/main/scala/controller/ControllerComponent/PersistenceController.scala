@@ -2,27 +2,25 @@ package controller.ControllerComponent
 
 package aview
 
-import scala.concurrent.Future
-import akka.actor.typed.{ActorSystem}
-import akka.actor.typed.scaladsl.Behaviors
-import akka.http.scaladsl.Http
-import akka.http.scaladsl.server.Directives.*
-import akka.http.scaladsl.model.{ContentTypes, HttpEntity, StatusCode, HttpMethods, HttpResponse, HttpRequest}
-import akka.http.scaladsl.server.{ExceptionHandler, Route}
-import scala.util.{Try, Success, Failure}
-import play.api.libs.json.*
-import akka.http.scaladsl.unmarshalling.Unmarshal
-import scala.concurrent.duration._
-import scala.concurrent.Await
-
 import FileIOComponent.fileIOJsonImpl.FileIO
-import model.GameComponent.GameInterface
-import model.GameComponent.GameBaseImpl.Game
-import model.GameComponent.GameBaseImpl.{Stone, HintStone, HStone}
-import scalafx.scene.input.KeyCode.G
-import akka.stream.ActorMaterializer
 import _root_.util.Event
+import akka.actor.typed.ActorSystem
+import akka.actor.typed.scaladsl.Behaviors
 import akka.http.javadsl.model.StatusCodes
+import akka.http.scaladsl.Http
+import akka.http.scaladsl.model.*
+import akka.http.scaladsl.server.Directives.*
+import akka.http.scaladsl.server.{ExceptionHandler, Route}
+import akka.http.scaladsl.unmarshalling.Unmarshal
+import akka.stream.ActorMaterializer
+import model.GameComponent.GameBaseImpl.{Game, HStone, HintStone, Stone}
+import model.GameComponent.GameInterface
+import play.api.libs.json.*
+import scalafx.scene.input.KeyCode.G
+
+import scala.concurrent.{Await, Future}
+import scala.concurrent.duration.*
+import scala.util.{Failure, Success, Try}
 
 
 class PersistenceController {
