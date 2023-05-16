@@ -32,9 +32,9 @@ trait ControllerInterface extends Observable:
 
   def load: GameInterface
 
-  def dbsave(game: GameInterface): Unit
+  def dbsave(game: GameInterface, save_name: String): Unit
 
-  def dbload: GameInterface
+  def dbload(num: Int): GameInterface
 
   def dblist: Unit
 

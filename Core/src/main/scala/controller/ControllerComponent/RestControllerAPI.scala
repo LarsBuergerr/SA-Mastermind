@@ -112,14 +112,6 @@ class RestControllerAPI(using controller: ControllerInterface):
                 controller.load
                 controller.request(PlayerInputStateEvent())
 
-              case dbsave: DBSaveStateEvent  =>
-                controller.dbsave(controller.game)
-                controller.request(PlayerInputStateEvent())
-
-              case dbload: DBLoadStateEvent  =>
-                controller.dbload
-                controller.request(PlayerInputStateEvent())
-
               case _ => 
                 controller.request(currentRequest)
                 
@@ -129,31 +121,34 @@ class RestControllerAPI(using controller: ControllerInterface):
         }
       },
       get {
-        path("controller"/ "handleMultiCharReq" / Segment) { str => { 
+        path("controller"/ "handleMultiCharReq" / Segments) { input => { 
 
-          if(str == "dbload") then
-            controller.dbload
+          var action = input(0)
+          var num = input(1)
+
+          if(action == "dbload") then
+            controller.dbload(num.toInt)
             controller.request(PlayerInputStateEvent())
             complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, controller.gameToJson(controller.game)))
-          else if(str == "dbsave") then
-            controller.dbsave(controller.game)
+          else if(action == "dbsave") then
+            controller.dbsave(controller.game, num)
             controller.request(PlayerInputStateEvent())
             complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, controller.gameToJson(controller.game)))
-          else if(str == "dblist") then
+          else if(action == "dblist") then
             print("controller.dblist")
             controller.dblist
             controller.request(PlayerInputStateEvent())
             complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, controller.gameToJson(controller.game)))
           else
             val emptyVector: Vector[Stone] = Vector()
-            val currentRequest = controller.handleRequest(MultiCharRequest(str))
+            val currentRequest = controller.handleRequest(MultiCharRequest(action))
             if(currentRequest.isInstanceOf[PlayerAnalyzeEvent]) then
 
               val codeVector: Vector[Stone] =
-                Try(controller.game.buildVector(emptyVector)(str.toCharArray())) match
+                Try(controller.game.buildVector(emptyVector)(action.toCharArray())) match
                   case Success(vector) => vector.asInstanceOf[Vector[Stone]]
                   case Failure(e) =>
-                    controller.request(controller.game.getDefaultInputRule(str))
+                    controller.request(controller.game.getDefaultInputRule(action))
                     Vector.empty[Stone]
 
               val hints = controller.game.getCode().compareTo(codeVector)

@@ -105,7 +105,8 @@ class SlickDAO extends DAOInterface {
   //     )
   //   }
 
-  override def save(game: GameInterface) =
+  override def save(game: GameInterface, save_name: String) =
+    print("Saving game with name " + save_name + " into database...\n")
     Try {
       val json_game = fileIO.gameToJson(game)
 
@@ -124,7 +125,8 @@ class SlickDAO extends DAOInterface {
         hmatrixID,
         codeID,
         turnID,
-        stateID
+        stateID,
+        save_name
       )
     }
 
@@ -177,21 +179,21 @@ class SlickDAO extends DAOInterface {
       true
     }
   }
-  def storeGame(matrixID: Int, hmatrixID: Int, codeID: Int, turnID: Int, stateID: Int) = {
-    val gameID = Await.result(database.run(gameTable2 returning gameTable2.map(_.id) += (0, matrixID, hmatrixID, codeID, turnID, stateID)), WAIT_TIME)
+  def storeGame(matrixID: Int, hmatrixID: Int, codeID: Int, turnID: Int, stateID: Int, save_name: String) = {
+    val gameID = Await.result(database.run(gameTable2 returning gameTable2.map(_.id) += (0, matrixID, hmatrixID, codeID, turnID, stateID, save_name)), WAIT_TIME)
     gameID
   }
   
   def listAllGames() = {
-    val query = gameTable
+    val query = gameTable2
     val games = Await.result(database.run(query.result), WAIT_TIME)
     printGames(games)
   }
 
-  def printGames(games: Seq[(Int, String, String, String, Int, String)]) = {
+  def printGames(games: Seq[(Int, Int, Int, Int, Int, Int, String)]) = {
     println("All saved Games: ")
     println("-----------------")
-    games.foreach(game => println("GameID: " + game._1))
+    games.foreach(game => println("GameID: " + game._1 + " | Name: " + game._7))
   }
 
   def storeTurn(turn: Int) = {

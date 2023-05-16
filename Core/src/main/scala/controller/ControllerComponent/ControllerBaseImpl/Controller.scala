@@ -64,11 +64,11 @@ class Controller(using var game: GameInterface) extends ControllerInterface:
     game = persistenceController.game
     game
 
-  def dbsave(game: GameInterface) =
-    persistenceController.dbsave(game)
+  def dbsave(game: GameInterface, save_name: String) =
+    persistenceController.dbsave(game, save_name)
 
-  def dbload =
-    persistenceController.dbload()
+  def dbload(num: Int) =
+    persistenceController.dbload(num)
     notifyObservers
     game = persistenceController.game
     game

@@ -5,7 +5,7 @@ import scala.util.Try
 
 trait DAOInterface {
 
-  def save(game: GameInterface): Unit
+  def save(game: GameInterface, save_name: String): Unit
 
   def load(id: Option[Int]): Try[GameInterface]
 
