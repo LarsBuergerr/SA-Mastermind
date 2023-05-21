@@ -200,7 +200,7 @@ class SlickDAO extends DAOInterface {
     true
   }
   
-  def listAllGames() = {
+  override def listAllGames() = {
     val query = gameTable2
     val games = Await.result(database.run(query.result), WAIT_TIME)
     printGames(games)

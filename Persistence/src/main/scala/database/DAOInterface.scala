@@ -12,4 +12,6 @@ trait DAOInterface {
   def delete(id: Int): Try[Boolean]
 
   def update(game: GameInterface,  id: Int): Boolean
+
+  def listAllGames(): Unit
 }

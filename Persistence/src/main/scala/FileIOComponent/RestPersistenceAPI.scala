@@ -31,14 +31,12 @@ import play.api.libs.json.*
 import scala.util.{Failure, Success, Try}
 
 //****************************************************************************** CLASS DEFINITION
-class RestPersistenceAPI():
+class RestPersistenceAPI(using var database: DAOInterface):
 
   implicit val system: ActorSystem[Nothing] = ActorSystem(Behaviors.empty, "my-system")
   implicit val executionContext: ExecutionContextExecutor = system.executionContext
 
   val fileIO = new FileIO()
-  val slickDAO = new SlickDAO()
-  val mongo = new MongoDAO()
   val RestUIPort = 8081
   val routes: String =
     """
@@ -89,7 +87,7 @@ class RestPersistenceAPI():
             //save to db
             val fio = new FileIO()
             val game = fio.jsonToGame(jsonGame)
-            slickDAO.save(game, save_name)
+            database.save(game, save_name)
 
             complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "Game saved"))
           }
@@ -98,7 +96,7 @@ class RestPersistenceAPI():
 
       get {
         path("persistence" / "dbload" / IntNumber) { num =>
-          val game = slickDAO.load(Some(num))          
+          val game = database.load(Some(num))          
           val unpacked_game = game.getOrElse("ERROR LOADING GAME")
           complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, fileIO.gameToJson(unpacked_game.asInstanceOf[GameInterface]).toString))
         }
@@ -116,7 +114,7 @@ class RestPersistenceAPI():
             print("inside restpersistenceapi\n")
             print(game)
             print(id)
-            slickDAO.update(game, id.toInt)
+            database.update(game, id.toInt)
 
             complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "Game saved"))
           }
@@ -127,7 +125,7 @@ class RestPersistenceAPI():
         post {
           entity(as[String]) { saveGame =>
             
-            slickDAO.listAllGames()
+            database.listAllGames()
             complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "Game saved"))
           }
         }
