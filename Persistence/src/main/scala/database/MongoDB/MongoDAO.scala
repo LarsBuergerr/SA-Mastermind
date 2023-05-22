@@ -1,28 +1,30 @@
 package MongoDB
 
-import org.mongodb.scala.{Document, MongoClient, MongoCollection, MongoDatabase}
 import FileIOComponent.fileIOJsonImpl.FileIO
 import model.GameComponent.GameInterface
-import org.mongodb.scala.ObservableFuture
-import org.mongodb.scala.gridfs.ObservableFuture
-import org.mongodb.scala.model.Updates.{set, setOnInsert, unset}
-import org.mongodb.scala.model.Filters.{equal, exists}
-import org.mongodb.scala.model.Sorts.descending
-import org.mongodb.scala.model.{Aggregates, Sorts, Updates}
-import scala.concurrent.duration.*
-import scala.concurrent.duration.Duration.Inf
 
+import org.mongodb.scala.bson.BsonDocument
+import org.mongodb.scala.model.*
+import org.mongodb.scala.model.Aggregates.*
+import org.mongodb.scala.model.Filters.*
+import org.mongodb.scala.model.Sorts.*
+import org.mongodb.scala.result.{DeleteResult, InsertOneResult, UpdateResult}
+import org.mongodb.scala.{Document, MongoClient, MongoCollection, MongoDatabase, Observable, Observer, SingleObservable, result}
+import play.api.libs.json.{JsObject, Json}
+
+import scala.concurrent.duration.Duration.Inf
+import scala.concurrent.duration.DurationInt
+import scala.concurrent.{Await, Future}
 import scala.util.Try
-import akka.protobufv3.internal.Duration
-import scala.concurrent.Await
+
 
 class MongoDAO extends DAOInterface {
   val fileIO = new FileIO()
   // db Init
   private val database_pw = sys.env.getOrElse("MONGO_INITDB_ROOT_PASSWORD", "mongo")
   private val database_username = sys.env.getOrElse("MONGO_INITDB_ROOT_USERNAME", "root")
-  private val host = sys.env.getOrElse("MONGO_HOST", "localhost")
-  private val port = sys.env.getOrElse("MONGO_PORT", "27017")
+  private val host = sys.env.getOrElse("MONGO_INITDB_HOST", "mastermind-mongo")
+  private val port = sys.env.getOrElse("MONGO_INITDB_PORT", "27017")
 
   val uri: String = s"mongodb://$database_username:$database_pw@$host:$port/?authSource=admin"
   private val client: MongoClient = MongoClient(uri)
@@ -33,30 +35,57 @@ class MongoDAO extends DAOInterface {
   println("Connected to MongoDB")
 
   override def save(game: GameInterface, save_name: String): Unit = 
-    println("save game to MongoDB")
-    val document: Document = Document(
-      "_id" -> getId(gameCollection),
-      "save_name" -> save_name,
-      "game" -> fileIO.gameToJson(game).toString()
-    )
-    Await.result(gameCollection.insertOne(document).head(), Inf)
+    println("saving game to MongoDB")
+    handleResult(gameCollection.insertOne(Document(
+      "_id" -> (getID(gameCollection) + 1),
+      "name" -> save_name,
+      "game" -> fileIO.gameToJson(game).toString(),
+    )))
+    println("Inserted game with game id 1")
 
-  override def load(id: Option[Int]): Try[GameInterface] = ???
-    println("load game from MongoDB")
+  override def load(id: Option[Int]): Try[GameInterface] = 
+    Try {
+      Await.result(gameCollection.find(equal("_id", id.getOrElse(getID(gameCollection)))).first().head(), 10.second).get("game") match {
+        case Some(value) => fileIO.jsonToGame(Json.parse(value.asString().getValue))
+        case None => throw new Exception("No game found")
+      }
+    }
 
-  override def delete(id: Int): Try[Boolean] = ???
-  println("update game in MongoDB")
+  override def delete(id: Int): Try[Boolean] =
+    Try {
+      Await.result(gameCollection.deleteOne(equal("_id", id)).head(), 10.second).wasAcknowledged()
+    }
   
-  override def update(game: GameInterface, id: Int): Boolean = ???
-    println("update game in MongoDB")
+  
+  override def update(game: GameInterface, id: Int): Boolean = 
+    println("updating game in MongoDB")
+    val result = Await.result(gameCollection.replaceOne(equal("_id", id), Document(
+      "_id" -> id,
+      "game" -> fileIO.gameToJson(game).toString(),
+    )).head(), 10.second)
+    println("Finished update")
+    result.wasAcknowledged()
   
   override def listAllGames(): Unit =
     println("list all games from MongoDB")
     val result = Await.result(gameCollection.find().sort(descending("_id")).first().head(), Inf)
     if (result.isEmpty) println("No games found") else println(result.toJson())
 
-  def getId(collection: MongoCollection[Document]): Int = {
-    val result = Await.result(collection.find(exists("_id")).sort(descending("_id")).first().head(), Inf)
-    if (result.isEmpty) 0 else result("_id").asInt32().getValue
-  }
+
+  def getID(coll: MongoCollection[Document]): Int =
+    val result = Await.result(coll.aggregate(Seq(
+      Aggregates.sort(Sorts.descending("_id")),
+      Aggregates.limit(1),
+      Aggregates.project(Document("_id" -> 1))
+    )).headOption(), Inf)
+    result.flatMap(_.get("_id").map(_.asInt32().getValue.toHexString)).getOrElse("0").toInt
+
+  def handleResult[T](obs: SingleObservable[T]): Unit =
+    try {
+      Await.result(obs.asInstanceOf[SingleObservable[Unit]].head(), 10.second)
+    } catch {
+      case e: Exception => e.printStackTrace()
+    }
+    
+    println("db operation successful")
 }

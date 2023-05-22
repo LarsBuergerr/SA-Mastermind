@@ -31,12 +31,13 @@ import play.api.libs.json.*
 import scala.util.{Failure, Success, Try}
 
 //****************************************************************************** CLASS DEFINITION
-class RestPersistenceAPI(using var database: DAOInterface):
+class RestPersistenceAPI():
 
   implicit val system: ActorSystem[Nothing] = ActorSystem(Behaviors.empty, "my-system")
   implicit val executionContext: ExecutionContextExecutor = system.executionContext
 
   val fileIO = new FileIO()
+  val db = new MongoDAO()
   val RestUIPort = 8081
   val routes: String =
     """
@@ -87,7 +88,7 @@ class RestPersistenceAPI(using var database: DAOInterface):
             //save to db
             val fio = new FileIO()
             val game = fio.jsonToGame(jsonGame)
-            database.save(game, save_name)
+            db.save(game, save_name)
 
             complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "Game saved"))
           }
@@ -96,7 +97,7 @@ class RestPersistenceAPI(using var database: DAOInterface):
 
       get {
         path("persistence" / "dbload" / IntNumber) { num =>
-          val game = database.load(Some(num))          
+          val game = db.load(Some(num))          
           val unpacked_game = game.getOrElse("ERROR LOADING GAME")
           complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, fileIO.gameToJson(unpacked_game.asInstanceOf[GameInterface]).toString))
         }
@@ -114,7 +115,7 @@ class RestPersistenceAPI(using var database: DAOInterface):
             print("inside restpersistenceapi\n")
             print(game)
             print(id)
-            database.update(game, id.toInt)
+            db.update(game, id.toInt)
 
             complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "Game saved"))
           }
@@ -125,7 +126,7 @@ class RestPersistenceAPI(using var database: DAOInterface):
         post {
           entity(as[String]) { saveGame =>
             
-            database.listAllGames()
+            db.listAllGames()
             complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "Game saved"))
           }
         }

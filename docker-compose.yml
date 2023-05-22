@@ -24,14 +24,13 @@ services:
     restart: always
     ports:
       - "27017:27017"
+    container_name: mastermind-mongo
     environment:
-      MONGO_HOST: localhost
-      MONGO_PORT: 27017
+      MONGO_INITDB_HOST: mastermind-mongo
+      MONGO_INITDB_PORT: 27017
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: mongo
       MONGO_INITDB_DATABASE: mastermind
-    volumes:
-     - .:/var/lib/sql/mastermind
 
   database:
     image: mysql:5.7
