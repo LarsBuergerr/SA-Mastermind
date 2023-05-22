@@ -74,7 +74,18 @@ We thank the following people for their contributions to this project ( :) ):
 
 ---      
 
-## How to run on Docker
-- Step one: create lokal Images of the Services with: >> sbt Docker/publishLocal
-- Step two: run the docker-compose.yml File
-- Step three: To interact with the TUI enter >> docker attach ui_service
+## How to run the Game in Docker
+- Step one: create lokal Images of the Services with: >> `sbt Docker/publishLocal`
+- Step two: run the `docker-compose.yml` File 
+
+- OR start the Docker-Service and klick on:
+```bash 
+docker-compose up 
+``` 
+to run it in the console
+
+- Step three: To interact with the TUI enter:db
+```bash 
+docker attach ui_service
+``` 
+

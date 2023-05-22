@@ -35,7 +35,7 @@ class MongoDAO extends DAOInterface {
   println(uri)
   val db: MongoDatabase = client.getDatabase("mastermind")
   print(db)
-  private val gameCollection: MongoCollection[Document] = db.getCollection("game")
+  var gameCollection: MongoCollection[Document] = db.getCollection("game")
   println("Connected to MongoDB")
 
   override def save(game: GameInterface, save_name: String): Unit = 
@@ -45,7 +45,7 @@ class MongoDAO extends DAOInterface {
       "name" -> save_name,
       "game" -> fileIO.gameToJson(game).toString(),
     )))
-    println("Inserted game with game id 1")
+    println("Inserted game with game id " +(getID(gameCollection)) )
 
   override def load(id: Option[Int]): Try[GameInterface] = 
     Try {
@@ -94,4 +94,8 @@ class MongoDAO extends DAOInterface {
     }
     
     println("db operation successful")
+
+    def getNewestId(collection: MongoCollection[Document]): Int =
+      val result = Await.result(collection.find(exists("_id")).sort(descending("_id")).first().head(), Inf)
+      if result != null then result("_id").asInt32().getValue else 0
 }
