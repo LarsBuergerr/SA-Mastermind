@@ -40,6 +40,8 @@ trait ControllerInterface extends Observable:
 
   def dbupdate(game: GameInterface, id: Int): Unit
 
+  def dbdelete(id: Int): Unit
+
   def update: String
     
   def request(event: Event): State

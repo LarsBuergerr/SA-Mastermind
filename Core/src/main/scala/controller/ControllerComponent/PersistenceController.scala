@@ -106,4 +106,16 @@ class PersistenceController {
         entity = fio.gameToJson(game).toString())
         )
     }
+
+
+    def dbdelete(id: Int) = {
+        implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
+        implicit val executionContext = system.executionContext
+
+        val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
+        method = HttpMethods.POST,
+        uri = "http://persistence_service:8081/persistence/dbdelete/" + id.toString(),
+        entity = fio.gameToJson(game).toString())
+        )
+    }
 }

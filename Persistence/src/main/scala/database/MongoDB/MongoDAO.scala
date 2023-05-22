@@ -16,6 +16,10 @@ import scala.concurrent.duration.Duration.Inf
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, Future}
 import scala.util.Try
+import java.time.format.DateTimeFormatter
+import akka.http.javadsl.model.headers.Date
+import org.mongodb.scala.ObservableFuture
+import org.mongodb.scala.gridfs.ObservableFuture
 
 
 class MongoDAO extends DAOInterface {
@@ -52,6 +56,7 @@ class MongoDAO extends DAOInterface {
     }
 
   override def delete(id: Int): Try[Boolean] =
+    println("Deleting game from MongoDB")
     Try {
       Await.result(gameCollection.deleteOne(equal("_id", id)).head(), 10.second).wasAcknowledged()
     }
@@ -61,15 +66,16 @@ class MongoDAO extends DAOInterface {
     println("updating game in MongoDB")
     val result = Await.result(gameCollection.replaceOne(equal("_id", id), Document(
       "_id" -> id,
+      "name" -> ("updated_" + DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss").format(java.time.LocalDateTime.now())),
       "game" -> fileIO.gameToJson(game).toString(),
     )).head(), 10.second)
     println("Finished update")
     result.wasAcknowledged()
   
   override def listAllGames(): Unit =
-    println("list all games from MongoDB")
-    val result = Await.result(gameCollection.find().sort(descending("_id")).first().head(), Inf)
-    if (result.isEmpty) println("No games found") else println(result.toJson())
+    println("All Games with name and id: \n")
+    val result = Await.result(gameCollection.find().toFuture(), 10.second)
+    result.foreach(doc => println("Name: \t" + doc.get("name").get.asString().getValue + "\nID: \t" + doc.get("_id").get.asInt32().getValue.toHexString + "\n"))
 
 
   def getID(coll: MongoCollection[Document]): Int =

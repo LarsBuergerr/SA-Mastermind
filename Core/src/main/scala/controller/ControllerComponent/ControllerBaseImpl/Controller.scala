@@ -79,6 +79,9 @@ class Controller(using var game: GameInterface) extends ControllerInterface:
   def dbupdate(game: GameInterface, id: Int) =
     persistenceController.dbupdate(game, id)
 
+  def dbdelete(id: Int) =
+    persistenceController.dbdelete(id)
+
   def reset =
     game = game.resetGame()
     notifyObservers
