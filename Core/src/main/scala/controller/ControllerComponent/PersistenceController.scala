@@ -18,8 +18,8 @@ import model.GameComponent.GameInterface
 import play.api.libs.json.*
 import scalafx.scene.input.KeyCode.G
 
-import scala.concurrent.{Await, Future}
 import scala.concurrent.duration.*
+import scala.concurrent.{Await, Future}
 import scala.util.{Failure, Success, Try}
 
 
