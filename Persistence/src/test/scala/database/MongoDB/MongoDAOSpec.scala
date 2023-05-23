@@ -97,13 +97,27 @@ class MongoDAOSpec extends AnyWordSpec with Matchers with BeforeAndAfter{
 
     }
 
-    "load the game from the MongoDB collection" in {
+    "load the game by ID from the MongoDB collection" in {
       val game = Game()
       mongoDAO.save(game, "loadTest1")
       mongoDAO.save(game, "loadTest2")
       println(mongoDAO.listAllGames())
 
       val loadedGame = mongoDAO.load(Some(2))
+
+      loadedGame.isSuccess shouldEqual true
+      println(loadedGame)
+      loadedGame.get.toString shouldEqual game.toString
+    }
+
+    "load the game by Name from the MongoDB collection" in {
+      var game = Game()
+      //var gameTest = game.field.matrix.replaceCell(0, 0, Some(Stone("B"))).replaceCell(3, 3, Some(Stone("B")))
+      mongoDAO.save(game, "loadNameTest1")
+      mongoDAO.save(game, "loadNameTest2")
+      println(mongoDAO.listAllGames())
+
+      val loadedGame = mongoDAO.loadByName(Some("loadNameTest1"))
 
       loadedGame.isSuccess shouldEqual true
       println(loadedGame)

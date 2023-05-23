@@ -87,5 +87,4 @@ to run it in the console
 - Step three: To interact with the TUI enter:db
 ```bash 
 docker attach ui_service
-``` 
-
+```

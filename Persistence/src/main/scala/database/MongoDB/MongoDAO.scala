@@ -9,18 +9,16 @@ import org.mongodb.scala.model.Aggregates.*
 import org.mongodb.scala.model.Filters.*
 import org.mongodb.scala.model.Sorts.*
 import org.mongodb.scala.result.{DeleteResult, InsertOneResult, UpdateResult}
+import org.mongodb.scala.ObservableFuture
+import org.mongodb.scala.gridfs.ObservableFuture
 import org.mongodb.scala.{Document, MongoClient, MongoCollection, MongoDatabase, Observable, Observer, SingleObservable, result}
 import play.api.libs.json.{JsObject, Json}
-
 import scala.concurrent.duration.Duration.Inf
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, Future}
 import scala.util.Try
 import java.time.format.DateTimeFormatter
 import akka.http.javadsl.model.headers.Date
-import org.mongodb.scala.ObservableFuture
-import org.mongodb.scala.gridfs.ObservableFuture
-
 
 class MongoDAO extends DAOInterface {
   val fileIO = new FileIO()
@@ -54,6 +52,24 @@ class MongoDAO extends DAOInterface {
         case None => throw new Exception("No game found")
       }
     }
+
+  def loadByName(name: Option[String]): Try[GameInterface] =
+    Try {
+      Await.result(gameCollection.find(equal("name", name.getOrElse(getID(gameCollection)))).first().head(), 10.second).get("game") match {
+        case Some(value) => fileIO.jsonToGame(Json.parse(value.asString().getValue))
+        case None => throw new Exception("No game found")
+      }
+    }
+/*
+ def loadN(name: String): Try[GameInterface] = {
+    Try {
+      val documentOption = Await.result(gameCollection.find(Filters.equal("name", name)).first().head(), 10.seconds)
+      documentOption.flatMap(_.get("game")) match {
+        case Some(value) => fileIO.jsonToGame(Json.parse(value.asString().getValue))
+        case None => throw new Exception("No game found")
+      }
+    }
+  }*/
 
   override def delete(id: Int): Try[Boolean] =
     println("Deleting game from MongoDB")
