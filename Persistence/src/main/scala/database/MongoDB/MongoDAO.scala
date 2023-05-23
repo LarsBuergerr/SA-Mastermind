@@ -61,16 +61,6 @@ class MongoDAO extends DAOInterface {
         case None => throw new Exception("No game found")
       }
     }
-/*
- def loadN(name: String): Try[GameInterface] = {
-    Try {
-      val documentOption = Await.result(gameCollection.find(Filters.equal("name", name)).first().head(), 10.seconds)
-      documentOption.flatMap(_.get("game")) match {
-        case Some(value) => fileIO.jsonToGame(Json.parse(value.asString().getValue))
-        case None => throw new Exception("No game found")
-      }
-    }
-  }*/
 
 
   override def delete(id: Int): Try[Boolean] =

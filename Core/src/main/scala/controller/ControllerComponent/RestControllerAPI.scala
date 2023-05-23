@@ -126,6 +126,10 @@ class RestControllerAPI(using controller: ControllerInterface):
             controller.dbload(num.toInt)
             controller.request(PlayerInputStateEvent())
             complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, controller.gameToJson(controller.game)))
+          else if (action == "dbloadname") then
+            controller.dbloadname(num)
+            controller.request(PlayerInputStateEvent())
+            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, controller.gameToJson(controller.game)))
           else if(action == "dbsave") then
             controller.dbsave(controller.game, num)
             controller.request(PlayerInputStateEvent())
