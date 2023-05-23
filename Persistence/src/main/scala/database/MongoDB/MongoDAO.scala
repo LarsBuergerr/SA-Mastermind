@@ -53,6 +53,7 @@ class MongoDAO extends DAOInterface {
       }
     }
 
+
   def loadByName(name: Option[String]): Try[GameInterface] =
     Try {
       Await.result(gameCollection.find(equal("name", name.getOrElse(getID(gameCollection)))).first().head(), 10.second).get("game") match {
@@ -71,6 +72,7 @@ class MongoDAO extends DAOInterface {
     }
   }*/
 
+
   override def delete(id: Int): Try[Boolean] =
     println("Deleting game from MongoDB")
     Try {
@@ -88,10 +90,11 @@ class MongoDAO extends DAOInterface {
     println("Finished update")
     result.wasAcknowledged()
   
+
   override def listAllGames(): Unit =
     println("All Games with name and id: \n")
     val result = Await.result(gameCollection.find().toFuture(), 10.second)
-    result.foreach(doc => println("Name: \t" + doc.get("name").get.asString().getValue + "\nID: \t" + doc.get("_id").get.asInt32().getValue.toHexString + "\n"))
+    result.foreach(doc => println("Name: \t" + doc.get("name").get.asString().getValue + "\nID: \t" + doc.get("_id").get.asInt32().getValue.toString() + "\n"))
 
 
   def getID(coll: MongoCollection[Document]): Int =
@@ -100,7 +103,8 @@ class MongoDAO extends DAOInterface {
       Aggregates.limit(1),
       Aggregates.project(Document("_id" -> 1))
     )).headOption(), Inf)
-    result.flatMap(_.get("_id").map(_.asInt32().getValue.toHexString)).getOrElse("0").toInt
+    result.flatMap(_.get("_id").map(_.asInt32().getValue.toString())).getOrElse("0").toInt
+
 
   def handleResult[T](obs: SingleObservable[T]): Unit =
     try {
@@ -108,10 +112,11 @@ class MongoDAO extends DAOInterface {
     } catch {
       case e: Exception => e.printStackTrace()
     }
-    
+
     println("db operation successful")
 
-    def getNewestId(collection: MongoCollection[Document]): Int =
-      val result = Await.result(collection.find(exists("_id")).sort(descending("_id")).first().head(), Inf)
-      if result != null then result("_id").asInt32().getValue else 0
+
+  def getNewestId(collection: MongoCollection[Document]): Int =
+    val result = Await.result(collection.find(exists("_id")).sort(descending("_id")).first().head(), Inf)
+    if result != null then result("_id").asInt32().getValue else 0
 }

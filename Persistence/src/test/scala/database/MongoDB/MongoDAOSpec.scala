@@ -51,8 +51,9 @@ class MongoDAOSpec extends AnyWordSpec with Matchers with BeforeAndAfter{
   }
 
   after {
-    collection.drop()
+    Await.result(collection.drop().toFuture(), 5.seconds)
     client.close()
+    println("After test")
   }
 
   "MongoDAO" should {
