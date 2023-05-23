@@ -27,7 +27,7 @@ class SlickDAO extends DAOInterface {
   val databaseUser: String = sys.env.getOrElse("MYSQL_USER", "admin")
   val databasePassword: String = sys.env.getOrElse("MYSQL_PASSWORD", "root")
   val databasePort: String = sys.env.getOrElse("MYSQL_PORT", "3306")
-  val databaseHost: String = sys.env.getOrElse("MYSQL_HOST", "mastermind-database")
+  val databaseHost: String = sys.env.getOrElse("MYSQL_HOST", "localhost")
   val databaseUrl = s"jdbc:mysql://$databaseHost:$databasePort/$databaseDB?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&autoReconnect=true"
   println(databaseUrl)
   val database = Database.forURL(
@@ -37,6 +37,7 @@ class SlickDAO extends DAOInterface {
     password = databasePassword
   )
   val matrixTable = new TableQuery(new MatrixTable(_))
+  val matrixTable2 = new TableQuery(new MatrixTable(_))
   val hmatrixTable = new TableQuery(new HMatrixTable(_))
   val turnTable = new TableQuery(new TurnTable(_))
   val codeTable = new TableQuery(new CodeTable(_))
@@ -45,6 +46,7 @@ class SlickDAO extends DAOInterface {
   val gameTable2 = new TableQuery(new GameTable2(_))
 
   val setup: DBIOAction[Unit, NoStream, Effect.Schema] = DBIO.seq(matrixTable.schema.createIfNotExists,
+                                                                  matrixTable2.schema.createIfNotExists,
                                                                   hmatrixTable.schema.createIfNotExists,
                                                                   turnTable.schema.createIfNotExists,
                                                                   codeTable.schema.createIfNotExists,
@@ -62,45 +64,6 @@ class SlickDAO extends DAOInterface {
   }
   println("tables created")
 
-  // override def load(id: Option[Int] = None): Try[GameInterface] = {
-  //   Try {
-  //     print("before query")
-  //     val query = id.map(id => gameTable.filter(_.id === id))
-  //       .getOrElse(gameTable.filter(_.id === gameTable.map(_.id).max))
-
-  //     val game = Await.result(database.run(query.result), WAIT_TIME)
-
-  //     val matrix = game.head._2
-  //     val hmatrix = game.head._3
-  //     val code = game.head._4
-  //     val turn = game.head._5
-  //     val state = sanitize(game.head._6)
-
-  //     val jsonGame = Json.obj(
-  //       "matrix" -> Json.parse(matrix),
-  //       "hmatrix" -> Json.parse(hmatrix),
-  //       "code" -> Json.parse(code),
-  //       "turn" -> Json.toJson(turn),
-  //       "state" -> Json.parse(state)
-  //     )
-  //     val res = fileIO.jsonToGame(jsonGame.asInstanceOf[JsValue])
-  //     res
-  //   }
-  // }
-
-  // override def save(game: GameInterface) =
-  //   Try {
-  //     print("Saving game into database...\n")
-  //     val jsonGame = fileIO.gameToJson(game)
-      
-  //     val gameID = storeGame(
-  //       jsonGame("matrix").toString(),
-  //       jsonGame("hmatrix").toString(),
-  //       jsonGame("code").toString(),
-  //       jsonGame("turn").toString().toInt,
-  //       jsonGame("state").toString()
-  //     )
-  //   }
 
   override def save(game: GameInterface, save_name: String) =
     print("Saving game with name " + save_name + " into database...\n")
