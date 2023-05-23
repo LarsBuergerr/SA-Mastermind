@@ -102,6 +102,13 @@ class RestPersistenceAPI():
           complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, fileIO.gameToJson(unpacked_game.asInstanceOf[GameInterface]).toString))
         }
       },
+      get {
+        path("persistence" / "dbloadname" / Segment) { name =>
+          val game = db.loadByName(Some(name))
+          val unpacked_game = game.getOrElse("ERROR LOADING GAME")
+          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, fileIO.gameToJson(unpacked_game.asInstanceOf[GameInterface]).toString))
+        }
+      },
 
       path ("persistence" / "dbupdate" / Segment) { id => 
         post {

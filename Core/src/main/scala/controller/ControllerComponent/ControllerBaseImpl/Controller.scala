@@ -72,6 +72,12 @@ class Controller(using var game: GameInterface) extends ControllerInterface:
     game = persistenceController.game
     game
 
+  def dbloadname(name: String) =
+    persistenceController.dbloadByName(name)
+    notifyObservers
+    game = persistenceController.game
+    game
+
   def dblist =
     print("persistenceController.dblist()")
     persistenceController.dblist()

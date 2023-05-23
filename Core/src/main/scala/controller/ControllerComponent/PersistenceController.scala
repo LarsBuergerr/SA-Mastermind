@@ -55,8 +55,7 @@ class PersistenceController {
         val endpoint = "load"
         fetchData(endpoint)
     }
-
-
+    
     def save(game: GameInterface) = {
        implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
         implicit val executionContext = system.executionContext
@@ -69,6 +68,11 @@ class PersistenceController {
 
     def dbload(num: Int) = {
         val endpoint = "dbload/" + num.toString()
+        fetchData(endpoint)
+    }
+
+    def dbloadByName(name: String) = {
+        val endpoint = "dbloadname/" + name.toString()
         fetchData(endpoint)
     }
 
@@ -106,8 +110,7 @@ class PersistenceController {
         entity = fio.gameToJson(game).toString())
         )
     }
-
-
+    
     def dbdelete(id: Int) = {
         implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
         implicit val executionContext = system.executionContext
