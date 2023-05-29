@@ -7,7 +7,6 @@
 package controller.ControllerComponent
 
 //****************************************************************************** IMPORTS
-
 import FileIOComponent.fileIOJsonImpl.FileIO
 import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
@@ -38,6 +37,10 @@ class RestControllerAPI(using controller: ControllerInterface):
         <h1>Welcome to the Mastermind REST Controller API service!</h1>
         <h2>Available routes:</h2>
           <p><a href="controller/tui">GET ->    controller/tui</a></p>
+          <p><a href="controller/tuiF">GET ->    controller/tuiF</a></p>
+          <p><a href="controller/tuiColor">GET ->    controller/tuiColor</a></p>
+          <p><a href="controller/tuiHTML">GET ->    controller/tuiHTML</a></p>
+          <p><a href="controller/tuiJSON">GET ->    controller/tuiJSON</a></p>
           <p><a href="controller/load">GET  ->   controller/load</a></p>
             <p><a href="controller/undo">GET  ->    controller/undo</a></p>
             <p><a href="controller/redo">GET  ->    controller/redo</a></p>
@@ -58,8 +61,24 @@ class RestControllerAPI(using controller: ControllerInterface):
         complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, routes))
       },
       //Todo
-      path("controller"/ "tui") {
+      path("controller" / "tui") {
+        complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "Mastermind<br>"
+          + formatGameBoard(colorizeLetters(controller.game.field.toString() ) )
+          + "<br>"
+          + "Remaining Turns: "+ (10- controller.game.currentTurn).toString
+        ))
+      },
+      path("controller" / "tuiF") {
+        complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "Mastermind<br>" + formatGameBoard(controller.game.field.toString())))
+      },
+      path("controller" / "tuiColor") {
+        complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "Mastermind<br>" + colorizeLetters(controller.game.field.toString())))
+      },
+      path("controller"/ "tuiHTML") {
         complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "Mastermind\n\n" +controller.game.field.toString()))
+      },
+      path("controller" / "tuiJSON") {
+        complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "Mastermind\n\n" + controller.gameToJson(controller.game)))
       },
       get {
         path("controller"/ "request"/ Segment) { command => {
@@ -242,4 +261,36 @@ class RestControllerAPI(using controller: ControllerInterface):
         println(s"Mastermind ControllerAPI service failed to start: ${exception.getMessage}")
       }
     }
+  }
+
+  def formatGameBoard(gameBoard: String): String = {
+    val gameBoardRows = gameBoard.split("\n") // Split into rows
+    val formattedGameBoard = gameBoardRows.map { row =>
+      if (row.startsWith("|")) {
+        val cells = row.split("\\|").map(_.trim) // Split into cells
+        val formattedCells = cells.map(cell => s" <span>$cell</span> ") // Add span tags
+        formattedCells.mkString("|", "|", "|") // Join cells back together
+      } else {
+        row // Keep unchanged row
+      }
+    }
+    formattedGameBoard.mkString("<br>") // Join formatted text back together with line breaks
+  }
+
+  def colorizeLetters(text: String): String = {
+    val colorMap = Map(
+      'R' -> "red",
+      'G' -> "green",
+      'B' -> "blue",
+      'Y' -> "yellow",
+      'W' -> "darkgray",
+      'P' -> "purple"
+    )
+
+    val coloredText = text.map { letter =>
+      val color = colorMap.getOrElse(letter, "black")
+      s"<span style='color: $color;'>$letter</span>"
+    }
+
+    coloredText.mkString
   }
