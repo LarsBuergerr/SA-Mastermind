@@ -52,9 +52,11 @@ class RestControllerAPI(using controller: ControllerInterface):
             <p><a href="controller/reset">Game reset</a></p>
 
           <h3>DB Actions:</h3>
-            <p><a href="controller/handleSingleCharReq/dbsave/DBSaveTestName"> Save the game to the DB</a></p>
-            <p><a href="controller/handleSingleCharReq/dbload/DBSaveTestName"> Load the game from the DB</a></p>
-            <p><a href="controller/handleSingleCharReq/dblist/0"> List all DB Saves</a></p>
+            <p><a href="controller/handleMultiCharReq/dbsave/0"> Save the game to the DB</a></p>
+            <p><a href="controller/handleMultiCharReq/dbsave/DBSaveTestName"> Save the game to the DB whit Name</a></p>
+            <p><a href="controller/handleMultiCharReq/dbload/0"> Load the game from the DB by ID</a></p>
+            <p><a href="controller/handleMultiCharReq/dbloadname/DBSaveTestName"> Load the game from the DB by Name</a></p>
+            <p><a href="controller/handleMultiCharReq/dblist/0"> List all DB Saves</a></p>
 
           <br>
         <p><a href=""controller"/ /save">POST ->     controller/save</a></p>
@@ -65,7 +67,6 @@ class RestControllerAPI(using controller: ControllerInterface):
       pathSingleSlash {
         complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, routes))
       },
-      //Todo
       path("controller" / "tui") {
         complete(HttpEntity(ContentTypes.`text/html(UTF-8)`,HTMLGameboardString ))
       },
@@ -309,7 +310,7 @@ class RestControllerAPI(using controller: ControllerInterface):
       + "<input type=\"button\" value=\"Send\" onclick=\"redirectToURI()\"> </form>"
       + "<script>"
       + "function redirectToURI() {var inputValue = document.getElementById('inputValue').value;"
-      + "var url = '/controller/handleMultiCharReq/' + inputValue+'/0'; window.location.href = url; }"
+      + "var url = '/controller/set/' + inputValue+'/0'; window.location.href = url; }"
       + "</script>"
 
   }
