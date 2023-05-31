@@ -36,20 +36,25 @@ class RestControllerAPI(using controller: ControllerInterface):
     """
         <h1>Welcome to the Mastermind REST Controller API service!</h1>
         <h2>Available routes:</h2>
-          <p><a href="controller/tui">GET ->    controller/tui</a></p>
-          <p><a href="controller/tuiF">GET ->    controller/tuiF</a></p>
-          <p><a href="controller/tuiColor">GET ->    controller/tuiColor</a></p>
-          <p><a href="controller/tuiHTML">GET ->    controller/tuiHTML</a></p>
-          <p><a href="controller/tuiJSON">GET ->    controller/tuiJSON</a></p>
-          <p><a href="controller/load">GET  ->   controller/load</a></p>
-            <p><a href="controller/undo">GET  ->    controller/undo</a></p>
-            <p><a href="controller/redo">GET  ->    controller/redo</a></p>
-            <p><a href="controller/reset">GET ->     controller/reset</a></p>
-            <p><a href="controller/save">GET  ->     controller/save</a></p>
-            <p><a href="controller/get">GET  ->     controller/get</a></p>
-            <p><a href="controller/placeGuessAndHints">GET ->    controller/placeGuessAndHints</a></p>
-            <p><a href="controller/handleSingleCharReq">GET ->    controller/handleSingleCharReq</a></p>
-            <p><a href="controller/handleMultiCharReq">GET ->    controller/handleMultiCharReq</a></p>
+
+          <h3>Game Actions:</h3>
+            <p><a href="controller/tui">Go to the Web TUI</a></p>
+            <p><a href="controller/tuiJSON">JSON presentation of the Game</a></p>
+            <p><a href="controller/placeGuessAndHints">placeGuessAndHints</a></p>
+            <p><a href="controller/handleSingleCharReq">handleSingleCharReq</a></p>
+            <p><a href="controller/handleMultiCharReq">handleMultiCharReq</a></p>
+
+          <h3>JSON Actions:</h3>
+            <p><a href="controller/save">Game JSON save</a></p>
+            <p><a href="controller/load">Game JSON load</a></p>
+            <p><a href="controller/undo">Game undo</a></p>
+            <p><a href="controller/redo">Game redo</a></p>
+            <p><a href="controller/reset">Game reset</a></p>
+
+          <h3>DB Actions:</h3>
+            <p><a href="controller/handleSingleCharReq/dbsave/DBSaveTestName"> Save the game to the DB</a></p>
+            <p><a href="controller/handleSingleCharReq/dbload/DBSaveTestName"> Load the game from the DB</a></p>
+            <p><a href="controller/handleSingleCharReq/dblist/0"> List all DB Saves</a></p>
 
           <br>
         <p><a href=""controller"/ /save">POST ->     controller/save</a></p>
@@ -66,24 +71,14 @@ class RestControllerAPI(using controller: ControllerInterface):
       },
       get {
         path("controller" / "set"/ Segments) { command => {
-          //make Vector of Stones
           val stonesVector = command(0).split("").toVector.map(stone => Stone(stone))
           val hintsVector = command(1).split("").toVector.map(hint => HintStone(hint))
           val turn = command(2).toInt
 
           controller.placeGuessAndHints(stonesVector)(hintsVector)(turn)
-          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, controller.gameToJson(controller.game)))
+          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, HTMLGameboardString))
         }
         }
-      },
-      path("controller" / "tuiF") {
-        complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "Mastermind<br>" + formatGameBoard(controller.game.field.toString())))
-      },
-      path("controller" / "tuiColor") {
-        complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "Mastermind<br>" + colorizeLetters(controller.game.field.toString())))
-      },
-      path("controller"/ "tuiHTML") {
-        complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "Mastermind\n\n" +controller.game.field.toString()))
       },
       path("controller" / "tuiJSON") {
         complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "Mastermind\n\n" + controller.gameToJson(controller.game)))
@@ -166,7 +161,7 @@ class RestControllerAPI(using controller: ControllerInterface):
             print("controller.dblist")
             controller.dblist
             controller.request(PlayerInputStateEvent())
-            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, controller.gameToJson(controller.game)))
+            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, (controller.dblist).toString))
           else if(action == "dbupdate") then
             controller.dbupdate(controller.game, num.toInt)
             controller.request(PlayerInputStateEvent())
@@ -305,7 +300,7 @@ class RestControllerAPI(using controller: ControllerInterface):
   }
 
   private def HTMLGameboardString: String ={
-    "Mastermind<br>"
+    "<h2>Mastermind</h2><br>"
       + formatGameBoard(colorizeLetters(controller.game.field.toString()))
       + "<br>"
       + "Remaining Turns: " + (10 - controller.game.currentTurn).toString
