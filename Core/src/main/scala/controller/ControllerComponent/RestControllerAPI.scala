@@ -62,11 +62,19 @@ class RestControllerAPI(using controller: ControllerInterface):
       },
       //Todo
       path("controller" / "tui") {
-        complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "Mastermind<br>"
-          + formatGameBoard(colorizeLetters(controller.game.field.toString() ) )
-          + "<br>"
-          + "Remaining Turns: "+ (10- controller.game.currentTurn).toString
-        ))
+        complete(HttpEntity(ContentTypes.`text/html(UTF-8)`,HTMLGameboardString ))
+      },
+      get {
+        path("controller" / "set"/ Segments) { command => {
+          //make Vector of Stones
+          val stonesVector = command(0).split("").toVector.map(stone => Stone(stone))
+          val hintsVector = command(1).split("").toVector.map(hint => HintStone(hint))
+          val turn = command(2).toInt
+
+          controller.placeGuessAndHints(stonesVector)(hintsVector)(turn)
+          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, controller.gameToJson(controller.game)))
+        }
+        }
       },
       path("controller" / "tuiF") {
         complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "Mastermind<br>" + formatGameBoard(controller.game.field.toString())))
@@ -136,11 +144,12 @@ class RestControllerAPI(using controller: ControllerInterface):
         }
       },
       get {
-        path("controller"/ "handleMultiCharReq" / Segments) { input => { 
-
+        path("controller"/ "handleMultiCharReq" / Segments) { input => {
+          println("RESTController hmC String: "+input)
           var action = input(0)
           var num = input(1)
-
+          println("RESTController hmC action 0: "+action)
+          println("RESTController hmC num: "+num)
           if(action == "dbload") then
             controller.dbload(num.toInt)
             controller.request(PlayerInputStateEvent())
@@ -263,7 +272,7 @@ class RestControllerAPI(using controller: ControllerInterface):
     }
   }
 
-  def formatGameBoard(gameBoard: String): String = {
+  private def formatGameBoard(gameBoard: String): String = {
     val gameBoardRows = gameBoard.split("\n") // Split into rows
     val formattedGameBoard = gameBoardRows.map { row =>
       if (row.startsWith("|")) {
@@ -277,7 +286,7 @@ class RestControllerAPI(using controller: ControllerInterface):
     formattedGameBoard.mkString("<br>") // Join formatted text back together with line breaks
   }
 
-  def colorizeLetters(text: String): String = {
+  private def colorizeLetters(text: String): String = {
     val colorMap = Map(
       'R' -> "red",
       'G' -> "green",
@@ -294,3 +303,19 @@ class RestControllerAPI(using controller: ControllerInterface):
 
     coloredText.mkString
   }
+
+  private def HTMLGameboardString: String ={
+    "Mastermind<br>"
+      + formatGameBoard(colorizeLetters(controller.game.field.toString()))
+      + "<br>"
+      + "Remaining Turns: " + (10 - controller.game.currentTurn).toString
+      + "<br>"
+      + "<form> <input type=\"text\" id=\"inputValue\">"
+      + "<input type=\"button\" value=\"Send\" onclick=\"redirectToURI()\"> </form>"
+      + "<script>"
+      + "function redirectToURI() {var inputValue = document.getElementById('inputValue').value;"
+      + "var url = '/controller/handleMultiCharReq/' + inputValue+'/0'; window.location.href = url; }"
+      + "</script>"
+
+  }
+//TODO observer fehlt? bzw. keine aktualisierung in der tui bei uri eingabe
