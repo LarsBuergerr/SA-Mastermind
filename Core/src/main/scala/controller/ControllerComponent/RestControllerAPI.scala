@@ -7,7 +7,6 @@
 package controller.ControllerComponent
 
 //****************************************************************************** IMPORTS
-
 import FileIOComponent.fileIOJsonImpl.FileIO
 import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
@@ -24,7 +23,6 @@ import play.api.libs.json.*
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.util.{Failure, Success, Try}
-
 
 //****************************************************************************** CLASS DEFINITION
 class RestControllerAPI(using controller: ControllerInterface):
@@ -53,11 +51,11 @@ class RestControllerAPI(using controller: ControllerInterface):
             <p><a href="controller/reset">Game reset</a></p>
 
           <h3>DB Actions:</h3>
-            <p><a href="controller/handleMultiCharReq/dbsave/0"> Save the game to the DB</a></p>
+            <p><a href="controller/handleMultiCharReq/dbsave/1"> Save the game to the DB</a></p>
             <p><a href="controller/handleMultiCharReq/dbsave/DBSaveTestName"> Save the game to the DB whit Name</a></p>
-            <p><a href="controller/handleMultiCharReq/dbload/0"> Load the game from the DB by ID</a></p>
+            <p><a href="controller/handleMultiCharReq/dbload/1"> Load the game from the DB by ID</a></p>
             <p><a href="controller/handleMultiCharReq/dbloadname/DBSaveTestName"> Load the game from the DB by Name</a></p>
-            <p><a href="controller/handleMultiCharReq/dblist/0"> List all DB Saves</a></p>
+            <p><a href="controller/handleMultiCharReq/dblist/1> List all DB Saves</a></p>
 
           <br>
         <p><a href=""controller"/ /save">POST ->     controller/save</a></p>
@@ -74,11 +72,13 @@ class RestControllerAPI(using controller: ControllerInterface):
       },
 
       path("controller" / "set" / Segments) { command => {
-        val stonesVector = command(0).split("").toVector.map(stone => Stone(stone))
-        val hintsVector = command(1).split("").toVector.map(hint => HintStone(hint))
+        val codeVector = command(0).split("").toVector.map(stone => Stone(stone))
+        val hints = controller.game.getCode().compareTo(codeVector)
+        controller.placeGuessAndHints(codeVector)(hints)(controller.game.currentTurn)
+
         val turn = command(2).toInt
 
-        controller.placeGuessAndHints(stonesVector)(hintsVector)(turn)
+        controller.placeGuessAndHints(codeVector)(hints)(turn)
         complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, HTMLGameboardString))
         }
       },
@@ -141,11 +141,14 @@ class RestControllerAPI(using controller: ControllerInterface):
       },
 
       path("controller" / "handleMultiCharReq" / Segments) { input => {
-        println("RESTController hmC String: " + input)
         val action = input(0)
         val num = input(1)
+
+        // prints for debugging
+        println("RESTController hmC String: " + input)
         println("RESTController hmC action 0: " + action)
         println("RESTController hmC num: " + num)
+
         if (action == "dbload") then
           controller.dbload(num.toInt)
           controller.request(PlayerInputStateEvent())
@@ -160,6 +163,7 @@ class RestControllerAPI(using controller: ControllerInterface):
           complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, controller.gameToJson(controller.game)))
         else if (action == "dblist") then
           print("controller.dblist")
+          print("dblist Obj: "+controller.dblist )
           controller.dblist
           controller.request(PlayerInputStateEvent())
           complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, (controller.dblist).toString))
@@ -193,7 +197,10 @@ class RestControllerAPI(using controller: ControllerInterface):
               controller.request(PlayerInputStateEvent())
           else //Invalid input -> stay in current state
             controller.request(currentRequest)
-          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, controller.gameToJson(controller.game)))
+          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`,
+            //controller.gameToJson(controller.game)
+              HTMLGameboardString
+            ))
         }
       },
 
@@ -271,7 +278,7 @@ class RestControllerAPI(using controller: ControllerInterface):
       + "<input type=\"button\" value=\"Send\" onclick=\"redirectToURI()\"> </form>"
       + "<script>"
       + "function redirectToURI() {var inputValue = document.getElementById('inputValue').value;"
-      + "var url = '/controller/set/' + inputValue+'/0'; window.location.href = url; }"
+      + "var url = '/controller/handleMultiCharReq/' + inputValue+'/0'; window.location.href = url; }"
       + "</script>"
 
   }
