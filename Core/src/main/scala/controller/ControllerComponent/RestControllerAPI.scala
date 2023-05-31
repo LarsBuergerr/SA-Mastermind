@@ -71,18 +71,6 @@ class RestControllerAPI(using controller: ControllerInterface):
         complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, HTMLGameboardString))
       },
 
-      path("controller" / "set" / Segments) { command => {
-        val codeVector = command(0).split("").toVector.map(stone => Stone(stone))
-        val hints = controller.game.getCode().compareTo(codeVector)
-        controller.placeGuessAndHints(codeVector)(hints)(controller.game.currentTurn)
-
-        val turn = command(2).toInt
-
-        controller.placeGuessAndHints(codeVector)(hints)(turn)
-        complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, HTMLGameboardString))
-        }
-      },
-
       path("controller" / "tuiJSON") {
         complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "Mastermind\n\n" + controller.gameToJson(controller.game)))
       },
