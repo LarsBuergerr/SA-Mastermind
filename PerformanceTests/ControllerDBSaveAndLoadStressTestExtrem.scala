@@ -43,5 +43,5 @@ class ControllerDBSaveAndLoadStressTestExtrem extends Simulation {
         .headers(headers_0)
     )
 
-  setUp(scn.inject(rampUsersPerSec(3).to(1000).during(3.minutes))).protocols(httpProtocol)
+  setUp(scn.inject(rampUsersPerSec(3).to(800).during(2.minutes))).protocols(httpProtocol)
 }

@@ -29,10 +29,6 @@ class ontrollerAllFunctionsTest1000User extends Simulation {
 
 
   private val scn = scenario("ontrollerAllFunctionsTest1000User")
-  // with an Int times
-	repeat(5) {
-		exec(http("name").get("/"))
-	}
     .exec(
       http("request_GoToControllerAPI")
         .get("/")
@@ -105,5 +101,5 @@ class ontrollerAllFunctionsTest1000User extends Simulation {
         .headers(headers_0)
     )
 
-	setUp(scn.inject(atOnceUsers(10))).protocols(httpProtocol)
+	setUp(scn.inject(atOnceUsers(1000))).protocols(httpProtocol)
 }
