@@ -93,6 +93,7 @@ class UIController {
     }
 
     def handleMultiCharReq(req: String) = {
+        println("UIController hmC String: "+req)
         val splitted_req = req.split(" ")
         var action = ""
         var value = "0"

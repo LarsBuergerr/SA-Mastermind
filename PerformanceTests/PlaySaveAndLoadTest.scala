@@ -49,6 +49,12 @@ class PlaySaveAndLoadTest extends Simulation {
         .get("/controller/handleMultiCharReq/rgbr/0")
         .headers(headers_0)
     )
+    .pause(3)
+    .exec(
+      http("request_7_SetCode")
+        .get("/controller/handleMultiCharReq/bbbb/0")
+        .headers(headers_0)
+    )
     .pause(2)
     .exec(
       http("request_2_SetCode")
