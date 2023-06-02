@@ -27,6 +27,11 @@ lazy val allDependencies = Seq(
   mongodb
 )
 
+/** Gatling **/
+lazy val gatlingDependencies = Seq(
+  "io.gatling.highcharts" % "gatling-charts-highcharts" % "3.9.5" % "test" exclude("com.typesafe.scala-logging", "scala-logging_2.13"),
+  "io.gatling" % "gatling-test-framework" % "3.9.5" % "test" exclude("com.typesafe.scala-logging", "scala-logging_2.13"),
+)
 /** Docker **/
 val dockerAppPath = "/app/"
 
