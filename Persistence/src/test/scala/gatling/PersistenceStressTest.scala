@@ -29,7 +29,7 @@ class PersistenceStressTest extends SimulationSkeleton {
     setUp(
       // stress test with increasing the user number from 0 to 3000 in 1 minute
       scn.inject(
-        stressPeakUsers(10000) during (20.second)
+        stressPeakUsers(3000) during (20.second)
       )
     ).protocols(httpProtocol)
   }

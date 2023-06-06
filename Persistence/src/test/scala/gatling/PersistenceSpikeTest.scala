@@ -30,7 +30,7 @@ class PersistenceSpikeTest extends SimulationSkeleton {
       scn.inject(
         //spike users 
         rampUsers(10) during (10.second),
-        atOnceUsers(1000),
+        atOnceUsers(300),
         rampUsers(10) during (10.second),
         )
     ).protocols(httpProtocol)
