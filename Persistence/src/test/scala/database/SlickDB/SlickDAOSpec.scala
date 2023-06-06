@@ -8,7 +8,6 @@ import model.GameComponent.GameInterface
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers.shouldBe
 import org.scalatest.wordspec.AnyWordSpec
-import org.scalatestplus.mockito.MockitoSugar
 import slick.jdbc.JdbcBackend.Database
 import slick.jdbc.MySQLProfile.api.*
 import slick.lifted.TableQuery
@@ -35,7 +34,7 @@ class SlickDAOSpec extends AnyWordSpec with Matchers with BeforeAndAfter {
 
                 override def load(id: Option[Int]): Try[Game] = Try(mockGame.asInstanceOf[Game])
 
-                override def update(game: GameInterface, id: Int): Boolean = true
+                override def update(game: GameInterface, id: Int): Try[Boolean] = Try(true)
 
                 override def listAllGames(): Unit = ()
             end AnyDAO

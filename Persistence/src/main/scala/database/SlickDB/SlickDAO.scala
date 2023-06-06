@@ -2,7 +2,6 @@ package SlickDB
 
 import FileIOComponent.fileIOJsonImpl.FileIO
 import SQLTables.*
-import com.mysql.cj.jdbc.exceptions.CommunicationsException
 import model.GameComponent.GameBaseImpl.Game
 import model.GameComponent.GameInterface
 import play.api.libs.json.{JsObject, JsValue, Json}
@@ -29,7 +28,6 @@ class SlickDAO extends DAOInterface {
   val databasePort: String = sys.env.getOrElse("MYSQL_PORT", "3306")
   val databaseHost: String = sys.env.getOrElse("MYSQL_HOST", "localhost")
   val databaseUrl = s"jdbc:mysql://$databaseHost:$databasePort/$databaseDB?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&autoReconnect=true"
-  println(databaseUrl)
   val database = Database.forURL(
     url = databaseUrl,
     driver = "com.mysql.cj.jdbc.Driver",
@@ -53,20 +51,16 @@ class SlickDAO extends DAOInterface {
                                                                   gameTable.schema.createIfNotExists,
                                                                   gameTable2.schema.createIfNotExists,
                                                                   stateTable.schema.createIfNotExists)
-  println("create tables")
   try {
     Await.result(database.run(setup), WAIT_TIME)
   } catch {
     case e: SQLNonTransientException =>
-      println("Waiting for DB connection")
       Thread.sleep(WAIT_DB)
       Await.result(database.run(setup), WAIT_TIME)
   }
-  println("tables created")
 
 
   override def save(game: GameInterface, save_name: String) =
-    print("Saving game with name " + save_name + " into database...\n")
     Try {
       val json_game = fileIO.gameToJson(game)
 
@@ -93,8 +87,7 @@ class SlickDAO extends DAOInterface {
 
   override def load(id: Option[Int] = None) =
     Try {
-      val query = id.map(id => gameTable2.filter(_.id === id))
-        .getOrElse(gameTable2.filter(_.id === gameTable2.map(_.id).max))
+      val query = gameTable2.filter(_.id === gameTable2.map(_.id).max)
 
       val game = Await.result(database.run(query.result), WAIT_TIME)
 
@@ -123,7 +116,7 @@ class SlickDAO extends DAOInterface {
 
   override def delete(id: Int): Try[Boolean] = {
     Try {
-      Await.result(database.run(gameTable2.filter(_.id === id).delete), WAIT_TIME)
+      Await.result(database.run(gameTable2.filter(_.id === gameTable2.map(_.id).max).delete), WAIT_TIME)
       true
     }
   }
@@ -134,33 +127,35 @@ class SlickDAO extends DAOInterface {
     gameID
   }
 
-  override def update(game: GameInterface, id: Int): Boolean = {
-    val jsonGame = fileIO.gameToJson(game)
+  override def update(game: GameInterface, id: Int): Try[Boolean] = {
+    Try {
+      val jsonGame = fileIO.gameToJson(game)
 
-    val matrix = jsonGame("matrix").toString()
-    val hmatrix = jsonGame("hmatrix").toString()
-    val code = jsonGame("code").toString()
-    val turn = jsonGame("turn").toString().toInt
-    val state = jsonGame("state").toString()
+      val matrix = jsonGame("matrix").toString()
+      val hmatrix = jsonGame("hmatrix").toString()
+      val code = jsonGame("code").toString()
+      val turn = jsonGame("turn").toString().toInt
+      val state = jsonGame("state").toString()
 
-    val gameQ = gameTable2.filter(_.id === id)
-    val gameRes = Await.result(database.run(gameQ.result), WAIT_TIME)
+      val gameQ = gameTable2.filter(_.id === gameTable2.map(_.id).max)
+      val gameRes = Await.result(database.run(gameQ.result), WAIT_TIME)
 
-    val matrixID = gameRes.head._2
-    val hmatrixID = gameRes.head._3
-    val codeID = gameRes.head._4
-    val turnID = gameRes.head._5
-    val stateID = gameRes.head._6
+      val matrixID = gameRes.head._2
+      val hmatrixID = gameRes.head._3
+      val codeID = gameRes.head._4
+      val turnID = gameRes.head._5
+      val stateID = gameRes.head._6
 
-    val matrixQ = matrixTable.filter(_.id === matrixID).update((matrixID, matrix))
-    val hmatrixQ = hmatrixTable.filter(_.id === hmatrixID).update((hmatrixID, hmatrix))
-    val codeQ = codeTable.filter(_.id === codeID).update((codeID, code))
-    val turnQ = turnTable.filter(_.id === turnID).update((turnID, turn))
-    val stateQ = stateTable.filter(_.id === stateID).update((stateID, state))
+      val matrixQ = matrixTable.filter(_.id === matrixID).update((matrixID, matrix))
+      val hmatrixQ = hmatrixTable.filter(_.id === hmatrixID).update((hmatrixID, hmatrix))
+      val codeQ = codeTable.filter(_.id === codeID).update((codeID, code))
+      val turnQ = turnTable.filter(_.id === turnID).update((turnID, turn))
+      val stateQ = stateTable.filter(_.id === stateID).update((stateID, state))
 
-    val query = matrixQ andThen hmatrixQ andThen codeQ andThen turnQ andThen stateQ
-    Await.result(database.run(query), WAIT_TIME)
-    true
+      val query = matrixQ andThen hmatrixQ andThen codeQ andThen turnQ andThen stateQ
+      Await.result(database.run(query), WAIT_TIME)
+      true
+    }
   }
   
   override def listAllGames() = {
@@ -170,8 +165,6 @@ class SlickDAO extends DAOInterface {
   }
 
   def printGames(games: Seq[(Int, Int, Int, Int, Int, Int, String)]) = {
-    println("All saved Games: ")
-    println("-----------------")
     games.foreach(game => println("GameID: " + game._1 + " | Name: " + game._7))
   }
 

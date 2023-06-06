@@ -14,8 +14,8 @@ class SlickDAOMock extends DAOInterface:
   override def load(id: Option[Int]): Try[Game] =
     Try(Game())
 
-  override def update(game: GameInterface, id: Int): Boolean =
-    true
+  override def update(game: GameInterface, id: Int): Try[Boolean] =
+    Try(true)
 
   override def listAllGames(): Unit =
     ()

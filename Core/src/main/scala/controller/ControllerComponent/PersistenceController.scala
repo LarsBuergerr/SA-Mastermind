@@ -16,7 +16,6 @@ import akka.stream.ActorMaterializer
 import model.GameComponent.GameBaseImpl.{Game, HStone, HintStone, Stone}
 import model.GameComponent.GameInterface
 import play.api.libs.json.*
-import scalafx.scene.input.KeyCode.G
 
 import scala.concurrent.duration.*
 import scala.concurrent.{Await, Future}
@@ -48,7 +47,7 @@ class PersistenceController {
             }
         }
         // Wait for the future to complete and get the result
-        Await.result(res, 10.seconds)
+        Await.result(res, 30.seconds)
     }
 
     def load() = {
@@ -57,7 +56,7 @@ class PersistenceController {
     }
     
     def save(game: GameInterface) = {
-       implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
+        implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
         implicit val executionContext = system.executionContext
 
         val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
@@ -87,17 +86,13 @@ class PersistenceController {
     }
 
     def dblist() = {
-        try {
-            implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
-            implicit val executionContext = system.executionContext
+        implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
+        implicit val executionContext = system.executionContext
 
-            val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
-            method = HttpMethods.POST,
-            uri = "http://persistence_service:8081/persistence/dblist",
-            entity = fio.gameToJson(game).toString()))
-        } catch {
-            case e: Exception => print(e.printStackTrace())
-        }
+        val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
+        method = HttpMethods.POST,
+        uri = "http://persistence_service:8081/persistence/dblist",
+        entity = fio.gameToJson(game).toString()))
     }
     
     def dbupdate(game: GameInterface, id: Int) = {

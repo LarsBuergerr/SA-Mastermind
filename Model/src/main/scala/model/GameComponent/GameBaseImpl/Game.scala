@@ -8,7 +8,6 @@ package model.GameComponent.GameBaseImpl
 
 //****************************************************************************** IMPORTS
 import util._
-import com.google.inject.Inject
 import model.GameComponent.GameInterface
 
 //****************************************************************************** CLASS DEFINITION
@@ -48,11 +47,9 @@ case class Game(val field: Field = new Field(10, 4),
   def handleRequest(request: Request): Event =
     request match
       case SingleCharRequest(userinput) =>
-        //println("SingleCharRequest: " + userinput)                              //@todo remove after debugging
         chainSCR.applyOrElse(userinput, RequestHandlerSCR.DefaultInputRule)
 
       case MultiCharRequest(userinput) =>
-        //println("MultiCharRequest: " + userinput)                               //@todo remove after debugging
         if(userinput.size != field.matrix.cols) then
           return RequestHandlerSCR.DefaultInputRule(userinput)
         else

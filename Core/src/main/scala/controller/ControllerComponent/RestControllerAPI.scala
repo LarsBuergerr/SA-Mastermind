@@ -132,10 +132,6 @@ class RestControllerAPI(using controller: ControllerInterface):
         val action = input(0)
         val num = input(1)
 
-        // prints for debugging
-        println("RESTController hmC String: " + input)
-        println("RESTController hmC action 0: " + action)
-        println("RESTController hmC num: " + num)
 
         if (action == "dbload") then
           controller.dbload(num.toInt)
@@ -150,8 +146,6 @@ class RestControllerAPI(using controller: ControllerInterface):
           controller.request(PlayerInputStateEvent())
           complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, controller.gameToJson(controller.game)))
         else if (action == "dblist") then
-          print("controller.dblist")
-          print("dblist Obj: "+controller.dblist )
           controller.dblist
           controller.request(PlayerInputStateEvent())
           complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, (controller.dblist).toString))
@@ -180,6 +174,7 @@ class RestControllerAPI(using controller: ControllerInterface):
             if hints.forall(p => p.stringRepresentation.equals("R")) then
               controller.request(PlayerWinStateEvent())
             else if (controller.game.field.matrix.rows - controller.game.currentTurn) == 0 then
+              controller.reset
               controller.request(PlayerLoseStateEvent())
             else
               controller.request(PlayerInputStateEvent())

@@ -79,7 +79,6 @@ class Controller(using var game: GameInterface) extends ControllerInterface:
     game
 
   def dblist =
-    print("persistenceController.dblist()")
     persistenceController.dblist()
 
   def dbupdate(game: GameInterface, id: Int) =

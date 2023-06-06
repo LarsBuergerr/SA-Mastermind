@@ -18,6 +18,7 @@ import scala.concurrent.duration.Duration.Inf
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, Future}
 import scala.util.Try
+import model.GameComponent.GameBaseImpl.Game
 
 class MongoDAO extends DAOInterface {
   val fileIO = new FileIO()
@@ -29,26 +30,21 @@ class MongoDAO extends DAOInterface {
 
   val uri: String = s"mongodb://$database_username:$database_pw@$host:$port/?authSource=admin"
   private val client: MongoClient = MongoClient(uri)
-  println(uri)
   val db: MongoDatabase = client.getDatabase("mastermind")
-  print(db)
   var gameCollection: MongoCollection[Document] = db.getCollection("game")
-  println("Connected to MongoDB")
 
   override def save(game: GameInterface, save_name: String): Unit = 
-    println("saving game to MongoDB")
     handleResult(gameCollection.insertOne(Document(
       "_id" -> (getID(gameCollection) + 1),
       "name" -> save_name,
       "game" -> fileIO.gameToJson(game).toString(),
     )))
-    println("Inserted game with game id " +(getID(gameCollection)) )
 
   override def load(id: Option[Int]): Try[GameInterface] = 
     Try {
-      Await.result(gameCollection.find(equal("_id", id.getOrElse(getID(gameCollection)))).first().head(), 10.second).get("game") match {
+      Await.result(gameCollection.find(equal("_id", getID(gameCollection))).first().head(), 10.second).get("game") match {
         case Some(value) => fileIO.jsonToGame(Json.parse(value.asString().getValue))
-        case None => throw new Exception("No game found")
+        case None => new Game()
       }
     }
 
@@ -63,25 +59,22 @@ class MongoDAO extends DAOInterface {
 
 
   override def delete(id: Int): Try[Boolean] =
-    println("Deleting game from MongoDB")
     Try {
-      Await.result(gameCollection.deleteOne(equal("_id", id)).head(), 10.second).wasAcknowledged()
+      Await.result(gameCollection.deleteOne(equal("_id", getID(gameCollection))).head(), 10.second).wasAcknowledged()
     }
   
   
-  override def update(game: GameInterface, id: Int): Boolean = 
-    println("updating game in MongoDB")
-    val result = Await.result(gameCollection.replaceOne(equal("_id", id), Document(
-      "_id" -> id,
-      "name" -> ("updated_" + DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss").format(java.time.LocalDateTime.now())),
-      "game" -> fileIO.gameToJson(game).toString(),
-    )).head(), 10.second)
-    println("Finished update")
-    result.wasAcknowledged()
-  
+  override def update(game: GameInterface, id: Int): Try[Boolean] = 
+    Try{
+      val result = Await.result(gameCollection.replaceOne(equal("_id", getID(gameCollection)), Document(
+        "_id" -> id,
+        "name" -> ("updated_" + DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss").format(java.time.LocalDateTime.now())),
+        "game" -> fileIO.gameToJson(game).toString(),
+      )).head(), 10.second)
+      result.wasAcknowledged()
+    }
 
   override def listAllGames(): Unit =
-    println("All Games with name and id: \n")
     val result = Await.result(gameCollection.find().toFuture(), 10.second)
     result.foreach(doc => println("Name: \t" + doc.get("name").get.asString().getValue + "\nID: \t" + doc.get("_id").get.asInt32().getValue.toString() + "\n"))
 
@@ -101,9 +94,6 @@ class MongoDAO extends DAOInterface {
     } catch {
       case e: Exception => e.printStackTrace()
     }
-
-    println("db operation successful")
-
 
   def getNewestId(collection: MongoCollection[Document]): Int =
     val result = Await.result(collection.find(exists("_id")).sort(descending("_id")).first().head(), Inf)

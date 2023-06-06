@@ -14,8 +14,6 @@ class FileIO extends FileIOInterface:
 
   override def load(): GameInterface = 
     import scala.io.Source
-    import scalafx.stage.FileChooser
-    import scalafx.stage.FileChooser.ExtensionFilter
     import java.io.File
     val source: String = Source.fromFile("game.json").getLines.mkString
     val json: JsValue = Json.parse(source)

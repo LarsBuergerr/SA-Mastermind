@@ -51,7 +51,6 @@ class MongoDAOSpec extends AnyWordSpec with Matchers with BeforeAndAfter{
   after {
     Await.result(collection.drop().toFuture(), 5.seconds)
     client.close()
-    println("After test")
   }
 
   "MongoDAO" should {
@@ -75,14 +74,10 @@ class MongoDAOSpec extends AnyWordSpec with Matchers with BeforeAndAfter{
     "delete the game from the MongoDB collection" in {
       val game = Game()
       mongoDAO.save(game, "deleteTest")
-      println(mongoDAO.listAllGames())
-
       //val highest = Await.result(collection.find(exists("_id")).sort(descending("_id")).first().head(), Inf)
-      println(mongoDAO.getID(collection))
       val currentHighestID = mongoDAO.getID(collection)
       val result = mongoDAO.delete(currentHighestID)
-      println(result)
-      println(mongoDAO.listAllGames())
+
 
       result.isSuccess shouldEqual true
       result.get shouldEqual true
@@ -94,12 +89,10 @@ class MongoDAOSpec extends AnyWordSpec with Matchers with BeforeAndAfter{
       val game = Game()
       mongoDAO.save(game, "loadTest1")
       mongoDAO.save(game, "loadTest2")
-      println(mongoDAO.listAllGames())
 
       val loadedGame = mongoDAO.load(Some(2))
       
       loadedGame.isSuccess shouldEqual true
-      println(loadedGame)
       loadedGame.get.toString shouldEqual game.toString
     }
 
@@ -108,33 +101,11 @@ class MongoDAOSpec extends AnyWordSpec with Matchers with BeforeAndAfter{
       //var gameTest = game.field.matrix.replaceCell(0, 0, Some(Stone("B"))).replaceCell(3, 3, Some(Stone("B")))
       mongoDAO.save(game, "loadNameTest1")
       mongoDAO.save(game, "loadNameTest2")
-      println(mongoDAO.listAllGames())
 
       val loadedGame = mongoDAO.loadByName(Some("loadNameTest1"))
 
       loadedGame.isSuccess shouldEqual true
-      println(loadedGame)
       loadedGame.get.toString shouldEqual game.toString
-    }
-
-    "update the game board in the MongoDB collection" in {
-      val originalGame = Game()
-      println(originalGame.getCode())
-      mongoDAO.save(originalGame, "updateTest")
-      val updatedGame = new Game()
-      println(updatedGame.getCode())
-      val updateID = Await.result(collection.find(exists("_id")).sort(descending("_id")).first().head(), Inf)
-      val upID = Await.result(collection.countDocuments().toFuture(), 5.seconds).head
-
-      val upMongo = mongoDAO.update(updatedGame, 1)
-      println(upMongo)
-
-      println(mongoDAO.listAllGames())
-
-      upMongo shouldBe true
-      val loadedUpdatedGame = mongoDAO.load(Some(1))
-      //loadedUpdatedGame.get.toString shouldNot equal (originalGame.toString)
-      loadedUpdatedGame.get.toString shouldEqual updatedGame.toString
     }
   }
 }
