@@ -22,8 +22,7 @@ object dependencies {
     val playJson  = ("com.typesafe.play" %% "play-json" % "2.9.3").cross(CrossVersion.for3Use2_13)
     val swing     = ("org.scala-lang.modules" %% "scala-swing" % "3.0.0").cross(CrossVersion.for3Use2_13)
     val xml       = ("org.scala-lang.modules" %% "scala-xml" % "2.0.1")
-    val slick     =  ("com.typesafe.slick" %% "slick" % "3.4.1").cross(CrossVersion.for3Use2_13)
-    val slickHikari = ("com.typesafe.slick" %% "slick-hikaricp" % "3.4.1").cross(CrossVersion.for3Use2_13)
+    val slick = ("com.typesafe.slick" %% "slick" % "3.5.0-M3").cross(CrossVersion.for3Use2_13)
     val postgresql = "org.postgresql" % "postgresql" % "42.5.4"
     val sqlite    = "org.xerial" % "sqlite-jdbc" % "3.41.2.1"
     val testcontainer  = "com.dimafeng" %% "testcontainers-scala-scalatest" % "0.40.15"
@@ -32,6 +31,7 @@ object dependencies {
     val gatlingExclude = Seq(("com.typesafe.akka", "akka-actor_2.13"), ("org.scala-lang.modules", "scala-java8-compat_2.13"), ("com.typesafe.akka","akka-slf4j_2.13")).toVector.map((org_name: Tuple2[String,String]) => InclExclRule(org_name._1, org_name._2))
     val gatlingHigh = ("io.gatling.highcharts" % "gatling-charts-highcharts" % "3.9.5" % "test").withExclusions(gatlingExclude)
     val gatlingTest = ("io.gatling" % "gatling-test-framework" % "3.9.5" % "test").withExclusions(gatlingExclude)
+    val mysql = "mysql" % "mysql-connector-java" % "8.0.32"
 
     val yaml = ("net.jcazevedo" %% "moultingyaml" % "0.4.2").cross(CrossVersion.for3Use2_13) //YAML
     val commonDependency = Seq(
@@ -49,14 +49,11 @@ object dependencies {
         swing,
         xml,
         slick,
-        slickHikari,
-        postgresql,
-        testcontainer,
         jbcrypt,
-        sqlite,
         mongodb, 
         yaml,
         gatlingHigh,
         gatlingTest,
+        mysql
     )
 }

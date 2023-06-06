@@ -26,7 +26,7 @@ class SlickDAO extends DAOInterface {
   val databaseUser: String = sys.env.getOrElse("MYSQL_USER", "admin")
   val databasePassword: String = sys.env.getOrElse("MYSQL_PASSWORD", "root")
   val databasePort: String = sys.env.getOrElse("MYSQL_PORT", "3306")
-  val databaseHost: String = sys.env.getOrElse("MYSQL_HOST", "localhost")
+  val databaseHost: String = sys.env.getOrElse("MYSQL_HOST", "mastermind-database")
   val databaseUrl = s"jdbc:mysql://$databaseHost:$databasePort/$databaseDB?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&autoReconnect=true"
   val database = Database.forURL(
     url = databaseUrl,
