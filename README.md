@@ -15,9 +15,9 @@
 ---
 
 ## Contributors
-| [LarsBuergerr](https://github.com/LarsBuergerr)  |  [Smokey95](https://github.com/Smokey95) | 
-|---|---|
-| ![image](https://github-readme-streak-stats.herokuapp.com/?user=LarsBuergerr) | ![image](https://github-readme-streak-stats.herokuapp.com/?user=Smokey95)  |
+| [LarsBuergerr](https://github.com/LarsBuergerr)  |  [Smokey95](https://github.com/Smokey95) | [SinusP-CW90](https://github.com/SinusP-CW90) |
+|---|---|---|
+| ![image](https://github-readme-streak-stats.herokuapp.com/?user=LarsBuergerr) | ![image](https://github-readme-streak-stats.herokuapp.com/?user=Smokey95)  | ![image](https://github-readme-streak-stats.herokuapp.com/demo/preview.php?user=SinusP-CW90&theme=dark)  |
 
 ---
 
@@ -71,3 +71,20 @@ We thank the following people for their contributions to this project ( :) ):
 | Dave Gandy      | Save Icon             | [Save Icon Template](https://www.flaticon.com/free-icon/save-file-option_25398?related_id=25398&origin=pack)|
 | Dave Gandy      | Load Icon             | [Load Icon Template](https://www.flaticon.com/free-icon/open-folder-outline_25402?related_id=25402&origin=pack)|
 | Dave Gandy      | Help Icon             | [Help Icon Template](https://www.flaticon.com/free-icon/question-sign_25333?related_id=25333&origin=pack)|
+
+---      
+
+## How to run the Game in Docker
+- Step one: create lokal Images of the Services with: >> `sbt Docker/publishLocal`
+- Step two: run the `docker-compose.yml` File 
+
+- OR start the Docker-Service and klick on:
+```bash 
+docker-compose up 
+``` 
+to run it in the console
+
+- Step three: To interact with the TUI enter:db
+```bash 
+docker attach ui_service
+```

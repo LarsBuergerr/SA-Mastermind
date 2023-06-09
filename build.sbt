@@ -1,40 +1,25 @@
 import sbt.Keys.libraryDependencies
 import dependencies._
 
-val scala3Version = "3.1.2"
+val scala3Version = "3.2.2"
 val scalaTestVersion = "3.2.15"
 
-lazy val allDependencies = Seq(
-  scalameta,
-  scalatic,
-  scalatest,
-  guice,
-  sguice,
-  xml,
-  upickle,
-  yaml,
-  json,
-  akkaHttp,
-  akkaHttpSpray,
-  akkaHttpCore,
-  akkaActorTyped,
-  akkaStream,
-  akkaActor,
-  slf4jNop
-)
-
-/** Docker */
 val dockerAppPath = "/app/"
 
+ThisBuild / Gatling / publishArtifact := false
+ThisBuild / GatlingIt / publishArtifact := false
+
+/** Modules **/
 lazy val core: Project = Project(id = "Mastermind-Core-Module", base = file("Core"))
   .dependsOn(model, tools, persistence)
   .settings(
     name := "Mastermind-Core-Module",
     version := "0.1.0-SNAPSHOT",
+    dockerExposedPorts := Seq(8080),
     scalaVersion := scala3Version,
     commonSettings,
-    libraryDependencies ++= allDependencies
-  ).enablePlugins(JacocoPlugin, JavaAppPackaging, DockerPlugin)
+    libraryDependencies ++= commonDependency,
+  ).enablePlugins(JacocoPlugin, JavaAppPackaging, DockerPlugin, GatlingPlugin)
 
 lazy val model: Project = Project(id = "Mastermind-Model-Module", base = file("Model"))
   .dependsOn(tools)
@@ -43,21 +28,19 @@ lazy val model: Project = Project(id = "Mastermind-Model-Module", base = file("M
     version := "0.1.0-SNAPSHOT",
     scalaVersion := scala3Version,
     commonSettings,
-    libraryDependencies ++= allDependencies,
+    libraryDependencies ++= commonDependency,
   ).enablePlugins(JacocoPlugin)
 
 lazy val persistence: Project = Project(id = "Mastermind-Persistence-Module", base = file("Persistence"))
   .dependsOn(model, tools)
   .settings(
-    //expose port 8081
-    //Docker / dockerExposedPorts := Seq(8081),
-
     name := "Mastermind-Persistence-Module",
     version := "0.1.0-SNAPSHOT",
+    dockerExposedPorts := Seq(8081),
     scalaVersion := scala3Version,
     commonSettings,
-    libraryDependencies ++= allDependencies
-  ).enablePlugins(JacocoPlugin, JavaAppPackaging, DockerPlugin)
+    libraryDependencies ++= commonDependency,
+  ).enablePlugins(JacocoPlugin, JavaAppPackaging, DockerPlugin, GatlingPlugin)
 
 lazy val tools: Project = Project(id = "Mastermind-Tools-Module", base = file("Tools"))
   .settings(
@@ -65,7 +48,7 @@ lazy val tools: Project = Project(id = "Mastermind-Tools-Module", base = file("T
     version := "0.1.0-SNAPSHOT",
     scalaVersion := scala3Version,
     commonSettings,
-    libraryDependencies ++= allDependencies
+    libraryDependencies ++= commonDependency,
   ).enablePlugins(JacocoPlugin)
 
 lazy val ui: Project = Project(id = "Mastermind-UI-Module", base = file("UI"))
@@ -75,7 +58,7 @@ lazy val ui: Project = Project(id = "Mastermind-UI-Module", base = file("UI"))
     version := "0.1.0-SNAPSHOT",
     scalaVersion := scala3Version,
     commonSettings,
-    libraryDependencies ++= allDependencies
+    libraryDependencies ++= commonDependency,
   ).enablePlugins(JacocoPlugin)
 
 lazy val root: Project = Project(id = "Mastermind-Root-Module", base = file("."))
@@ -87,7 +70,7 @@ lazy val root: Project = Project(id = "Mastermind-Root-Module", base = file(".")
     version := "0.1.0-SNAPSHOT",
     scalaVersion := scala3Version,
     commonSettings,
-    libraryDependencies ++= allDependencies
+    libraryDependencies ++= commonDependency,
   ).enablePlugins(JacocoPlugin, JavaAppPackaging, DockerPlugin)
 
 lazy val commonSettings: Seq[Def.Setting[_]] = Seq(

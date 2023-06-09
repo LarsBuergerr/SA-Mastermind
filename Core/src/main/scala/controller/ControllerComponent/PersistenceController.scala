@@ -2,32 +2,30 @@ package controller.ControllerComponent
 
 package aview
 
-import scala.concurrent.Future
-import akka.actor.typed.{ActorSystem}
-import akka.actor.typed.scaladsl.Behaviors
-import akka.http.scaladsl.Http
-import akka.http.scaladsl.server.Directives.*
-import akka.http.scaladsl.model.{ContentTypes, HttpEntity, StatusCode, HttpMethods, HttpResponse, HttpRequest}
-import akka.http.scaladsl.server.{ExceptionHandler, Route}
-import scala.util.{Try, Success, Failure}
-import play.api.libs.json.*
-import akka.http.scaladsl.unmarshalling.Unmarshal
-import scala.concurrent.duration._
-import scala.concurrent.Await
-
 import FileIOComponent.fileIOJsonImpl.FileIO
-import model.GameComponent.GameInterface
-import model.GameComponent.GameBaseImpl.{Stone, HintStone, HStone}
-import scalafx.scene.input.KeyCode.G
-import akka.stream.ActorMaterializer
 import _root_.util.Event
+import akka.actor.typed.ActorSystem
+import akka.actor.typed.scaladsl.Behaviors
 import akka.http.javadsl.model.StatusCodes
+import akka.http.scaladsl.Http
+import akka.http.scaladsl.model.*
+import akka.http.scaladsl.server.Directives.*
+import akka.http.scaladsl.server.{ExceptionHandler, Route}
+import akka.http.scaladsl.unmarshalling.Unmarshal
+import akka.stream.ActorMaterializer
+import model.GameComponent.GameBaseImpl.{Game, HStone, HintStone, Stone}
+import model.GameComponent.GameInterface
+import play.api.libs.json.*
+
+import scala.concurrent.duration.*
+import scala.concurrent.{Await, Future}
+import scala.util.{Failure, Success, Try}
 
 
 class PersistenceController {
 
     val fio = new FileIO()
-    var game: GameInterface = null
+    var game: GameInterface = new Game()
 
     def fetchData(apiEndpoint: String) = {
 
@@ -42,29 +40,80 @@ class PersistenceController {
             case StatusCodes.OK =>
             Unmarshal(response.entity).to[String].map { jsonStr =>
                 val loadedGame = Json.parse(jsonStr)
-                this.game = fio.JsonToGame(loadedGame)
+                this.game = fio.jsonToGame(loadedGame)
             }
             case _ =>
             Future.failed(new RuntimeException(s"HTTP request to Persistence API failed with status ${response.status} and entity ${response.entity}"))
             }
         }
         // Wait for the future to complete and get the result
-        Await.result(res, 10.seconds)
+        Await.result(res, 30.seconds)
     }
 
     def load() = {
         val endpoint = "load"
         fetchData(endpoint)
     }
-
-
+    
     def save(game: GameInterface) = {
-       implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
+        implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
         implicit val executionContext = system.executionContext
 
         val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
         method = HttpMethods.POST,
         uri = "http://persistence_service:8081/persistence/save",
         entity = fio.gameToJson(game).toString()))
+    }
+
+    def dbload(num: Int) = {
+        val endpoint = "dbload/" + num.toString()
+        fetchData(endpoint)
+    }
+
+    def dbloadByName(name: String) = {
+        val endpoint = "dbloadname/" + name.toString()
+        fetchData(endpoint)
+    }
+
+    def dbsave(game: GameInterface, save_name: String) = {
+        implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
+        implicit val executionContext = system.executionContext
+
+        val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
+        method = HttpMethods.POST,
+        uri = "http://persistence_service:8081/persistence/dbsave/" + save_name,
+        entity = fio.gameToJson(game).toString()))
+    }
+
+    def dblist() = {
+        implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
+        implicit val executionContext = system.executionContext
+
+        val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
+        method = HttpMethods.POST,
+        uri = "http://persistence_service:8081/persistence/dblist",
+        entity = fio.gameToJson(game).toString()))
+    }
+    
+    def dbupdate(game: GameInterface, id: Int) = {
+        implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
+        implicit val executionContext = system.executionContext
+
+        val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
+        method = HttpMethods.POST,
+        uri = "http://persistence_service:8081/persistence/dbupdate/" + id.toString(),
+        entity = fio.gameToJson(game).toString())
+        )
+    }
+    
+    def dbdelete(id: Int) = {
+        implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
+        implicit val executionContext = system.executionContext
+
+        val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
+        method = HttpMethods.POST,
+        uri = "http://persistence_service:8081/persistence/dbdelete/" + id.toString(),
+        entity = fio.gameToJson(game).toString())
+        )
     }
 }

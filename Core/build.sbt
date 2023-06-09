@@ -1,1 +1,0 @@
-ThisBuild / Docker / dockerExposedPorts := Seq(8080)

@@ -26,6 +26,7 @@ import aview.{GUI, TUI}
 import controller.ControllerComponent.RestControllerAPI
 import FileIOComponent.FileIOInterface
 import FileIOComponent.RestPersistenceAPI
+import SlickDB.SlickDAO
 import scala.io.StdIn.readLine
 
 import MastermindModule.given
@@ -37,7 +38,6 @@ object mastermind extends Thread:
 
   // persistenceService.start()
   // controllerService.start()
-
   val tui = TUI()
   //val gui = GUI()
 

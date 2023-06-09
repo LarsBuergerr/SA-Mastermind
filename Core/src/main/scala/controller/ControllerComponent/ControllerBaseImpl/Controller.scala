@@ -8,15 +8,14 @@
 package controller.ControllerComponent.ControllerBaseImpl
 
 //****************************************************************************** IMPORTS
-import model.GameComponent.GameInterface
-import model.GameComponent.GameBaseImpl.Game
-import model.GameComponent.GameBaseImpl.{State, Stone, HStone, Field}
 import FileIOComponent.FileIOInterface
 import FileIOComponent.fileIOJsonImpl.FileIO
 import controller.ControllerComponent.ControllerInterface
-import util.{Request, Event, Observable}
-import play.api.libs.json.*
 import controller.ControllerComponent.aview.PersistenceController
+import model.GameComponent.GameBaseImpl.*
+import model.GameComponent.GameInterface
+import util.{Event, Observable, Request}
+import play.api.libs.json.*
 
 //****************************************************************************** CLASS DEFINITION
 class Controller(using var game: GameInterface) extends ControllerInterface:
@@ -63,6 +62,30 @@ class Controller(using var game: GameInterface) extends ControllerInterface:
     notifyObservers
     game = persistenceController.game
     game
+
+  def dbsave(game: GameInterface, save_name: String) =
+    persistenceController.dbsave(game, save_name)
+
+  def dbload(num: Int) =
+    persistenceController.dbload(num)
+    notifyObservers
+    game = persistenceController.game
+    game
+
+  def dbloadname(name: String) =
+    persistenceController.dbloadByName(name)
+    notifyObservers
+    game = persistenceController.game
+    game
+
+  def dblist =
+    persistenceController.dblist()
+
+  def dbupdate(game: GameInterface, id: Int) =
+    persistenceController.dbupdate(game, id)
+
+  def dbdelete(id: Int) =
+    persistenceController.dbdelete(id)
 
   def reset =
     game = game.resetGame()

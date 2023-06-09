@@ -38,7 +38,7 @@ class UIController {
             case StatusCodes.OK =>
             Unmarshal(response.entity).to[String].map { jsonStr =>
                 val loadedGame = Json.parse(jsonStr)
-                this.game = fio.JsonToGame(loadedGame)
+                this.game = fio.jsonToGame(loadedGame)
             }
             case _ =>
             Future.failed(new RuntimeException(s"HTTP request to Controller API failed with status ${response.status} and entity ${response.entity}"))
@@ -73,7 +73,7 @@ class UIController {
 
         val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
         method = HttpMethods.POST,
-        uri = "http://localhost:8080/controller/save",
+        uri = "http://localhost:8080/controller/save/",
         entity = fio.gameToJson(game).toString()))
     }
 
@@ -93,7 +93,18 @@ class UIController {
     }
 
     def handleMultiCharReq(req: String) = {
-        val endpoint = "handleMultiCharReq/" + req
+        val splitted_req = req.split(" ")
+        var action = ""
+        var value = "0"
+
+        if (splitted_req.length == 2) {
+            action = splitted_req(0)
+            value = splitted_req(1)
+        } else {
+            action = splitted_req(0)
+        }
+
+        val endpoint = "handleMultiCharReq/" + action + "/" + value
         fetchData(endpoint)
     }
 

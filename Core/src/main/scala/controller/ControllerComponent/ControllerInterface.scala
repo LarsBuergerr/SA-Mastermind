@@ -8,9 +8,9 @@ package controller.ControllerComponent
 
 //****************************************************************************** IMPORTS
 
-import model.GameComponent.GameBaseImpl.{Field, Stone, HStone, State, Game}
+import model.GameComponent.GameBaseImpl.*
 import model.GameComponent.GameInterface
-import util.{Observable, Event, Request}
+import util.{Event, Observable, Request}
 import play.api.libs.json.*
 
 //****************************************************************************** INTERFACE DEFINITION
@@ -31,6 +31,18 @@ trait ControllerInterface extends Observable:
   def save(game: GameInterface): Unit
 
   def load: GameInterface
+
+  def dbsave(game: GameInterface, save_name: String): Unit
+
+  def dbload(num: Int): GameInterface
+
+  def dbloadname(num: String): GameInterface
+
+  def dblist: Unit
+
+  def dbupdate(game: GameInterface, id: Int): Unit
+
+  def dbdelete(id: Int): Unit
 
   def update: String
     

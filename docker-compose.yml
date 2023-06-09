@@ -16,6 +16,37 @@ services:
     working_dir: /fileio
     volumes:
       - ./:/fileio:xro
+    depends_on:
+      - database
+
+  mongoDB:
+    image: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    container_name: mastermind-mongo
+    environment:
+      MONGO_INITDB_HOST: mastermind-mongo
+      MONGO_INITDB_PORT: 27017
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: mongo
+      MONGO_INITDB_DATABASE: mastermind
+
+  database:
+    image: mysql:5.7
+    restart: always
+    ports:
+      - "3306:3306"
+    container_name: mastermind-database
+    environment:
+      MYSQL_HOST: mastermind-database
+      MYSQL_PORT: 3306
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: mastermind
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: root
+    volumes:
+     - .:/var/lib/sql/mastermind
 
   core:
     image: mastermind-core-service

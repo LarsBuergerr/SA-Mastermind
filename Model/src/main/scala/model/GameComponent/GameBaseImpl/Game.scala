@@ -8,7 +8,6 @@ package model.GameComponent.GameBaseImpl
 
 //****************************************************************************** IMPORTS
 import util._
-import com.google.inject.Inject
 import model.GameComponent.GameInterface
 
 //****************************************************************************** CLASS DEFINITION
@@ -35,7 +34,9 @@ case class Game(val field: Field = new Field(10, 4),
     RequestHandlerSCR.UndoInputRule orElse
     RequestHandlerSCR.RedoInputRule orElse
     RequestHandlerSCR.SaveInputRule orElse
-    RequestHandlerSCR.LoadInputRule
+    RequestHandlerSCR.LoadInputRule orElse
+    RequestHandlerSCR.DBLoadInputRule orElse
+    RequestHandlerSCR.DBSaveInputRule
   
   /**
     * Calls the responsible chain
@@ -46,11 +47,9 @@ case class Game(val field: Field = new Field(10, 4),
   def handleRequest(request: Request): Event =
     request match
       case SingleCharRequest(userinput) =>
-        //println("SingleCharRequest: " + userinput)                              //@todo remove after debugging
         chainSCR.applyOrElse(userinput, RequestHandlerSCR.DefaultInputRule)
 
       case MultiCharRequest(userinput) =>
-        //println("MultiCharRequest: " + userinput)                               //@todo remove after debugging
         if(userinput.size != field.matrix.cols) then
           return RequestHandlerSCR.DefaultInputRule(userinput)
         else
@@ -124,6 +123,8 @@ case class Game(val field: Field = new Field(10, 4),
     val RedoInputRule: PartialFunctionRule = singleCharRule(_ == "r", RedoStateEvent())
     val SaveInputRule: PartialFunctionRule = singleCharRule(_ == "s", SaveStateEvent())
     val LoadInputRule: PartialFunctionRule = singleCharRule(_ == "l", LoadStateEvent())
+    val DBSaveInputRule: PartialFunctionRule = singleCharRule(_ == "d", DBSaveStateEvent())
+    val DBLoadInputRule: PartialFunctionRule = singleCharRule(_ == "b", DBLoadStateEvent())
     
     //defines the default rule
     def DefaultInputRule(userinput: String): Event =
