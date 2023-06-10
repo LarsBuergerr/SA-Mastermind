@@ -2,6 +2,8 @@ package MongoDB
 
 import FileIOComponent.fileIOJsonImpl.FileIO
 import akka.http.javadsl.model.headers.Date
+import database.FutureHandler
+import model.GameComponent.GameBaseImpl.Game
 import model.GameComponent.GameInterface
 import org.mongodb.scala.bson.BsonDocument
 import org.mongodb.scala.gridfs.ObservableFuture
@@ -18,10 +20,10 @@ import scala.concurrent.duration.Duration.Inf
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, Future}
 import scala.util.Try
-import model.GameComponent.GameBaseImpl.Game
 
 class MongoDAO extends DAOInterface {
   val fileIO = new FileIO()
+  val futureHandler = new FutureHandler()
   // db Init
   private val database_pw = sys.env.getOrElse("MONGO_INITDB_ROOT_PASSWORD", "mongo")
   private val database_username = sys.env.getOrElse("MONGO_INITDB_ROOT_USERNAME", "root")

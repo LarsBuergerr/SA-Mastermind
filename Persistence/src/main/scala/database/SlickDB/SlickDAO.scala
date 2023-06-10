@@ -2,6 +2,7 @@ package SlickDB
 
 import FileIOComponent.fileIOJsonImpl.FileIO
 import SQLTables.*
+import database.FutureHandler
 import model.GameComponent.GameBaseImpl.Game
 import model.GameComponent.GameInterface
 import play.api.libs.json.{JsObject, JsValue, Json}
@@ -22,6 +23,7 @@ val WAIT_DB = 5000
 class SlickDAO extends DAOInterface {
   //extends DAOInterface
   val fileIO = new FileIO()
+  val futureHandler = new FutureHandler()
   val databaseDB: String = sys.env.getOrElse("MYSQL_DATABASE", "mastermind")
   val databaseUser: String = sys.env.getOrElse("MYSQL_USER", "admin")
   val databasePassword: String = sys.env.getOrElse("MYSQL_PASSWORD", "root")

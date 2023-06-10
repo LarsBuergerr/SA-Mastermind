@@ -55,10 +55,7 @@ class RestControllerAPI(using controller: ControllerInterface):
             <p><a href="controller/handleMultiCharReq/dbsave/DBSaveTestName"> Save the game to the DB whit Name</a></p>
             <p><a href="controller/handleMultiCharReq/dbload/1"> Load the game from the DB by ID</a></p>
             <p><a href="controller/handleMultiCharReq/dbloadname/DBSaveTestName"> Load the game from the DB by Name</a></p>
-            <p><a href="controller/handleMultiCharReq/dblist/1> List all DB Saves</a></p>
-
-          <br>
-        <p><a href=""controller"/ /save">POST ->     controller/save</a></p>
+            <p><a href="controller/handleMultiCharReq/dblist/1"> List all DB Saves</a></p>
         """.stripMargin
 
   val route = get {
