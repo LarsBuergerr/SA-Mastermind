@@ -12,30 +12,37 @@ import slick.lifted.TableQuery
 
 import java.sql.SQLNonTransientException
 import scala.annotation.unused
-import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.DurationInt
+import scala.concurrent.{Await, Future}
 import scala.util.Try
 
-val WAIT_TIME = 5.seconds
-val WAIT_DB = 5000
-
+/**
+ * SlickDAO class represents the data access object for Slick database operations.
+ */
 class SlickDAO extends DAOInterface {
-  //extends DAOInterface
+  val WAIT_TIME = 10.seconds
+  val WAIT_DB = 10000
+
   val fileIO = new FileIO()
   val futureHandler = new FutureHandler()
+
   val databaseDB: String = sys.env.getOrElse("MYSQL_DATABASE", "mastermind")
   val databaseUser: String = sys.env.getOrElse("MYSQL_USER", "admin")
   val databasePassword: String = sys.env.getOrElse("MYSQL_PASSWORD", "root")
   val databasePort: String = sys.env.getOrElse("MYSQL_PORT", "3306")
   val databaseHost: String = sys.env.getOrElse("MYSQL_HOST", "mastermind-database")
   val databaseUrl = s"jdbc:mysql://$databaseHost:$databasePort/$databaseDB?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&autoReconnect=true"
+
+  // Establish the database connection
   val database = Database.forURL(
     url = databaseUrl,
     driver = "com.mysql.cj.jdbc.Driver",
     user = databaseUser,
     password = databasePassword
   )
+
+  // Define table queries
   val matrixTable = new TableQuery(new MatrixTable(_))
   val matrixTable2 = new TableQuery(new MatrixTable(_))
   val hmatrixTable = new TableQuery(new HMatrixTable(_))
@@ -45,6 +52,7 @@ class SlickDAO extends DAOInterface {
   val stateTable = new TableQuery(new StateTable(_))
   val gameTable2 = new TableQuery(new GameTable2(_))
 
+  // Define setup action to create tables if they don't exist
   val setup: DBIOAction[Unit, NoStream, Effect.Schema] = DBIO.seq(matrixTable.schema.createIfNotExists,
                                                                   matrixTable2.schema.createIfNotExists,
                                                                   hmatrixTable.schema.createIfNotExists,
@@ -61,66 +69,110 @@ class SlickDAO extends DAOInterface {
       Await.result(database.run(setup), WAIT_TIME)
   }
 
+  /**
+   * Saves the game to the database.
+   *
+   * @param game      The game to be saved.
+   * @param save_name The name of the save.
+   * @return A Future indicating whether the save operation was successful (true) or not (false).
+   */
+  override def save(game: GameInterface, save_name: String): Future[Boolean] = {
+    println("Slick save")
+    val json_game = fileIO.gameToJson(game)
 
-  override def save(game: GameInterface, save_name: String) =
-    Try {
-      val json_game = fileIO.gameToJson(game)
+    val matrixIDFuture = storeMatrix(json_game("matrix").toString())
+    val hmatrixIDFuture = storeHMatrix(json_game("hmatrix").toString())
+    val codeIDFuture = storeCode(json_game("code").toString())
+    val turnIDFuture = storeTurn(json_game("turn").toString().toInt)
+    val stateIDFuture = storeState(json_game("state").toString())
 
-      val matrixID = storeMatrix(json_game("matrix").toString())
+    val gameIDFuture = for {
+      matrixID <- matrixIDFuture
+      hmatrixID <- hmatrixIDFuture
+      codeID <- codeIDFuture
+      turnID <- turnIDFuture
+      stateID <- stateIDFuture
+    } yield storeGame(matrixID, hmatrixID, codeID, turnID, stateID, save_name)
 
-      val hmatrixID = storeHMatrix(json_game("hmatrix").toString())
+    val resolvedFuture = futureHandler.resolveNonBlockingOnFuture(gameIDFuture)
 
-      val codeID = storeCode(json_game("code").toString())
+    resolvedFuture.map(_ => true)
+      .recover { case _ => false }
+  }
 
-      val turnID = storeTurn(json_game("turn").toString().toInt)
+  /**
+   * Loads a game from the database.
+   *
+   * @param id The ID of the game to load.
+   * @return A Future containing an optional GameInterface object.
+   */
+  override def load(id: Option[Int] = None): Future[Option[GameInterface]] = {
+    println("Slick load")
+    val query = gameTable2.filter(_.id === gameTable2.map(_.id).max)
 
-      val stateID = storeState(json_game("state").toString())
+    val gameFuture = database.run(query.result)
+    val resolvedFuture = futureHandler.resolveNonBlockingOnFuture(gameFuture)
 
-      val gameID = storeGame(
-        matrixID,
-        hmatrixID,
-        codeID,
-        turnID,
-        stateID,
-        save_name
-      )
+    resolvedFuture.flatMap { games =>
+      val gameOption = games.headOption
+      gameOption match {
+        case Some(game) =>
+          val matrixID = game._2
+          val hmatrixID = game._3
+          val codeID = game._4
+          val turnID = game._5
+          val stateID = game._6
+
+          val matrixFuture = database.run(matrixTable.filter(_.id === matrixID).result)
+          val hmatrixFuture = database.run(hmatrixTable.filter(_.id === hmatrixID).result)
+          val codeFuture = database.run(codeTable.filter(_.id === codeID).result)
+          val turnFuture = database.run(turnTable.filter(_.id === turnID).result)
+          val stateFuture = database.run(stateTable.filter(_.id === stateID).result)
+
+          val resolvedMatrixFuture = futureHandler.resolveNonBlockingOnFuture(matrixFuture)
+          val resolvedHMatrixFuture = futureHandler.resolveNonBlockingOnFuture(hmatrixFuture)
+          val resolvedCodeFuture = futureHandler.resolveNonBlockingOnFuture(codeFuture)
+          val resolvedTurnFuture = futureHandler.resolveNonBlockingOnFuture(turnFuture)
+          val resolvedStateFuture = futureHandler.resolveNonBlockingOnFuture(stateFuture)
+
+          for {
+            matrix <- resolvedMatrixFuture
+            hmatrix <- resolvedHMatrixFuture
+            code <- resolvedCodeFuture
+            turn <- resolvedTurnFuture
+            state <- resolvedStateFuture
+          } yield {
+            val jsonGame = Json.obj(
+              "matrix" -> Json.parse(matrix.head._2),
+              "hmatrix" -> Json.parse(hmatrix.head._2),
+              "code" -> Json.parse(code.head._2),
+              "turn" -> Json.toJson(turn.head._2),
+              "state" -> Json.parse(state.head._2)
+            )
+            Some(fileIO.jsonToGame(jsonGame.asInstanceOf[JsValue]))
+          }
+
+        case None => Future.successful(None)
+      }
     }
+  }
 
+  /**
+   * Deletes a game from the database.
+   *
+   * @param id The ID of the game to delete.
+   * @return A Future indicating whether the delete operation was successful (true) or not (false).
+   */
+  override def delete(id: Int): Future[Boolean] = {
+    val future = for {
+      maxIdOption <- database.run(gameTable2.map(_.id).max.result)
+      _ <- maxIdOption match {
+        case Some(maxId) => database.run(gameTable2.filter(_.id === maxId).delete)
+        case None => Future.successful(())
+      }
+    } yield true
 
-  override def load(id: Option[Int] = None) =
-    Try {
-      val query = gameTable2.filter(_.id === gameTable2.map(_.id).max)
-
-      val game = Await.result(database.run(query.result), WAIT_TIME)
-
-      val matrixID = game.head._2
-      val hmatrixID = game.head._3
-      val codeID = game.head._4
-      val turnID = game.head._5
-      val stateID = game.head._6
-
-      val matrix = Await.result(database.run(matrixTable.filter(_.id === matrixID).result), WAIT_TIME).head._2
-      val hmatrix = Await.result(database.run(hmatrixTable.filter(_.id === hmatrixID).result), WAIT_TIME).head._2
-      val code = Await.result(database.run(codeTable.filter(_.id === codeID).result), WAIT_TIME).head._2
-      val turn = Await.result(database.run(turnTable.filter(_.id === turnID).result), WAIT_TIME).head._2
-      val state = Await.result(database.run(stateTable.filter(_.id === stateID).result), WAIT_TIME).head._2
-
-      val jsonGame = Json.obj(
-        "matrix" -> Json.parse(matrix),
-        "hmatrix" -> Json.parse(hmatrix),
-        "code" -> Json.parse(code),
-        "turn" -> Json.toJson(turn),
-        "state" -> Json.parse (state)
-      )
-      val res = fileIO.jsonToGame(jsonGame.asInstanceOf[JsValue])
-      res
-    }
-
-  override def delete(id: Int): Try[Boolean] = {
-    Try {
-      Await.result(database.run(gameTable2.filter(_.id === gameTable2.map(_.id).max).delete), WAIT_TIME)
-      true
-    }
+    future.recover { case _ => false }
   }
 
 
@@ -129,19 +181,26 @@ class SlickDAO extends DAOInterface {
     gameID
   }
 
-  override def update(game: GameInterface, id: Int): Try[Boolean] = {
-    Try {
-      val jsonGame = fileIO.gameToJson(game)
+  /**
+   * Updates a game in the database.
+   *
+   * @param game The GameInterface object representing the updated game.
+   * @param id   The ID of the game to update.
+   * @return A Future indicating whether the update operation was successful (true) or not (false).
+   */
+  override def update(game: GameInterface, id: Int): Future[Boolean] = {
+    val jsonGame = fileIO.gameToJson(game)
 
-      val matrix = jsonGame("matrix").toString()
-      val hmatrix = jsonGame("hmatrix").toString()
-      val code = jsonGame("code").toString()
-      val turn = jsonGame("turn").toString().toInt
-      val state = jsonGame("state").toString()
+    val matrix = jsonGame("matrix").toString()
+    val hmatrix = jsonGame("hmatrix").toString()
+    val code = jsonGame("code").toString()
+    val turn = jsonGame("turn").toString().toInt
+    val state = jsonGame("state").toString()
 
-      val gameQ = gameTable2.filter(_.id === gameTable2.map(_.id).max)
-      val gameRes = Await.result(database.run(gameQ.result), WAIT_TIME)
+    val gameQ = gameTable2.filter(_.id === gameTable2.map(_.id).max)
+    val gameResFuture = database.run(gameQ.result)
 
+    val updatedGameFuture = gameResFuture.flatMap { gameRes =>
       val matrixID = gameRes.head._2
       val hmatrixID = gameRes.head._3
       val codeID = gameRes.head._4
@@ -155,46 +214,95 @@ class SlickDAO extends DAOInterface {
       val stateQ = stateTable.filter(_.id === stateID).update((stateID, state))
 
       val query = matrixQ andThen hmatrixQ andThen codeQ andThen turnQ andThen stateQ
-      Await.result(database.run(query), WAIT_TIME)
+      database.run(query)
+    }
+
+    updatedGameFuture.map(_ => true)
+  }
+
+  /**
+   * Lists all games in the database.
+   *
+   * @return A Future indicating whether the list operation was successful (true) or not (false).
+   */
+  override def listAllGames(): Future[Boolean] = {
+    val query = gameTable2
+    val gamesFuture = database.run(query.result)
+    //val resolvedGamesFuture = futureHandler.resolveBlockingOnFuture(gamesFuture, WAIT_TIME)
+    gamesFuture.map { games =>
+      printGames(games)
       true
     }
   }
-  
-  override def listAllGames() = {
-    val query = gameTable2
-    val games = Await.result(database.run(query.result), WAIT_TIME)
-    printGames(games)
+
+  /**
+   * Prints the list of games to the console.
+   *
+   * @param games The sequence of games to print.
+   * @return A Future representing the completion of the print operation.
+   */
+  def printGames(games: Seq[(Int, Int, Int, Int, Int, Int, String)]): Future[Unit] = {
+    Future {
+      games.foreach(game => println("GameID: " + game._1 + " | Name: " + game._7))
+    }
   }
 
-  def printGames(games: Seq[(Int, Int, Int, Int, Int, Int, String)]) = {
-    games.foreach(game => println("GameID: " + game._1 + " | Name: " + game._7))
+  /**
+   * Stores a turn in the database.
+   *
+   * @param turn The turn to be stored.
+   * @return A Future containing the ID of the stored turn.
+   */
+  def storeTurn(turn: Int): Future[Int] = {
+    database.run(turnTable returning turnTable.map(_.id) += (0, turn))
   }
 
-  def storeTurn(turn: Int) = {
-    val turnID = Await.result(database.run(turnTable returning turnTable.map(_.id) += (0, turn)), WAIT_TIME)
-    turnID
+  /**
+   * Stores a code in the database.
+   *
+   * @param code The code to be stored.
+   * @return A Future containing the ID of the stored code.
+   */
+  def storeCode(code: String): Future[Int] = {
+    database.run(codeTable returning codeTable.map(_.id) += (0, code))
   }
 
-  def storeCode(code: String) = {
-    val codeID = Await.result(database.run(codeTable returning codeTable.map(_.id) += (0, code)), WAIT_TIME)
-    codeID
+  /**
+   * Stores a matrix in the database.
+   *
+   * @param matrix The matrix to be stored.
+   * @return A Future containing the ID of the stored matrix.
+   */
+  def storeMatrix(matrix: String): Future[Int] = {
+    database.run(matrixTable returning matrixTable.map(_.id) += (0, matrix))
   }
 
-  def storeMatrix(matrix: String) = {
-    val matrixID = Await.result(database.run(matrixTable returning matrixTable.map(_.id) += (0, matrix)), WAIT_TIME)
-    matrixID
+  /**
+   * Stores a hidden matrix in the database.
+   *
+   * @param hmatrix The hidden matrix to be stored.
+   * @return A Future containing the ID of the stored hidden matrix.
+   */
+  def storeHMatrix(hmatrix: String): Future[Int] = {
+    database.run(hmatrixTable returning hmatrixTable.map(_.id) += (0, hmatrix))
   }
 
-  def storeHMatrix(hmatrix: String) = {
-    val hmatrixID = Await.result(database.run(hmatrixTable returning hmatrixTable.map(_.id) += (0, hmatrix)), WAIT_TIME)
-    hmatrixID
+  /**
+   * Stores a state in the database.
+   *
+   * @param state The state to be stored.
+   * @return A Future containing the ID of the stored state.
+   */
+  def storeState(state: String): Future[Int] = {
+    database.run(stateTable returning stateTable.map(_.id) += (0, state))
   }
 
-  def storeState(state: String) = {
-    val stateID = Await.result(database.run(stateTable returning stateTable.map(_.id) += (0, state)), WAIT_TIME)
-    stateID
-  }
-
+  /**
+   * Sanitizes a string by replacing certain escape sequences with their corresponding characters.
+   *
+   * @param str The string to be sanitized.
+   * @return The sanitized string with escape sequences replaced by their corresponding characters.
+   */
   def sanitize(str: String): String =
     str.replace("\\n", "\n")
       .replace("\\r", "\r")
