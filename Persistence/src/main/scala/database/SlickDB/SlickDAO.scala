@@ -165,6 +165,7 @@ class SlickDAO extends DAOInterface {
    * @return A Future indicating whether the delete operation was successful (true) or not (false).
    */
   override def delete(id: Int): Future[Boolean] = {
+    println("maxID test: " +getHighestID())
     val future = for {
       maxIdOption <- database.run(gameTable2.map(_.id).max.result)
       _ <- maxIdOption match {
@@ -297,13 +298,12 @@ class SlickDAO extends DAOInterface {
   def storeState(state: String): Future[Int] = {
     database.run(stateTable returning stateTable.map(_.id) += (0, state))
   }
-  def getHighestID(): Int = {
+  def getHighestID(): Future[Int] = {
     val query = gameTable2.map(_.id).max
     val highestIDAction: DBIO[Option[Int]] = query.result
     val highestIDFuture = database.run(highestIDAction)
 
-    val highestIDOption = Await.result(highestIDFuture, 10.seconds)
-    highestIDOption.getOrElse(0)
+    highestIDFuture.map(_.getOrElse(0))
   }
 
   /**
