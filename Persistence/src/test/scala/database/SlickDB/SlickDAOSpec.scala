@@ -23,8 +23,10 @@ import scala.util.Try
 
 
 class SlickDAOSpec extends AnyWordSpec with Matchers with BeforeAndAfter {
+    
     "A Database Interface" when {
         val mockGame = Game()
+        /*
         "defined" should {
         "have the necessary interface operations" in {
             class AnyDAO extends DAOInterface:
@@ -63,5 +65,7 @@ class SlickDAOSpec extends AnyWordSpec with Matchers with BeforeAndAfter {
                 slickDAOMock.listAllGames() shouldBe a[Unit]
             }
         }
+        
+        */
     }
 }

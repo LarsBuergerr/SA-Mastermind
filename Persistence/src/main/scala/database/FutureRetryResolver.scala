@@ -6,11 +6,11 @@ import concurrent.duration.DurationInt
 import scala.util.{Failure, Success}
 
 /**
- * The FutureHandler class provides utility methods for handling and resolving Futures with retry functionality.
+ * The FutureRetryResolver class provides utility methods for handling and resolving Futures with retry functionality.
  *
- * @constructor Create a new FutureHandler instance.
+ * @constructor Create a new FutureRetryResolver instance.
  */
-class FutureHandler {
+class FutureRetryResolver {
   implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
 
   /**
@@ -101,10 +101,11 @@ class FutureHandler {
       }
   }
 
-  /**
-   * RetryExceptionList is an exception class used to encapsulate a list of retry attempts along with their corresponding exceptions.
-   *
-   * @param list A Vector of tuples representing the retry attempt number and the associated exception.
-   */
-  private case class RetryExceptionList(list: Vector[(Int, Throwable)]) extends Exception
 }
+
+/**
+ * RetryExceptionList is an exception class used to encapsulate a list of retry attempts along with their corresponding exceptions.
+ *
+ * @param list A Vector of tuples representing the retry attempt number and the associated exception.
+ */
+case class RetryExceptionList(list: Vector[(Int, Throwable)]) extends Exception

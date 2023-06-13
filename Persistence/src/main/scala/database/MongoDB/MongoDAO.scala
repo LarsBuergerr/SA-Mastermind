@@ -2,7 +2,7 @@ package MongoDB
 
 import FileIOComponent.fileIOJsonImpl.FileIO
 import akka.http.javadsl.model.headers.Date
-import database.FutureHandler
+import database.FutureRetryResolver
 import model.GameComponent.GameBaseImpl.Game
 import model.GameComponent.GameInterface
 import org.mongodb.scala.bson.BsonDocument
@@ -28,7 +28,7 @@ import scala.util.Try
  */
 class MongoDAO extends DAOInterface {
   val fileIO = new FileIO()
-  val futureHandler = new FutureHandler()
+  val futureRetryResolver = new FutureRetryResolver()
 
   // Database initialization
   private val database_pw = sys.env.getOrElse("MONGO_INITDB_ROOT_PASSWORD", "mongo")
@@ -57,7 +57,7 @@ class MongoDAO extends DAOInterface {
       )))
       true // onSuccess
     }
-    futureHandler.resolveNonBlockingOnFuture(future)
+    futureRetryResolver.resolveNonBlockingOnFuture(future)
   }
 
   /**
@@ -75,7 +75,7 @@ class MongoDAO extends DAOInterface {
         case None => Some(new Game())
       }
     }
-    futureHandler.resolveNonBlockingOnFuture[Option[GameInterface]](future)
+    futureRetryResolver.resolveNonBlockingOnFuture[Option[GameInterface]](future)
   }
 
   /**
@@ -94,7 +94,7 @@ class MongoDAO extends DAOInterface {
         case None => throw new Exception("No game found")
       }
     }
-    futureHandler.resolveNonBlockingOnFuture(future)
+    futureRetryResolver.resolveNonBlockingOnFuture(future)
   }
 
   /**
@@ -108,7 +108,7 @@ class MongoDAO extends DAOInterface {
       val result = Await.result(gameCollection.deleteOne(equal("_id", id)).head(), 10.second)
       result.wasAcknowledged()
     }
-    futureHandler.resolveNonBlockingOnFuture(future)
+    futureRetryResolver.resolveNonBlockingOnFuture(future)
   }
 
   /**
@@ -127,7 +127,7 @@ class MongoDAO extends DAOInterface {
       )).head(), 10.second)
       result.wasAcknowledged()
     }
-    futureHandler.resolveNonBlockingOnFuture(future)
+    futureRetryResolver.resolveNonBlockingOnFuture(future)
   }
 
   /**
@@ -140,7 +140,7 @@ class MongoDAO extends DAOInterface {
       val result = Await.result(gameCollection.find().toFuture(), 10.second)
       result.foreach(doc => println("Name: \t" + doc.get("name").get.asString().getValue + "\nID: \t" + doc.get("_id").get.asInt32().getValue.toString() + "\n"))
     }
-    futureHandler.resolveNonBlockingOnFuture(future).map(_ => true)
+    futureRetryResolver.resolveNonBlockingOnFuture(future).map(_ => true)
   }
 
   /**

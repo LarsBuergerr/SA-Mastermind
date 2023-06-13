@@ -2,7 +2,6 @@ package MongoDB
 
 import FileIOComponent.fileIOJsonImpl.FileIO
 import MongoDB.MongoDAO
-import scala.concurrent.Future
 import model.GameComponent.GameBaseImpl.*
 import model.GameComponent.GameInterface
 import org.mongodb.scala.bson.collection.immutable.Document

@@ -2,7 +2,7 @@ package SlickDB
 
 import FileIOComponent.fileIOJsonImpl.FileIO
 import SQLTables.*
-import database.FutureHandler
+import database.FutureRetryResolver
 import model.GameComponent.GameBaseImpl.Game
 import model.GameComponent.GameInterface
 import play.api.libs.json.{JsObject, JsValue, Json}
@@ -25,7 +25,7 @@ class SlickDAO extends DAOInterface {
   val WAIT_DB = 10000
 
   val fileIO = new FileIO()
-  val futureHandler = new FutureHandler()
+  val futureRetryResolver = new FutureRetryResolver()
 
   val databaseDB: String = sys.env.getOrElse("MYSQL_DATABASE", "mastermind")
   val databaseUser: String = sys.env.getOrElse("MYSQL_USER", "admin")
@@ -94,7 +94,7 @@ class SlickDAO extends DAOInterface {
       stateID <- stateIDFuture
     } yield storeGame(matrixID, hmatrixID, codeID, turnID, stateID, save_name)
 
-    val resolvedFuture = futureHandler.resolveNonBlockingOnFuture(gameIDFuture)
+    val resolvedFuture = futureRetryResolver.resolveNonBlockingOnFuture(gameIDFuture)
 
     resolvedFuture.map(_ => true)
       .recover { case _ => false }
@@ -111,7 +111,7 @@ class SlickDAO extends DAOInterface {
     val query = gameTable2.filter(_.id === gameTable2.map(_.id).max)
 
     val gameFuture = database.run(query.result)
-    val resolvedFuture = futureHandler.resolveNonBlockingOnFuture(gameFuture)
+    val resolvedFuture = futureRetryResolver.resolveNonBlockingOnFuture(gameFuture)
 
     resolvedFuture.flatMap { games =>
       val gameOption = games.headOption
@@ -129,11 +129,11 @@ class SlickDAO extends DAOInterface {
           val turnFuture = database.run(turnTable.filter(_.id === turnID).result)
           val stateFuture = database.run(stateTable.filter(_.id === stateID).result)
 
-          val resolvedMatrixFuture = futureHandler.resolveNonBlockingOnFuture(matrixFuture)
-          val resolvedHMatrixFuture = futureHandler.resolveNonBlockingOnFuture(hmatrixFuture)
-          val resolvedCodeFuture = futureHandler.resolveNonBlockingOnFuture(codeFuture)
-          val resolvedTurnFuture = futureHandler.resolveNonBlockingOnFuture(turnFuture)
-          val resolvedStateFuture = futureHandler.resolveNonBlockingOnFuture(stateFuture)
+          val resolvedMatrixFuture = futureRetryResolver.resolveNonBlockingOnFuture(matrixFuture)
+          val resolvedHMatrixFuture = futureRetryResolver.resolveNonBlockingOnFuture(hmatrixFuture)
+          val resolvedCodeFuture = futureRetryResolver.resolveNonBlockingOnFuture(codeFuture)
+          val resolvedTurnFuture = futureRetryResolver.resolveNonBlockingOnFuture(turnFuture)
+          val resolvedStateFuture = futureRetryResolver.resolveNonBlockingOnFuture(stateFuture)
 
           for {
             matrix <- resolvedMatrixFuture
@@ -228,7 +228,7 @@ class SlickDAO extends DAOInterface {
   override def listAllGames(): Future[Boolean] = {
     val query = gameTable2
     val gamesFuture = database.run(query.result)
-    //val resolvedGamesFuture = futureHandler.resolveBlockingOnFuture(gamesFuture, WAIT_TIME)
+    //val resolvedGamesFuture = futureRetryResolver.resolveBlockingOnFuture(gamesFuture, WAIT_TIME)
     gamesFuture.map { games =>
       printGames(games)
       true
