@@ -2,6 +2,7 @@ package MongoDB
 
 import FileIOComponent.fileIOJsonImpl.FileIO
 import MongoDB.MongoDAO
+import scala.concurrent.Future
 import model.GameComponent.GameBaseImpl.*
 import model.GameComponent.GameInterface
 import org.mongodb.scala.bson.collection.immutable.Document
@@ -13,6 +14,7 @@ import org.mongodb.scala.model.Sorts.*
 import org.mongodb.scala.model.Updates.*
 import org.mongodb.scala.{Document, MongoClient, MongoCollection, MongoDatabase, Observable, ObservableFuture}
 import org.scalactic.Prettifier.default
+import org.scalatest.concurrent.Futures.whenReady
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.{BeforeAndAfter, PrivateMethodTester}
@@ -23,7 +25,7 @@ import scala.concurrent.duration.Duration.Inf
 import scala.concurrent.{Await, Future}
 import scala.util.{Failure, Success}
 
-class MongoDAOSpec extends AnyWordSpec with Matchers with BeforeAndAfter{
+class MongoDAOSpec extends AnyWordSpec with Matchers with BeforeAndAfter {
   val fileIO = new FileIO()
   val gameFinal = Game()
   // Initialization of the test database
@@ -54,58 +56,51 @@ class MongoDAOSpec extends AnyWordSpec with Matchers with BeforeAndAfter{
   }
 
   "MongoDAO" should {
-
     "save the game to the MongoDB collection" in {
       val game = Game()
       val solutionCode = new Code(Vector(Stone.apply("R"), Stone.apply("R"), Stone.apply("B"), Stone.apply("Y")))
-      val g1 = new Game(new Field(), solutionCode, 0, Init())
-      val g2 = new Game(new Field(), game.getCode(), 0, Init())
+      val savedGame1 = new Game(new Field(), solutionCode, 0, Init())
+      val savedGame2 = new Game(new Field(), game.getCode(), 0, Init())
 
-      mongoDAO.save(g2,"saveTest")
-      val result = Await.result(collection.find().first().head(), 5.seconds)
-      val actual = result("game").asString().getValue
-      val expected = (""+fileIO.gameToJson(game))
+      val saveResult = Await.result(mongoDAO.save(savedGame2, "saveTest"), 5.seconds)
+      val loadedGame = Await.result(mongoDAO.loadByName(Some("saveTest")), 5.seconds)
 
-      //TODO for some reason fileIO.gameToJson(game) has different resolution code even though it uses the same game objects
-      actual shouldEqual actual // expected
-      //result("game").asString().getValue.toString shouldEqual ""+fileIO.gameToJson(gameX)
+      saveResult shouldEqual true //true if Futures Success
+      loadedGame.toString shouldEqual savedGame2.toString()
     }
 
     "delete the game from the MongoDB collection" in {
       val game = Game()
-      mongoDAO.save(game, "deleteTest")
-      //val highest = Await.result(collection.find(exists("_id")).sort(descending("_id")).first().head(), Inf)
+      val saveResult = mongoDAO.save(game, "deleteTest")
+      Await.result(saveResult, 5.seconds)
+
       val currentHighestID = mongoDAO.getID(collection)
-      val result = mongoDAO.delete(currentHighestID)
+      val deleteResult = mongoDAO.delete(currentHighestID)
+      val result = Await.result(deleteResult, 5.seconds)
 
-
-      result.isSuccess shouldEqual true
-      result.get shouldEqual true
+      result shouldBe true //true if Futures Success
       val count = Await.result(collection.countDocuments().toFuture(), 5.seconds).head
-      count shouldEqual currentHighestID -1
+      count shouldEqual (currentHighestID - 1)
     }
 
     "load the game by ID from the MongoDB collection" in {
       val game = Game()
-      mongoDAO.save(game, "loadTest1")
-      mongoDAO.save(game, "loadTest2")
+      val saveResultThatWillBeLoaded = Await.result(mongoDAO.save(game, "loadTest"), 5.seconds)
+      val saveResultThatNOTWillBeLoaded = Await.result(mongoDAO.save(game, "loadTestNotUse"), 5.seconds)
 
-      val loadedGame = mongoDAO.load(Some(2))
-      
-      loadedGame.isSuccess shouldEqual true
-      loadedGame.get.toString shouldEqual game.toString
+      val loadedGameFuture = mongoDAO.load(Some(1))
+      val loadedGameOption = Await.result(loadedGameFuture, 5.seconds)
+      loadedGameOption shouldBe Some(game)
     }
-
     "load the game by Name from the MongoDB collection" in {
-      var game = Game()
-      //var gameTest = game.field.matrix.replaceCell(0, 0, Some(Stone("B"))).replaceCell(3, 3, Some(Stone("B")))
-      mongoDAO.save(game, "loadNameTest1")
-      mongoDAO.save(game, "loadNameTest2")
+      val game = Game()
+      val saveResult = mongoDAO.save(game, "loadNameTest")
+      Await.result(saveResult, 5.seconds)
 
-      val loadedGame = mongoDAO.loadByName(Some("loadNameTest1"))
+      val loadedGameFuture = mongoDAO.loadByName(Some("loadNameTest"))
+      val loadedGame = Await.result(loadedGameFuture, 5.seconds)
 
-      loadedGame.isSuccess shouldEqual true
-      loadedGame.get.toString shouldEqual game.toString
+      loadedGame shouldBe game
     }
   }
 }
