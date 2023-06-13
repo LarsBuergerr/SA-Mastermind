@@ -6,6 +6,7 @@ import database.FutureRetryResolver
 import model.GameComponent.GameBaseImpl.Game
 import model.GameComponent.GameInterface
 import play.api.libs.json.{JsObject, JsValue, Json}
+import slick.dbio.Effect.Read
 import slick.jdbc.JdbcBackend.Database
 import slick.jdbc.MySQLProfile.api.*
 import slick.lifted.TableQuery
@@ -295,6 +296,14 @@ class SlickDAO extends DAOInterface {
    */
   def storeState(state: String): Future[Int] = {
     database.run(stateTable returning stateTable.map(_.id) += (0, state))
+  }
+  def getHighestID(): Int = {
+    val query = gameTable2.map(_.id).max
+    val highestIDAction: DBIO[Option[Int]] = query.result
+    val highestIDFuture = database.run(highestIDAction)
+
+    val highestIDOption = Await.result(highestIDFuture, 10.seconds)
+    highestIDOption.getOrElse(0)
   }
 
   /**
