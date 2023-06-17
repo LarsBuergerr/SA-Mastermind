@@ -1,43 +1,40 @@
-/**
- * RootSevice.scala
- *  implementation for AKKA RestControllerAPI
- */
-
-//****************************************************************************** PACKAGE
 package FileIOComponent
 
-//****************************************************************************** IMPORTS
+import FileIOComponent.fileIOJsonImpl.FileIO
+import MongoDB.MongoDAO
+import SlickDB.SlickDAO
 import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpResponse, StatusCodes}
 import akka.http.scaladsl.server.Directives.{entity, *}
 import akka.stream.ActorMaterializer
-import model.GameComponent.GameBaseImpl.PlayerInput
-import util.{MultiCharRequest, Observer}
-import util.*
+import model.GameComponent.GameBaseImpl.*
 import model.GameComponent.GameInterface
-import model.GameComponent.GameBaseImpl.{HStone, HintStone, Stone}
-import FileIOComponent.fileIOJsonImpl.FileIO
-import SlickDB.SlickDAO
-import MongoDB.MongoDAO
+import util.*
+import play.api.libs.json._
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
-import scala.util.{Failure, Success}
-
-import play.api.libs.json.*
-
 import scala.util.{Failure, Success, Try}
 
-//****************************************************************************** CLASS DEFINITION
+/**
+ * RestPersistenceAPI
+ * This class implements an AKKA RestController API for handling game persistence operations.
+ */
 class RestPersistenceAPI():
 
+  // Implicit actor system and execution context for AKKA
   implicit val system: ActorSystem[Nothing] = ActorSystem(Behaviors.empty, "my-system")
   implicit val executionContext: ExecutionContextExecutor = system.executionContext
 
+  // FileIO, MongoDAO, and SlickDAO instances for handling game data
   val fileIO = new FileIO()
-  val db = new SlickDAO()
+  val db = new MongoDAO() // SlickDAO()
+
+  // Port number for the REST API
   val RestUIPort = 8081
+
+  // HTML routes for the REST API
   val routes: String =
     """
         <h1>Welcome to the Mastermind REST Persistence API service!</h1>
@@ -53,34 +50,32 @@ class RestPersistenceAPI():
           <br>
         """.stripMargin
 
-  val route = 
-    concat (
+  // Routes for the REST API
+  val route =
+    concat(
       get {
         concat(
           pathSingleSlash {
             complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, routes))
           },
-          //post maps create
-          //TODO
-          path("persistence"/ "load") {
+          path("persistence" / "load") {
             val game = fileIO.load()
             complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, fileIO.gameToJson(game).toString))
           },
           path("persistence" / "dbload" / IntNumber) { num =>
-            val game = db.load(Some(num))   
-            val unpacked_game = game.getOrElse("ERROR LOADING GAME")
-            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, fileIO.gameToJson(unpacked_game.asInstanceOf[GameInterface]).toString))
+            val gameFuture = db.load(Some(num))
+            complete(gameFuture.map(gameOption => fileIO.gameToJson(gameOption.getOrElse(new Game())).toString).recover {
+              case _ => "ERROR LOADING GAME"
+            })
           },
         )
       },
 
       post {
         concat(
-          path("persistence"/ "save") {
+          path("persistence" / "save") {
             entity(as[String]) { saveGame =>
-              //turn String to Json
               val jsonGame = Json.parse(saveGame)
-              //turn Json to Game
               val fio = new FileIO()
               val game = fio.jsonToGame(jsonGame)
               fileIO.save(game)
@@ -89,27 +84,22 @@ class RestPersistenceAPI():
           },
           path("persistence" / "dbsave" / Segment) { save_name =>
             entity(as[String]) { saveGame =>
-              //turn String to Json
               val jsonGame = Json.parse(saveGame)
-              //save to db
               val fio = new FileIO()
               val game = fio.jsonToGame(jsonGame)
               db.save(game, save_name)
               complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "Game saved"))
             }
           },
-          path ("persistence" / "dbupdate" / Segment) { id => 
+          path("persistence" / "dbupdate" / Segment) { id =>
             entity(as[String]) { saveGame =>
-              //turn String to Json
               val jsonGame = Json.parse(saveGame)
-              //save to db
               val fio = new FileIO()
               val game = fio.jsonToGame(jsonGame)
               db.update(game, id.toInt)
               complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "Game saved"))
             }
           },
-
           path("persistence" / "dblist") {
             entity(as[String]) { saveGame =>
               db.listAllGames()
@@ -126,6 +116,7 @@ class RestPersistenceAPI():
       }
     )
 
+  // Start the REST API server
   def start(): Unit = {
     val binding = Http().newServerAt("persistence_service", RestUIPort).bind(route)
 

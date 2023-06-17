@@ -1,12 +1,5 @@
-/**
- * RootSevice.scala
- * implementation for AKKA RestControllerAPI
- */
-
-//****************************************************************************** PACKAGE
 package controller.ControllerComponent
 
-//****************************************************************************** IMPORTS
 import FileIOComponent.fileIOJsonImpl.FileIO
 import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
@@ -24,13 +17,19 @@ import play.api.libs.json.*
 import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.util.{Failure, Success, Try}
 
-//****************************************************************************** CLASS DEFINITION
+/**
+ * The RestControllerAPI class is responsible for handling the REST API endpoints for the Mastermind game.
+ *
+ * @param controller The controller interface implementation to interact with the game.
+ */
 class RestControllerAPI(using controller: ControllerInterface):
 
+  // Create the actor system and execution context for handling HTTP requests
   implicit val system: ActorSystem[Nothing] = ActorSystem(Behaviors.empty, "my-system")
   implicit val executionContext: ExecutionContextExecutor = system.executionContext
 
   val RestUIPort = 8080
+  // HTML routes for different actions and endpoints
   val routes: String =
     """
         <h1>Welcome to the Mastermind REST Controller API service!</h1>
@@ -55,26 +54,26 @@ class RestControllerAPI(using controller: ControllerInterface):
             <p><a href="controller/handleMultiCharReq/dbsave/DBSaveTestName"> Save the game to the DB whit Name</a></p>
             <p><a href="controller/handleMultiCharReq/dbload/1"> Load the game from the DB by ID</a></p>
             <p><a href="controller/handleMultiCharReq/dbloadname/DBSaveTestName"> Load the game from the DB by Name</a></p>
-            <p><a href="controller/handleMultiCharReq/dblist/1> List all DB Saves</a></p>
-
-          <br>
-        <p><a href=""controller"/ /save">POST ->     controller/save</a></p>
+            <p><a href="controller/handleMultiCharReq/dblist/1"> List all DB Saves</a></p>
+            <p><a href="controller/handleMultiCharReq/dbupdate/1"> update the game save in the db with id 1</a></p>
+            <p><a href="controller/handleMultiCharReq/dbdelete/1"> delete the game save in the db with id 1</a></p>
         """.stripMargin
-
+  // Define the main route for handling HTTP requests
   val route = get {
     concat(
+      // Handle root path request
       pathSingleSlash {
         complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, routes))
       },
-
+      // Handle TUI path request
       path("controller" / "tui") {
         complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, HTMLGameboardString))
       },
-
+      // Handle TUI JSON path request
       path("controller" / "tuiJSON") {
         complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "Mastermind\n\n" + controller.gameToJson(controller.game)))
       },
-
+      // Handle request path with command parameter
       path("controller" / "request" / Segment) { command => {
         val event =
           command match {
@@ -94,7 +93,7 @@ class RestControllerAPI(using controller: ControllerInterface):
         complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, controller.gameToJson(controller.game)))
         }
       },
-
+      // Handle single character request path
       path("controller" / "handleSingleCharReq" / Segment) { str => {
         str.size match
           case 0 => // Handles no user input -> stay in current state
@@ -127,11 +126,10 @@ class RestControllerAPI(using controller: ControllerInterface):
             complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, controller.gameToJson(controller.game)))
         }
       },
-
+      // Handle multi-character request path
       path("controller" / "handleMultiCharReq" / Segments) { input => {
         val action = input(0)
         val num = input(1)
-
 
         if (action == "dbload") then
           controller.dbload(num.toInt)
@@ -222,8 +220,7 @@ class RestControllerAPI(using controller: ControllerInterface):
         complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, controller.gameToJson(controller.game)))
       },
 
-      //post maps create
-      //TODO
+      // POST route for saving the game state as JSON
       path("controller" / "save") {
         post {
           entity(as[String]) { saveGame =>
@@ -239,7 +236,7 @@ class RestControllerAPI(using controller: ControllerInterface):
       },
     )
   }
-
+  // Starts the HTTP server
   def start(): Unit = {
     val binding = Http().newServerAt("0.0.0.0", RestUIPort).bind(route)
 
@@ -251,6 +248,11 @@ class RestControllerAPI(using controller: ControllerInterface):
     }
   }
 
+  /**
+   * Generates an HTML string representing the game board.
+   *
+   * @return The HTML string of the game board.
+   */
   private def HTMLGameboardString: String = {
     "<h2>Mastermind</h2><br>"
       + formatGameBoard(colorizeLetters(controller.game.field.toString()))
@@ -266,6 +268,12 @@ class RestControllerAPI(using controller: ControllerInterface):
 
   }
 
+  /**
+   * Formats the game board string by adding HTML tags for proper display.
+   *
+   * @param gameBoard The game board string to be formatted.
+   * @return The formatted game board string.
+   */
   private def formatGameBoard(gameBoard: String): String = {
     val gameBoardRows = gameBoard.split("\n") // Split into rows
     val formattedGameBoard = gameBoardRows.map { row =>
@@ -280,6 +288,12 @@ class RestControllerAPI(using controller: ControllerInterface):
     formattedGameBoard.mkString("<br>") // Join formatted text back together with line breaks
   }
 
+  /**
+   * Colorizes the letters in the given text using predefined colors.
+   *
+   * @param text The text to be colorized.
+   * @return The colorized text with HTML span tags.
+   */
   private def colorizeLetters(text: String): String = {
     val colorMap = Map(
       'R' -> "red",
@@ -289,7 +303,7 @@ class RestControllerAPI(using controller: ControllerInterface):
       'W' -> "darkgray",
       'P' -> "purple"
     )
-
+    // Colorize each letter using the color mapping
     val coloredText = text.map { letter =>
       val color = colorMap.getOrElse(letter, "black")
       s"<span style='color: $color;'>$letter</span>"
