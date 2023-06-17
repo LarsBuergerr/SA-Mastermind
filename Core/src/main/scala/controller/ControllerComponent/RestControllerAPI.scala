@@ -38,9 +38,9 @@ class RestControllerAPI(using controller: ControllerInterface):
           <h3>Game Actions:</h3>
             <p><a href="controller/tui">Go to the Web TUI</a></p>
             <p><a href="controller/tuiJSON">JSON presentation of the Game</a></p>
-            <p><a href="controller/placeGuessAndHints">placeGuessAndHints</a></p>
-            <p><a href="controller/handleSingleCharReq">handleSingleCharReq</a></p>
-            <p><a href="controller/handleMultiCharReq">handleMultiCharReq</a></p>
+            <p><a href="controller/placeGuessAndHints/rrrr/wwww/0">placeGuessAndHints</a></p>
+            <p><a href="controller/handleSingleCharReq/h">handleSingleCharReq</a></p>
+            <p><a href="controller/handleMultiCharReq/rrrr/wwww/0">handleMultiCharReq</a></p>
 
           <h3>JSON Actions:</h3>
             <p><a href="controller/save">Game JSON save</a></p>
@@ -179,9 +179,38 @@ class RestControllerAPI(using controller: ControllerInterface):
           else //Invalid input -> stay in current state
             controller.request(currentRequest)
           complete(HttpEntity(ContentTypes.`text/html(UTF-8)`,
-            //controller.gameToJson(controller.game)
-              HTMLGameboardString
+              controller.gameToJson(controller.game)
+              //HTMLGameboardString
             ))
+        }
+      },
+
+      path("controller" / "htmlGameboard" / Segment) { stones => {
+        val emptyVector: Vector[Stone] = Vector()
+        val currentRequest = controller.handleRequest(MultiCharRequest(stones))
+        if (currentRequest.isInstanceOf[PlayerAnalyzeEvent]) then
+
+          val codeVector: Vector[Stone] =
+            Try(controller.game.buildVector(emptyVector)(stones.toCharArray())) match
+              case Success(vector) => vector.asInstanceOf[Vector[Stone]]
+              case Failure(e) =>
+                controller.request(controller.game.getDefaultInputRule(stones))
+                Vector.empty[Stone]
+
+          val hints = controller.game.getCode().compareTo(codeVector)
+          controller.placeGuessAndHints(codeVector)(hints)(controller.game.currentTurn)
+          if hints.forall(p => p.stringRepresentation.equals("R")) then
+            controller.request(PlayerWinStateEvent())
+          else if (controller.game.field.matrix.rows - controller.game.currentTurn) == 0 then
+            controller.reset
+            controller.request(PlayerLoseStateEvent())
+          else
+            controller.request(PlayerInputStateEvent())
+        else //Invalid input -> stay in current state
+          controller.request(currentRequest)
+        complete(HttpEntity(ContentTypes.`text/html(UTF-8)`,
+            HTMLGameboardString
+          ))
         }
       },
 
@@ -263,7 +292,7 @@ class RestControllerAPI(using controller: ControllerInterface):
       + "<input type=\"button\" value=\"Send\" onclick=\"redirectToURI()\"> </form>"
       + "<script>"
       + "function redirectToURI() {var inputValue = document.getElementById('inputValue').value;"
-      + "var url = '/controller/handleMultiCharReq/' + inputValue+'/0'; window.location.href = url; }"
+      + "var url = '/controller/htmlGameboard/' + inputValue; window.location.href = url; }"
       + "</script>"
 
   }
