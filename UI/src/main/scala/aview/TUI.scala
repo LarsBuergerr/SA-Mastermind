@@ -1,40 +1,40 @@
-/**
-  * TUI.scala
-  * 
-  * Class for the Text User Interface of the Mastermind game.
-  */
-
-//****************************************************************************** PACKAGE  
-
 package aview
 
-//****************************************************************************** IMPORTS
-import model.GameComponent.GameBaseImpl._
-import util.Observer
-import util._
-import model._
 import FileIOComponent.fileIOyamlImpl.FileIO
-import scala.io.StdIn.readLine
-import scala.util.{Try, Success, Failure}
-import akka.actor.typed.{ActorSystem}
+import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
 import akka.http.scaladsl.Http
+import akka.http.scaladsl.model.*
 import akka.http.scaladsl.server.Directives.*
-import akka.http.scaladsl.model.{ContentTypes, HttpEntity, StatusCode, HttpMethods, HttpResponse, HttpRequest}
 import akka.http.scaladsl.server.{ExceptionHandler, Route}
-import model.GameModeComponent.GameModeBaseImpl.GameMode
 import akka.http.scaladsl.unmarshalling.Unmarshal
+import model.*
+import model.GameComponent.GameBaseImpl.*
+import model.GameModeComponent.GameModeBaseImpl.GameMode
+import util.*
 
-//****************************************************************************** CLASS DEFINITION
+import scala.io.StdIn.readLine
+import scala.util.{Failure, Success, Try}
+
+/**
+ * The TUI class represents the text-based user interface of the application.
+ */
 class TUI():
 
   val uiController = new UIController()
   uiController.game = new Game(GameMode.strategy_medium, new Code(4), 0, Play())
   //uiController.fetchGame()
 
+  /**
+   * The run() method is the main method of the TUI class that starts the input loop.
+   */
   def run(): Unit =
     inputLoop()
-  
+
+  /**
+   * The inputLoop() method represents the main input loop of the TUI.
+   * It continuously reads user input, parses it, and updates the game state accordingly.
+   */
   //@todo Boolean return type for testing?
   def inputLoop(): Unit =
     update()
@@ -59,7 +59,12 @@ class TUI():
       case quit: Quit         =>
         print("--- See you later alligator...\n")
 
-  
+  /**
+   * The parseInput() method takes the user input as a string and parses it to determine the appropriate game state.
+   *
+   * @param input The user input as a string.
+   * @return The corresponding game state based on the user input.
+   */
   def parseInput(input: String): State =
 
     val emptyVector: Vector[Stone] = Vector()
@@ -78,6 +83,9 @@ class TUI():
         uiController.handleMultiCharReq(input)
         return uiController.game.state
 
+  /**
+   * The update() method prints the current game field and the remaining turns.
+   */
   def update() =
     println(uiController.game.field)
     println("Remaining Turns: " + (uiController.game.field.matrix.rows - uiController.game.currentTurn))

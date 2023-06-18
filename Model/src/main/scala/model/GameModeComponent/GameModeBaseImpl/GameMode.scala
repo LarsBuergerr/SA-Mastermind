@@ -1,21 +1,14 @@
-/**
-  * GameMode.scala
-  * 
-  * Base implementation of the GameModeInterface
-  * Implements the STRATEGY_PATTERN to select different game modes
-  */
-
-//****************************************************************************** PACKAGE  
-
 package model.GameModeComponent.GameModeBaseImpl
 
-//****************************************************************************** IMPORTS
 import model.GameComponent.GameBaseImpl.{Field, Stone, HintStone}
 import model.GameModeComponent.GameModeInterface
 import scala.io.StdIn.readLine
 
-
-//****************************************************************************** OBJECT DEFINITION
+/**
+ * Base implementation of the GameModeInterface
+ * 
+ * Implements the STRATEGY_PATTERN to select different game modes
+ */
 object GameMode extends GameModeInterface:
 
   val selectMode = "Not used anymore!!!!"

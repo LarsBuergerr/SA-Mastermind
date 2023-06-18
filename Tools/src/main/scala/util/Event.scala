@@ -1,17 +1,12 @@
-/**
-  * Event.scala
-  * Implements the STATE_PATTERN to keep track over current game state
-  */
-
-//****************************************************************************** PACKAGE  
-
 package util
 
-//****************************************************************************** INTERFACE DEFINITION
+/**
+ * A trait representing different types of events in the application.
+ * It also includes case classes for specific event types to keep track over current game state
+ */
 trait Event
 
-
-//****************************************************************************** CLASS DEFINITIONS
+/** Specific classes for the event types **/
 case class MenuStateEvent()         extends Event
 case class PlayStateEvent()         extends Event
 case class InitStateEvent()         extends Event

@@ -1,22 +1,16 @@
-/**
-  * Game.scala
-  */
-
-//****************************************************************************** PACKAGE
-
 package model.GameComponent.GameBaseImpl
 
-//****************************************************************************** IMPORTS
 import util._
 import model.GameComponent.GameInterface
 
-//****************************************************************************** CLASS DEFINITION
 /**
-  * Represents a game instance with it's current state and game field
+  * Represents a game instance with its current state and game field.
   *
-  * @param field  mastermind game field
-  * @param state  state in which the game is currently
-  */
+  * @param field         The mastermind game field.
+  * @param code          The code to be guessed.
+  * @param currentTurn   The current turn of the game.
+  * @param state         The state in which the game is currently.
+ **/
 case class Game(val field: Field = new Field(10, 4),
                 val code: Code = new Code(4),
                 val currentTurn: Int = 0,
@@ -37,13 +31,13 @@ case class Game(val field: Field = new Field(10, 4),
     RequestHandlerSCR.LoadInputRule orElse
     RequestHandlerSCR.DBLoadInputRule orElse
     RequestHandlerSCR.DBSaveInputRule
-  
+
   /**
-    * Calls the responsible chain
-    *
-    * @param request
-    * @return
-    */
+   * Calls the responsible chain to handle the request.
+   *
+   * @param request The request to be handled.
+   * @return The resulting event.
+   */
   def handleRequest(request: Request): Event =
     request match
       case SingleCharRequest(userinput) =>
@@ -55,7 +49,12 @@ case class Game(val field: Field = new Field(10, 4),
         else
           return PlayerAnalyzeEvent()
 
-
+  /**
+   * Processes an event and returns the new state.
+   *
+   * @param event The event to be processed.
+   * @return The new state.
+   */
   def request(event: Event): State =
     val req_state = event match
       case init: InitStateEvent         =>  Init()
@@ -95,6 +94,7 @@ case class Game(val field: Field = new Field(10, 4),
   /**
     * Return the event that is needed to trigger the current state and 
     * can be used to stay in the current state
+    * 
     * @return event that triggers the current state
     */
   def getCurrentStateEvent(): Event =

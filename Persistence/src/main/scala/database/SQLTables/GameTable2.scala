@@ -2,6 +2,11 @@ package SQLTables
 
 import slick.jdbc.MySQLProfile.api.*
 
+/**
+ * A class representing the definition of a database table for the "GAME" data type.
+ *
+ * @param tag The tag for the table.
+ */
 class GameTable2(tag: Tag) extends Table[(Int, Int, Int, Int, Int, Int, String)](tag, "GAME2"):
   
   def id = column[Int]("ID", O.PrimaryKey, O.AutoInc)
