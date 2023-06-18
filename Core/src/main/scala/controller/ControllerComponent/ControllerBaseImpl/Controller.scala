@@ -1,12 +1,5 @@
-/**
- * Controller.scala
- * Base implementation of the controller
- */
-
-//****************************************************************************** PACKAGE
 package controller.ControllerComponent.ControllerBaseImpl
 
-//****************************************************************************** IMPORTS
 import FileIOComponent.FileIOInterface
 import FileIOComponent.fileIOJsonImpl.FileIO
 import controller.ControllerComponent.ControllerInterface
@@ -14,9 +7,12 @@ import controller.ControllerComponent.aview.PersistenceController
 import model.GameComponent.GameBaseImpl.*
 import model.GameComponent.GameInterface
 import util.{Event, Observable, Request}
-import play.api.libs.json._
+import play.api.libs.json.*
 
-//****************************************************************************** CLASS DEFINITION
+/**
+ * Controller.scala
+ * Base implementation of the controller
+ */
 class Controller(using var game: GameInterface) extends ControllerInterface:
 
   val persistenceController = new PersistenceController

@@ -1,31 +1,20 @@
-/**
-  * GUI.scala
-  * 
-  * Class for the GUI of the Mastermind game.
-  */
-
-//****************************************************************************** PACKAGE  
-
 package aview
 
-//****************************************************************************** IMPORTS
-import scalafx.application.JFXApp3
-import scalafx.application.Platform
-import scalafx.scene.layout.{StackPane, CornerRadii, GridPane}
+import model.GameComponent.GameBaseImpl.*
+import scalafx.Includes.*
+import scalafx.application.{JFXApp3, Platform}
+import scalafx.geometry.Insets
+import scalafx.geometry.Pos.*
+import scalafx.scene.{ImageCursor, Scene}
 import scalafx.scene.control.{Button, Label, Tooltip}
 import scalafx.scene.image.{Image, ImageView}
-import scalafx.scene.Scene
-import scalafx.stage.{Stage, Popup, FileChooser}
-import scalafx.scene.ImageCursor
-import scalafx.geometry.Insets
-import scalafx.geometry.Pos._
-import scalafx.Includes._
+import scalafx.scene.layout.{CornerRadii, GridPane, StackPane}
+import scalafx.stage.{FileChooser, Popup, Stage}
+import util.*
 
-import model.GameComponent.GameBaseImpl._
-import util._
-
-
-//****************************************************************************** CLASS DEFINITION
+/**
+ * The GUI class represents the graphical user interface of the application.
+ */
 class GUI() extends JFXApp3:
   
   val uiController = new UIController()
@@ -35,6 +24,9 @@ class GUI() extends JFXApp3:
   var browseColors = 0
   val selectableColors = Vector("G", "R", "B", "Y", "P", "W")
 
+  /**
+   * The start() method is called when the application starts and initializes the GUI.
+   */
   override def start() = {
     stage = new JFXApp3.PrimaryStage {
       icons += new Image(getClass.getResource("/logo.png").toExternalForm())
@@ -44,9 +36,11 @@ class GUI() extends JFXApp3:
     }
   }
 
+  /**
+   * The update() method refreshes the scene with a runnable which is added to the threads event queue.
+   * This is needed because Java/ScalaFX Threads must not be updated/interrupted from other threads.
+   */
   def update = {
-    /* Refresh scene with a runnable which is added to the threads event queue.
-       This is needed cause Java/ScalaFX Threads must not be updated/interrupted from other threads */
     Platform.runLater(new Runnable() {
       override def run() = {
         stage.scene = refreshScene()
@@ -54,6 +48,12 @@ class GUI() extends JFXApp3:
     })
   }
 
+  /**
+   * The refreshScene() method creates and returns a new Scene object representing the updated GUI scene.
+   * It fetches the game state, initializes the UI elements, and sets event handlers.
+   *
+   * @return The new Scene object representing the updated GUI scene.
+   */
   def refreshScene() : Scene = {
     uiController.fetchGame()
     currentStoneVector = Vector.from[Stone](Array.fill[Stone](uiController.game.field.matrix.cols)(Stone("E")))

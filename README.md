@@ -50,8 +50,15 @@ To set up the project using Docker Compose, follow these steps:
 3. Run the command: `sbt Docker/publishLocal` or `Docker/publishLocal` if you are already in the sbt shell in the root directory of the project.
     - The error chain in the output is okay and nothing to worry about.
 5. Run the docker-compose file: `docker-compose up`
+```bash 
+docker-compose up 
+``` 
 6. In a seperate terminal, run the command: `docker attach ui_service` to attach the terminal to the TUI.
-7. From here you can now use all the specified commands above to play the game normally.
+```bash 
+docker attach ui_service
+``` 
+8. From here you can now use all the specified commands above to play the game normally.
+
 
 ## API URLs
 

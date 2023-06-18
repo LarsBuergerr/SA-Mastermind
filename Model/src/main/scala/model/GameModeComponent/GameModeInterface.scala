@@ -1,16 +1,10 @@
-/**
-  * GameModeInterface.scala
-  */
-
-//****************************************************************************** PACKAGE  
-
 package model.GameModeComponent
-
-//****************************************************************************** IMPORTS
 
 import model.GameComponent.GameBaseImpl.Field
 
-//****************************************************************************** INTERFACE DEFINITION
+/**
+ * Interface for the GameModes
+ */
 trait GameModeInterface:
   
   val selectMode : String

@@ -19,7 +19,7 @@ import scala.concurrent.{Await, Future}
 import scala.util.Try
 
 /**
- * SlickDAO class represents the data access object for Slick database operations.
+ * The SlickDAO class represents the data access object for Slick database operations.
  */
 class SlickDAO extends DAOInterface {
   val WAIT_TIME = 10.seconds

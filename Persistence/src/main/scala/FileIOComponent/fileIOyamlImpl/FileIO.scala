@@ -1,12 +1,15 @@
 package FileIOComponent.fileIOyamlImpl
 
-
 import model.GameComponent.GameBaseImpl.{Field, Code, Matrix, Stone, HStone, HintStone, Game, Play}
 import model.GameComponent.GameInterface
 import FileIOComponent.FileIOInterface
 
 import net.jcazevedo.moultingyaml._
 
+/**
+ * Implementation of the FileIOInterface for yaml file operations.
+ * Handles loading and saving game data in yaml format.
+ */
 class FileIO extends FileIOInterface:
   
   override def load(): GameInterface = 
@@ -109,7 +112,7 @@ class FileIO extends FileIOInterface:
         YamlString("turn") -> YamlNumber(obj.currentTurn)
       )
 
-    def read(yaml: YamlValue) = 
+    def read(yaml: YamlValue): Game = 
       val yaml_data = yaml.asYamlObject.getFields(YamlString("matrix"), YamlString("hmatrix"), YamlString("code"), YamlString("turn"))
       yaml_data match
         case Seq(YamlArray(matrix), YamlArray(hmatrix), code, YamlNumber(turn)) =>

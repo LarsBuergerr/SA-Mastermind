@@ -8,8 +8,16 @@ import FileIOComponent.FileIOInterface
 import java.io._
 import scala.xml._
 
+/**
+ * Implementation of the FileIOInterface for XML file operations.
+ * Handles loading and saving game data in XML format.
+ */
 class FileIO extends FileIOInterface:
-
+  /**
+   * Loads game data from an XML file and returns a GameInterface object.
+   *
+   * @return The loaded GameInterface object.
+   */
   override def load(): GameInterface = 
     import java.io._
     import scala.xml._
@@ -66,6 +74,11 @@ class FileIO extends FileIOInterface:
 
     loop(initialMatrix, all_rows, 0)
 
+  /**
+   * Saves game data as an XML file.
+   *
+   * @param game The GameInterface object to be saved.
+   */
   override def save(game: GameInterface): Unit =
     import java.io._
     import scala.xml._

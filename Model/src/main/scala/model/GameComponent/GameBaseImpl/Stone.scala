@@ -1,21 +1,20 @@
-/**
-  * Stone.scala
-  * Implements the Factory Pattern to create different stones
-  */
-
-//****************************************************************************** PACKAGE
-
 package model.GameComponent.GameBaseImpl
 
-//****************************************************************************** IMPORTS
 import scala.util.Random
 
-
-//****************************************************************************** INTERFACE DEFINITION
+/**
+ * Represents a stone in the game.
+ */
 trait Stone:
   val stringRepresentation: String
   override def toString(): String = stringRepresentation
 
+  /**
+   * Checks if this stone is equal to another object.
+   *
+   * @param obj The object to compare.
+   * @return True if the stones are equal, false otherwise.
+   */
   override def equals(obj: Any): Boolean = obj match
     case that: Stone => this.stringRepresentation.equals(that.stringRepresentation)
     case _ => false
@@ -24,12 +23,18 @@ trait HStone:
   val stringRepresentation: String
   override def toString(): String = stringRepresentation
 
+  /**
+   * Checks if this hint stone is equal to another object.
+   *
+   * @param obj The object to compare.
+   * @return True if the hint stones are equal, false otherwise.
+   */
   override def equals(obj: Any): Boolean = obj match
     case that: HStone => this.stringRepresentation.equals(that.stringRepresentation)
     case _ => false
 
 
-//****************************************************************************** CLASS DEFINITIONS
+/** the following classes represent the colored stones in the game **/
 private class Red extends Stone:
   val stringRepresentation = "R"
   override def toString(): String = stringRepresentation
@@ -80,7 +85,9 @@ private class HEmpty extends HStone:
   override def toString(): String = stringRepresentation
 
 
-//****************************************************************************** OBJECT DEFINITION
+/**
+ * Represents the Stone object that provides stone creation and randomness.
+ */
 object Stone:
   def apply(stringRepresentation: String): Stone = stringRepresentation match
     case "R" => new Red
@@ -103,8 +110,16 @@ object Stone:
       case _ => "E"
     )
 
-
+/**
+ * Represents the HintStone object that provides hint stone creation.
+ */
 object HintStone:
+  /**
+   * Creates a hint stone based on its string representation.
+   *
+   * @param stringRepresentation The string representation of the hint stone.
+   * @return The hint stone object.
+   */
   def apply(stringRepresentation: String): HStone = stringRepresentation match
     case "R" => new HRed
     case "W" => new HWhite
