@@ -22,6 +22,7 @@ This is a implementation of the game Mastermind. The game is played against the 
 ## Information for the Reviews
 
 The Game currently only runs when deployed in Docker because the Core and the Persistence Service are not started when running the game normally and the databases only exist in the docker images. :)
+For any upcoming questions or if there is anything that is not working dm me on discord (my user is in the SWAR server, username: lars_buerger)
 
 ## Commands
 
