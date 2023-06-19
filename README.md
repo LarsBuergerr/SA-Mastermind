@@ -49,6 +49,7 @@ To set up the project using Docker Compose, follow these steps:
 2. Start the Docker daemon.
 3. Run the command: `sbt Docker/publishLocal` or `Docker/publishLocal` if you are already in the sbt shell in the root directory of the project.
     - The error chain in the output is okay and nothing to worry about.
+    - This command is going to create the local images of the services for docker.
 5. Run the docker-compose file: `docker-compose up`
 ```bash 
 docker-compose up 
