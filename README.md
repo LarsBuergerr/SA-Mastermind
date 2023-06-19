@@ -18,6 +18,11 @@
 
 This is a implementation of the game Mastermind. The game is played against the computer. The game creates a secret code of four to five stones (depends on the chosen difficult) . The layer tries to guess the code. After each guess the player gets feedback about how many stones are in the right position and how many stones are in the wrong position. The game ends when the player guesses the code or when the player has used all his tries.
 
+
+## Information for the Reviews
+
+The Game currently only runs when deployed in Docker because the Core and the Persistence Service are not started when running the game normally and the databases only exist in the docker images. :)
+
 ## Commands
 
 The following commands can be used in the TUI of the game:
